@@ -1,16 +1,19 @@
 {
   "files": {
-    "main.css": "/sports/static/css/main.073c9b0a.css",
-    "main.js": "/sports/static/js/main.ac347377.js",
+    "main.css": "/sports/static/css/main.2e897995.css",
+    "main.js": "/sports/static/js/main.7ca9fcbe.js",
     "static/js/787.f87d2b1c.chunk.js": "/sports/static/js/787.f87d2b1c.chunk.js",
-    "static/media/logo.svg": "/sports/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "static/media/IBMPlexSans-SemiBold.ttf": "/sports/static/media/IBMPlexSans-SemiBold.fffccb38819b2f4eb6ab.ttf",
+    "static/media/IBMPlexSans-Medium.ttf": "/sports/static/media/IBMPlexSans-Medium.4c69d30a49b3ad04d7df.ttf",
+    "static/media/IBMPlexSans-Bold.ttf": "/sports/static/media/IBMPlexSans-Bold.1be47adb18631ff5ab76.ttf",
+    "static/media/PlusJakartaSans-VariableFont_wght.ttf": "/sports/static/media/PlusJakartaSans-VariableFont_wght.e927df8b07a258431c9a.ttf",
     "index.html": "/sports/index.html",
-    "main.073c9b0a.css.map": "/sports/static/css/main.073c9b0a.css.map",
-    "main.ac347377.js.map": "/sports/static/js/main.ac347377.js.map",
+    "main.2e897995.css.map": "/sports/static/css/main.2e897995.css.map",
+    "main.7ca9fcbe.js.map": "/sports/static/js/main.7ca9fcbe.js.map",
     "787.f87d2b1c.chunk.js.map": "/sports/static/js/787.f87d2b1c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.073c9b0a.css",
-    "static/js/main.ac347377.js"
+    "static/css/main.2e897995.css",
+    "static/js/main.7ca9fcbe.js"
   ]
 }
