@@ -1,0 +1,23 @@
+@font-face {
+    font-family: "IBMPlexSans-Bold";
+    src: url("/public/fonts/IBMPlexSans-Bold.ttf") format("truetype");
+    /* Add additional font variations if available */
+}
+
+@font-face {
+  font-family: "IBMPlexSans-SemiBold";
+  src: url("/public/fonts/IBMPlexSans-SemiBold.ttf") format("truetype");
+  /* Add additional font variations if available */
+}
+
+@font-face {
+  font-family: "IBMPlexSans-Medium";
+  src: url("/public/fonts/IBMPlexSans-Medium.ttf") format("truetype");
+  /* Add additional font variations if available */
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/public/fonts/PlusJakartaSans-VariableFont_wght.ttf") format("truetype");
+  /* Add additional font variations if available */
+}

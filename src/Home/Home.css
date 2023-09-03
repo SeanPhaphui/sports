@@ -1,0 +1,13 @@
+.Home {
+    width: 85%;
+}
+
+.Home .title {
+    font-family: "Plus Jakarta Sans";
+    font-weight: 800;
+    font-size: 36px;
+}
+
+.Home .MuiSnackbar-root {
+    margin-bottom: 20px;
+}
