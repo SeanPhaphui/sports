@@ -1,4 +1,4 @@
-export interface Game {
+export interface GameSelectionObject {
     id: string;
     name: string;
     date: Date;
@@ -21,12 +21,12 @@ const getOption = async (url: string) => {
     return response.json();
 };
 
-export const getGamesByDate = async (date: string): Promise<Game[]> => {
+export const getGamesByDate = async (date: string): Promise<GameSelectionObject[]> => {
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?dates=${date}`;
 
     const data = await getOption(footballUrl);
-    const games: Game[] = [];
+    const games: GameSelectionObject[] = [];
     if (data?.events) {
         for (const event of data.events) {
             const competition = event.competitions[0];
@@ -40,7 +40,7 @@ export const getGamesByDate = async (date: string): Promise<Game[]> => {
                 );
 
                 if (homeTeam && awayTeam) {
-                    const game: Game = {
+                    const game: GameSelectionObject = {
                         id: event.id,
                         name: event.name,
                         date: new Date(event.date),

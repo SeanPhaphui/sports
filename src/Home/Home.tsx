@@ -2,12 +2,13 @@ import { DateCalendar, MobileDatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import React, { useEffect, useState } from "react";
 import "./Home.css";
-import { Game, getGamesByDate } from "../Utils/Utils";
+import { GameSelectionObject, getGamesByDate } from "../Utils/Utils";
 import { Autocomplete, Box, Card, Paper, TextField } from "@mui/material";
+import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
 
 const Home: React.FC = () => {
     const [startDate, setStart] = useState<Dayjs | null>(dayjs());
-    const [games, setGames] = useState<Game[]>([
+    const [games, setGames] = useState<GameSelectionObject[]>([
         {
             id: "401532394",
             name: "Howard Bison at Eastern Michigan Eagles",
@@ -139,43 +140,7 @@ const Home: React.FC = () => {
                     onChange={(event) => setFilterText(event.target.value)}
                 />
             </div>
-            {games
-                .filter((game) => game.name.toLowerCase().includes(filterText.toLowerCase())) // Apply filter
-                .map((game) => (
-                    <Card className="game-item" key={game.id}>
-                        <div className="game-item-group">
-                            <div className="team">
-                                <Box
-                                    component="img"
-                                    sx={{
-                                        height: "4vh",
-                                        width: "4vh",
-                                        marginRight: "10px",
-                                    }}
-                                    src={game.homeTeam.logo}
-                                />
-                                <div>{game.homeTeam.location}</div>
-                            </div>
-                            <div>{game.homeTeam.record}</div>
-                        </div>
-                        <div className="divider"></div>
-                        <div className="game-item-group">
-                            <div className="team">
-                                <Box
-                                    component="img"
-                                    sx={{
-                                        height: "4vh",
-                                        width: "4vh",
-                                        marginRight: "10px",
-                                    }}
-                                    src={game.awayTeam.logo}
-                                />
-                                <div>{game.awayTeam.location}</div>
-                            </div>
-                            <div>{game.awayTeam.record}</div>
-                        </div>
-                    </Card>
-                ))}
+            <SelectGameCardList gameSelections={games} filterText={filterText}/>
         </div>
     );
 };
