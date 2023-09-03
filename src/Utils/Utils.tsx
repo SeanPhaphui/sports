@@ -2,6 +2,18 @@ export interface Game {
     id: string;
     name: string;
     date: Date;
+    homeTeam: {
+        rank: number;
+        record: string;
+        location: string;
+        logo: string;
+    };
+    awayTeam: {
+        rank: number;
+        record: string;
+        location: string;
+        logo: string;
+    };
 }
 
 const getOption = async (url: string) => {
@@ -17,17 +29,40 @@ export const getGamesByDate = async (date: string): Promise<Game[]> => {
     const games: Game[] = [];
     if (data?.events) {
         for (const event of data.events) {
-            const game: Game = {
-                id: event.id,
-                name: event.name,
-                date: new Date(event.date), // Assuming 'date' is in UTC format
-            };
-            games.push(game);
+            const competition = event.competitions[0];
+            if (competition && competition.competitors && competition.competitors.length >= 2) {
+                const homeTeam = competition.competitors.find(
+                    (comp: { homeAway: string }) => comp.homeAway === "home"
+                );
+                console.log("Home Team: ", homeTeam);
+                const awayTeam = competition.competitors.find(
+                    (comp: { homeAway: string }) => comp.homeAway === "away"
+                );
+
+                if (homeTeam && awayTeam) {
+                    const game: Game = {
+                        id: event.id,
+                        name: event.name,
+                        date: new Date(event.date),
+                        homeTeam: {
+                            rank: homeTeam.curatedRank.current,
+                            record: homeTeam.records[0].summary,
+                            location: homeTeam.team.location,
+                            logo: homeTeam.team.logo,
+                        },
+                        awayTeam: {
+                            rank: awayTeam.curatedRank.current,
+                            record: awayTeam.records[0].summary,
+                            location: awayTeam.team.location,
+                            logo: awayTeam.team.logo,
+                        },
+                    };
+
+                    games.push(game);
+                }
+            }
         }
     }
-    if (games === undefined) {
-        return [];
-    }
-
+    console.log("From Utils - games: ", games);
     return games;
 };

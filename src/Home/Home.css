@@ -11,3 +11,76 @@
 .Home .MuiSnackbar-root {
     margin-bottom: 20px;
 }
+
+.MuiPaper-root.MuiCard-root {
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+}
+
+/* Start Date CSS */
+/* .MuiButtonBase-root.MuiPickersDay-root {
+    color: white;
+}
+
+.MuiTypography-root.MuiDayCalendar-weekDayLabel {
+    color: white;
+}
+.MuiButtonBase-root.MuiIconButton-root.MuiPickersCalendarHeader-switchViewButton{
+    color: white;
+}
+
+.MuiButtonBase-root.MuiIconButton-root.MuiPickersArrowSwitcher-button {
+    color: white;
+} */
+/* End Date CSS */
+
+.Home .search-parameters {
+    margin-top: 20px;
+    background-color: #2b2c2d;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+}
+
+.Home .search-parameters .search-parameters-item {
+    width: 100%;
+}
+
+.Home .search-parameters .search-parameters-item .MuiFormLabel-root.MuiInputLabel-root {
+    color: rgba(255, 255, 255, 0.9);
+}
+.Home .search-parameters .search-parameters-item .MuiInputBase-root.MuiOutlinedInput-root {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.Home .search-parameters .search-parameters-item .MuiOutlinedInput-notchedOutline {
+    color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.9);
+}
+
+.Home .game-item {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    color: #ffffff;
+    font-weight: 500;
+    background-color: #1d1e1f;
+    margin-bottom: 20px;
+}
+
+.Home .game-item .game-item-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Home .game-item .game-item-group .team{
+    display: flex;
+    align-items: center;
+}
+
+.divider {
+    margin-bottom: 10px;
+}
