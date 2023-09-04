@@ -20,29 +20,15 @@
     margin-bottom: 20px;
 }
 
+.PlayerBetCard .card .date {
+    margin-bottom: 10px;
+    text-align: left;
+    color: #a4a5a6;
+    font-weight: 100;
+    font-size: medium;
+}
+
 .PlayerBetCard .card .card-group-top {
-    text-align: center;
-}
-
-.PlayerBetCard .card .card-group-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.PlayerBetCard .card .card-group-bottom .team-stats {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.PlayerBetCard .card .card-group-bottom .team-stats .logo-and-name{
-    display: flex;
-    align-items: center;
-    margin-right: 20px;
-}
-
-.PlayerBetCard .card .card-group-bottom .current-spread {
     text-align: center;
 }
 

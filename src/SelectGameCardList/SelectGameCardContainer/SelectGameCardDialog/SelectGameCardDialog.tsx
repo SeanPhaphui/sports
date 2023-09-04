@@ -12,6 +12,7 @@ export interface BetObject {
     gameId: string;
     team: string;
     spread: string;
+    status?: 'final' | 'ongoing' | 'upcoming'; // Add more statuses as needed
 }
 
 interface SelectGameCardDialogProps {

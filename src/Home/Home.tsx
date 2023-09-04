@@ -119,47 +119,30 @@ const Home: React.FC = () => {
 
     const [bets, setBets] = useState<BetObject[]>([]);
 
-    const [playerBets, setPlayerBets] = useState<PlayerBetObject[]>([{
-        id: "1cbc9ee7-1980-4757-a043-f294eb2fc20e",
-        team: "Howard",
-        spread: "11",
-        date: new Date("2023-09-01T22:30:00.000Z"),
-        homeTeam: {
-            location: "Eastern Michigan",
-            score: "33",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2199.png"
-        },
-        awayTeam: {
-            location: "Howard",
-            score: "23",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/47.png"
-        }
-    }]);
+    const [playerBets, setPlayerBets] = useState<PlayerBetObject[]>([]);
 
     useEffect(() => {
         if (startDate) {
             const formattedDate = startDate.format("YYYYMMDD");
-            // getGamesByDate(formattedDate).then(setGames);
+            getGamesByDate(formattedDate).then(setGames);
             // console.log(getGamesByDate(formattedDate))
         }
     }, [startDate]);
 
-    // useEffect(() => {
-    //     if (bets) {
-    //         getGameByID("someid").then(setPlayerBets);
-    //     }
-    // }, [bets]);
-
     useEffect(() => {
         if (bets.length > 0) {
-            // Iterate through bets and fetch game details for each bet
             const fetchPlayerBets = async () => {
                 const newPlayerBets: PlayerBetObject[] = [];
 
-                for (const bet of bets) {
+                for (let i = 0; i < bets.length; i++) {
+                    const bet = bets[i];
                     try {
-                        // const playerBet = await getGameByID(bet.gameId, bet.team, bet.spread);
-                        // newPlayerBets.push(playerBet);
+                        const { playerBetObject, status } = await getGameByID(
+                            bet.gameId,
+                            bet.team,
+                            bet.spread
+                        );
+                        newPlayerBets.push(playerBetObject);
                     } catch (error) {
                         console.error(`Error fetching game for bet ${bet.gameId}:`, error);
                     }
@@ -185,7 +168,6 @@ const Home: React.FC = () => {
                     value={startDate}
                     onChange={(newValue: Dayjs | null) => setStart(newValue)}
                 />
-                {/* <DateCalendar value={startDate} onChange={(newValue: Dayjs | null) => setStart(newValue)} /> */}
                 <div className="divider"></div>
                 <TextField
                     className="search-parameters-item"
@@ -195,7 +177,7 @@ const Home: React.FC = () => {
                 />
             </div>
             {playerBets.map((playerBet) => (
-                <PlayerBetCard key={playerBet.id} playerBet={playerBet}/>
+                <PlayerBetCard key={playerBet.id} playerBet={playerBet} />
             ))}
             <SelectGameCardList
                 gameSelections={games}

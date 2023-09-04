@@ -1,0 +1,21 @@
+.Info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Info .team-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Info .team-stats .logo-and-name{
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.Info .current-spread {
+    text-align: center;
+}
