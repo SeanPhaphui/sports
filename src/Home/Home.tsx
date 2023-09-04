@@ -2,10 +2,11 @@ import { DateCalendar, MobileDatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import React, { useEffect, useState } from "react";
 import "./Home.css";
-import { GameSelectionObject, getGamesByDate } from "../Utils/Utils";
+import { GameSelectionObject, PlayerBetObject, getGameByID, getGamesByDate } from "../Utils/Utils";
 import { Autocomplete, Box, Card, Paper, TextField } from "@mui/material";
 import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
 import { BetObject } from "../SelectGameCardList/SelectGameCardContainer/SelectGameCardDialog/SelectGameCardDialog";
+import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
 
 const Home: React.FC = () => {
     const [startDate, setStart] = useState<Dayjs | null>(dayjs());
@@ -118,18 +119,63 @@ const Home: React.FC = () => {
 
     const [bets, setBets] = useState<BetObject[]>([]);
 
+    const [playerBets, setPlayerBets] = useState<PlayerBetObject[]>([{
+        id: "1cbc9ee7-1980-4757-a043-f294eb2fc20e",
+        team: "Howard",
+        spread: "11",
+        date: new Date("2023-09-01T22:30:00.000Z"),
+        homeTeam: {
+            location: "Eastern Michigan",
+            score: "33",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2199.png"
+        },
+        awayTeam: {
+            location: "Howard",
+            score: "23",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/47.png"
+        }
+    }]);
+
     useEffect(() => {
         if (startDate) {
             const formattedDate = startDate.format("YYYYMMDD");
-            getGamesByDate(formattedDate).then(setGames);
+            // getGamesByDate(formattedDate).then(setGames);
             // console.log(getGamesByDate(formattedDate))
         }
     }, [startDate]);
 
+    // useEffect(() => {
+    //     if (bets) {
+    //         getGameByID("someid").then(setPlayerBets);
+    //     }
+    // }, [bets]);
+
+    useEffect(() => {
+        if (bets.length > 0) {
+            // Iterate through bets and fetch game details for each bet
+            const fetchPlayerBets = async () => {
+                const newPlayerBets: PlayerBetObject[] = [];
+
+                for (const bet of bets) {
+                    try {
+                        // const playerBet = await getGameByID(bet.gameId, bet.team, bet.spread);
+                        // newPlayerBets.push(playerBet);
+                    } catch (error) {
+                        console.error(`Error fetching game for bet ${bet.gameId}:`, error);
+                    }
+                }
+
+                setPlayerBets(newPlayerBets);
+            };
+
+            fetchPlayerBets();
+        }
+    }, [bets]);
+
     const handleAddBet = (bet: BetObject) => {
         setBets((prevArray) => [...prevArray, bet]);
         console.log(bet);
-    }
+    };
     return (
         <div className="Home">
             <div className="search-parameters">
@@ -148,7 +194,14 @@ const Home: React.FC = () => {
                     onChange={(event) => setFilterText(event.target.value)}
                 />
             </div>
-            <SelectGameCardList gameSelections={games} filterText={filterText} onAdd={handleAddBet}/>
+            {playerBets.map((playerBet) => (
+                <PlayerBetCard key={playerBet.id} playerBet={playerBet}/>
+            ))}
+            <SelectGameCardList
+                gameSelections={games}
+                filterText={filterText}
+                onAdd={handleAddBet}
+            />
         </div>
     );
 };

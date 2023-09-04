@@ -25,11 +25,11 @@ const SelectGameCard: React.FC<SelectGameCardProps> = (props) => {
                                 width: "4vh",
                                 marginRight: "10px",
                             }}
-                            src={game.homeTeam.logo}
+                            src={game.awayTeam.logo}
                         />
-                        <div>{game.homeTeam.location}</div>
+                        <div>{game.awayTeam.location}</div>
                     </div>
-                    <div>{game.homeTeam.record}</div>
+                    <div>{game.awayTeam.record}</div>
                 </div>
                 <div className="divider"></div>
                 <div className="game-item-group">
@@ -41,11 +41,11 @@ const SelectGameCard: React.FC<SelectGameCardProps> = (props) => {
                                 width: "4vh",
                                 marginRight: "10px",
                             }}
-                            src={game.awayTeam.logo}
+                            src={game.homeTeam.logo}
                         />
-                        <div>{game.awayTeam.location}</div>
+                        <div>{game.homeTeam.location}</div>
                     </div>
-                    <div>{game.awayTeam.record}</div>
+                    <div>{game.homeTeam.record}</div>
                 </div>
             </Card>
         </div>

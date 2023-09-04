@@ -1,0 +1,55 @@
+.PlayerBetCard .MuiPaper-root.MuiCard-root {
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+}
+
+.PlayerBetCard .MuiDivider-root {
+    border-color: rgba(255, 255, 255, 0.12);
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.PlayerBetCard .card {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    color: #ffffff;
+    font-weight: 500;
+    background-color: #1d1e1f;
+    margin-bottom: 20px;
+}
+
+.PlayerBetCard .card .card-group-top {
+    text-align: center;
+}
+
+.PlayerBetCard .card .card-group-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.PlayerBetCard .card .card-group-bottom .team-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.PlayerBetCard .card .card-group-bottom .team-stats .logo-and-name{
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.PlayerBetCard .card .card-group-bottom .current-spread {
+    text-align: center;
+}
+
+.PlayerBetCard .card .status {
+    margin-top: 10px;
+    text-align: center;
+    color: #a4a5a6;
+    font-weight: 100;
+    font-size: medium;
+}

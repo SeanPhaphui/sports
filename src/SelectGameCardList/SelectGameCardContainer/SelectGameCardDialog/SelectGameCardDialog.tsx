@@ -5,9 +5,11 @@ import "./SelectGameCardDialog.css";
 import { TextField } from "@mui/material";
 import SpreadSign from "./SpreadSign/SpreadSign";
 import AddSpread from "./AddSpread/AddSpread";
+import { v4 as uuidv4 } from 'uuid';
 
 export interface BetObject {
-    id: string;
+    uniqueId: string;
+    gameId: string;
     team: string;
     spread: string;
 }
@@ -54,7 +56,8 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = (props) => {
             spreadSign
         ) {
             const bet: BetObject = {
-                id: game.id,
+                uniqueId: uuidv4(),
+                gameId: game.id,
                 team: team,
                 spread: spreadSign + spread,
             };
