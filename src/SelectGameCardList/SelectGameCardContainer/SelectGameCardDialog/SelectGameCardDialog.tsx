@@ -1,63 +1,96 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { Button, TextField } from "@mui/material";
-import "./SelectGameCardDialog.css";
 import { GameSelectionObject } from "../../../Utils/Utils";
+import TeamPicker from "./TeamPicker/TeamPicker";
+import "./SelectGameCardDialog.css";
+import { TextField } from "@mui/material";
+import SpreadSign from "./SpreadSign/SpreadSign";
+import AddSpread from "./AddSpread/AddSpread";
+
+export interface BetObject {
+    id: string;
+    team: string;
+    spread: string;
+}
 
 interface SelectGameCardDialogProps {
     game: GameSelectionObject;
-    // addGame: (contract: ContractObject) => void;
+    onAdd: (bet: BetObject) => void;
 }
 
 const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = (props) => {
-    const { game } = props;
+    const { game, onAdd } = props;
 
-    // const inputProps = {
-    //     type: "number",
-    //     pattern: "[0-9]*",
-    // };
+    const [team, setTeam] = useState<string>();
+    const [spread, setSpread] = useState<string>();
+    const [spreadSign, setSpreadSign] = useState<string>();
+    const [disableAddSpread, setDisableAddSpread] = useState<boolean>(true);
 
-    // const [buyBackPrice, setBuyBackPrice] = useState<number>(0);
-    // const [optionCount, setOptionCount] = useState<number>(
-    //     contract.optionCount
-    // );
-    // const [disabled, setDisabled] = useState<boolean>(true);
+    useEffect(() => {
+        if (
+            team &&
+            spread &&
+            spreadSign
+        ) {
+            setDisableAddSpread(false);
+        } else {
+            setDisableAddSpread(true);
+        }
+    }, [team, spread, spreadSign]);
 
-    // const handleContractUpdate = () => {
-    //     const updatedTotalSellPrice = (contract.totalSellPrice / contract.optionCount) * optionCount
+    const handleSpreadSignUpdate = (spreadSign: string) => {
+        setSpreadSign(spreadSign);
+    };
 
-    //     const totalBuyBackPrice = optionCount > 1 ? buyBackPrice * optionCount : buyBackPrice;
-    //     const updatedContract: ContractObject = {
-    //         ...contract, // Copy all properties from the original object
-    //         // Update the desired properties
-    //         totalSellPrice: updatedTotalSellPrice,
-    //         optionCount: optionCount,
-    //         totalBuyBackPrice: totalBuyBackPrice,
-    //     };
-    //     updateContract(updatedContract);
-    // };
+    const inputProps = {
+        type: "tel",
+        pattern: "-?[0-9]*\\.?[0-9]+",
+        inputmode: "decimal",
+    };
 
-    // const handleContractDeletion = () => {
-    //     const id = contract.id;
-    //     deleteContract(id);
-    // };
-
-    // useEffect(() => {
-    //     if (buyBackPrice) {
-    //         setDisabled(false);
-    //     } else {
-    //         setDisabled(true);
-    //     }
-    // }, [buyBackPrice]);
-
-    // useEffect(() => {
-    //     if (optionCount !== contract.optionCount) {
-    //       setDisabled(false); // Set disabled to false when optionCount changes
-    //     }
-    //   }, [optionCount, contract.optionCount]);
+    const buildBet = () => {
+        if (
+            team &&
+            spread &&
+            spreadSign
+        ) {
+            const bet: BetObject = {
+                id: game.id,
+                team: team,
+                spread: spreadSign + spread,
+            };
+            onAdd(bet);
+        }
+    };
 
     return (
         <div className="SelectGameCardDialog">
-            HELLO
+            <div className="item">
+                <TeamPicker
+                    homeTeam={game.homeTeam.location}
+                    awayTeam={game.awayTeam.location}
+                    onTeamChange={(team: string) => setTeam(team)}
+                />
+            </div>
+            <div className="item">
+                <TextField
+                    label="Spread"
+                    InputProps={{
+                        inputProps: inputProps,
+                    }}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSpread(e.target.value)}
+                />
+            </div>
+            <div className="item">
+                <SpreadSign onSpreadSignChange={handleSpreadSignUpdate}/>
+            </div>
+            <div className="item">
+                <AddSpread
+                    spread={spread}
+                    spreadSign={spreadSign}
+                    disabled={disableAddSpread}
+                    onAddSpreadChange={() => buildBet()}
+                />
+            </div>
         </div>
     );
 };

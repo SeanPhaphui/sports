@@ -1,0 +1,22 @@
+.SelectGameCardDialog {
+    font-family: "Roboto";
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.MuiPaper-root.MuiDialog-paper {
+    border-radius: 10px;
+    width: 100%;
+}
+
+.MuiFormControl-root {
+    width: 100%;
+}
+
+.MuiInputBase-root.MuiOutlinedInput-root {
+    border-radius: 10px;
+}
+
+.SelectGameCardDialog .item {
+    margin-bottom: 20px;
+}

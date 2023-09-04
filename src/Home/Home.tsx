@@ -5,6 +5,7 @@ import "./Home.css";
 import { GameSelectionObject, getGamesByDate } from "../Utils/Utils";
 import { Autocomplete, Box, Card, Paper, TextField } from "@mui/material";
 import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
+import { BetObject } from "../SelectGameCardList/SelectGameCardContainer/SelectGameCardDialog/SelectGameCardDialog";
 
 const Home: React.FC = () => {
     const [startDate, setStart] = useState<Dayjs | null>(dayjs());
@@ -113,7 +114,9 @@ const Home: React.FC = () => {
         },
     ]);
 
-    const [filterText, setFilterText] = useState<string>(""); // Step 1: State for filter text
+    const [filterText, setFilterText] = useState<string>(""); // Step 1: State for filter text'
+
+    const [bets, setBets] = useState<BetObject[]>([]);
 
     useEffect(() => {
         if (startDate) {
@@ -122,6 +125,11 @@ const Home: React.FC = () => {
             // console.log(getGamesByDate(formattedDate))
         }
     }, [startDate]);
+
+    const handleAddBet = (bet: BetObject) => {
+        setBets((prevArray) => [...prevArray, bet]);
+        console.log(bet);
+    }
     return (
         <div className="Home">
             <div className="search-parameters">
@@ -140,7 +148,7 @@ const Home: React.FC = () => {
                     onChange={(event) => setFilterText(event.target.value)}
                 />
             </div>
-            <SelectGameCardList gameSelections={games} filterText={filterText}/>
+            <SelectGameCardList gameSelections={games} filterText={filterText} onAdd={handleAddBet}/>
         </div>
     );
 };

@@ -1,13 +1,16 @@
 import React from "react";
 import { GameSelectionObject } from "../../Utils/Utils";
 import SelectGameCard from "./SelectGameCard/SelectGameCard";
+import { Dialog, DialogTitle } from "@mui/material";
+import SelectGameCardDialog, { BetObject } from "./SelectGameCardDialog/SelectGameCardDialog";
 
 interface SelectGameCardContainerProps {
     game: GameSelectionObject;
+    onAdd: (bet: BetObject) => void;
 }
 
 const SelectGameCardContainer: React.FC<SelectGameCardContainerProps> = (props) => {
-    const { game} = props;
+    const { game, onAdd } = props;
 
     const [open, setOpen] = React.useState(false);
 
@@ -19,19 +22,18 @@ const SelectGameCardContainer: React.FC<SelectGameCardContainerProps> = (props) 
         setOpen(false);
     };
 
-    // const handleContractUpdate = (contract: ContractObject) => {
-    //     updateContract(contract);
-    //     setOpen(false);
-    //   };
-
+    const handleCloseAndAdd = (bet: BetObject) => {
+        onAdd(bet);
+        setOpen(false);
+    };
 
     return (
         <div>
             <SelectGameCard game={game} openDialog={handleClickOpen}/>
-            {/* <Dialog onClose={handleClose} open={open}>
-                <DialogTitle>{contract.ticker + " " + contract.strikePrice + " " + contract.optionType}</DialogTitle>
-                <ContractUpdater contract={contract} updateContract={handleContractUpdate} deleteContract={deleteContract}/>
-            </Dialog> */}
+            <Dialog onClose={handleClose} open={open}>
+                <DialogTitle>Pick Team & Spread</DialogTitle>
+                <SelectGameCardDialog game={game} onAdd={handleCloseAndAdd}/>
+            </Dialog>
         </div>
     );
 };

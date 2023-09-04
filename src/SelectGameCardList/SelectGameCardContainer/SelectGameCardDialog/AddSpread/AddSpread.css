@@ -1,0 +1,14 @@
+.AddSpread .MuiButtonBase-root.MuiButton-root {
+    border-radius: 10px;
+    font-family: "IBMPlexSans-Bold";
+    text-transform: none;
+}
+
+.AddSpread .MuiButtonBase-root.MuiButton-root.Mui-disabled {
+    background-color: #0000001f;
+}
+
+.AddSpread .add {
+    background-color: #007FFF;
+    width: 100%;
+}
