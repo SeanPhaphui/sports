@@ -11,122 +11,14 @@ import {
     GameSelectionObject,
     PlayerBetObject,
     fetchGameCalendar,
+    gameSelectionArrayTestObject,
     getGameByID,
     getGamesByWeek,
 } from "../Utils/Utils";
 import "./Home.css";
 
 const Home: React.FC = () => {
-    const [games, setGames] = useState<GameSelectionObject[]>([
-        {
-            id: "401532394",
-            name: "Howard Bison at Eastern Michigan Eagles",
-            date: new Date("2023-09-01T22:30:00.000Z"),
-            spread: "EM -42.0",
-            homeTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Eastern Michigan",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2199.png",
-            },
-            awayTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Howard",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/47.png",
-            },
-        },
-        {
-            id: "401520163",
-            name: "Central Michigan Chippewas at Michigan State Spartans",
-            date: new Date("2023-09-01T23:00:00.000Z"),
-            spread: "EM -42.0",
-            homeTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Michigan State",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/127.png",
-            },
-            awayTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Central Michigan",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2117.png",
-            },
-        },
-        {
-            id: "401525463",
-            name: "Miami (OH) RedHawks at Miami Hurricanes",
-            date: new Date("2023-09-01T23:00:00.000Z"),
-            spread: "EM -42.0",
-            homeTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Miami",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png",
-            },
-            awayTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Miami (OH)",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/193.png",
-            },
-        },
-        {
-            id: "401525462",
-            name: "Louisville Cardinals at Georgia Tech Yellow Jackets",
-            date: new Date("2023-09-01T23:30:00.000Z"),
-            spread: "EM -42.0",
-            homeTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Georgia Tech",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/59.png",
-            },
-            awayTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Louisville",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/97.png",
-            },
-        },
-        {
-            id: "401525815",
-            name: "Missouri State Bears at Kansas Jayhawks",
-            date: new Date("2023-09-02T00:00:00.000Z"),
-            spread: "EM -42.0",
-            homeTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Kansas",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2305.png",
-            },
-            awayTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Missouri State",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2623.png",
-            },
-        },
-        {
-            id: "401523988",
-            name: "Stanford Cardinal at Hawai'i Rainbow Warriors",
-            date: new Date("2023-09-02T03:00:00.000Z"),
-            spread: "EM -42.0",
-            homeTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Hawai'i",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/62.png",
-            },
-            awayTeam: {
-                rank: 12,
-                record: "1-0",
-                location: "Stanford",
-                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/24.png",
-            },
-        },
-    ]);
+    const [games, setGames] = useState<GameSelectionObject[]>([]);
 
     const [filterText, setFilterText] = useState<string>(""); // Step 1: State for filter text'
 
@@ -142,8 +34,15 @@ const Home: React.FC = () => {
         // Assuming fetchGameCalendar is the function to fetch the GameCalendarObjects
         fetchGameCalendar().then((data) => {
             setGameCalendar(data);
+            
+            // Setting the week after gameCalendar has been set
+            // This is just an example. Modify the logic as per your requirements.
+            if(data && data.length > 0) {
+                setWeek("1"); // setting the first week for simplicity, modify as needed
+            }
         });
     }, []);
+    
 
     useEffect(() => {
         if (week) {

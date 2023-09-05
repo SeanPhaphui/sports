@@ -62,12 +62,12 @@ export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
 
         for (const singleCalendarKey in leaguesCalendar) {
             const singleCalendar = leaguesCalendar[singleCalendarKey];
-            
+
             for (const entry of singleCalendar.entries) {
                 const gameCalendarEntry: GameCalendarObject = {
                     label: entry.label.toUpperCase(),
-                    detail: entry.detail.toUpperCase()
-                }
+                    detail: entry.detail.toUpperCase(),
+                };
                 calendarEntries.push(gameCalendarEntry);
             }
         }
@@ -75,7 +75,7 @@ export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
 
     // Optionally, you can remove the console log if not needed.
     console.log("From Utils - calendar: ", calendarEntries);
-    
+
     return calendarEntries;
 };
 
@@ -106,13 +106,17 @@ export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[
                             rank: homeTeam.curatedRank.current,
                             record: homeTeam.records ? homeTeam.records[0].summary : "0-0",
                             location: homeTeam.team.location,
-                            logo: homeTeam.team.logo ? homeTeam.team.logo : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
+                            logo: homeTeam.team.logo
+                                ? homeTeam.team.logo
+                                : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
                         },
                         awayTeam: {
                             rank: awayTeam.curatedRank.current,
                             record: awayTeam.records ? awayTeam.records[0].summary : "0-0",
                             location: awayTeam.team.location,
-                            logo: awayTeam.team.logo ? awayTeam.team.logo : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
+                            logo: awayTeam.team.logo
+                                ? awayTeam.team.logo
+                                : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
                         },
                     };
 
@@ -124,7 +128,6 @@ export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[
     console.log("From Utils - games: ", games);
     return games;
 };
-
 
 const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" => {
     switch (apiStatus) {
@@ -220,18 +223,17 @@ export const getGameByID = async (
 };
 
 export const formatDate = (d: Date): string => {
-    const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(d);
-    const month = d.getMonth() + 1;  // Months are 0-indexed in JavaScript
+    const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(d);
+    const month = d.getMonth() + 1; // Months are 0-indexed in JavaScript
     const day = d.getDate();
     const hour24 = d.getHours();
-    const hour12 = hour24 % 12 || 12;  // Convert to 12-hour format, use 12 for 12:00 PM instead of 0
+    const hour12 = hour24 % 12 || 12; // Convert to 12-hour format, use 12 for 12:00 PM instead of 0
     const minute = d.getMinutes();
-    const period = hour24 < 12 ? 'AM' : 'PM';
+    const period = hour24 < 12 ? "AM" : "PM";
     const formattedMinute = minute < 10 ? `0${minute}` : minute; // to make sure minutes are always two digits
 
     return `${weekday}, ${month}/${day}, ${hour12}:${formattedMinute} ${period}`;
-}
-
+};
 
 // Old way of getting spread relative to bet
 // const calculateSpread = () => {
@@ -264,7 +266,7 @@ export const formatDate = (d: Date): string => {
 //                 if (bet.status !== 'final') {
 //                     try {
 //                         const { playerBetObject, status } = await getGameByID(bet.gameId, bet.team, bet.spread);
-                        
+
 //                         newPlayerBets.push(playerBetObject);
 //                         newBets[i] = { ...newBets[i], status };  // Update the status of the current bet
 
@@ -281,3 +283,114 @@ export const formatDate = (d: Date): string => {
 //         fetchPlayerBets();
 //     }
 // }, [bets]);
+
+export const gameSelectionArrayTestObject: GameSelectionObject[] = [
+    {
+        id: "401532394",
+        name: "Howard Bison at Eastern Michigan Eagles",
+        date: new Date("2023-09-01T22:30:00.000Z"),
+        spread: "EM -42.0",
+        homeTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Eastern Michigan",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2199.png",
+        },
+        awayTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Howard",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/47.png",
+        },
+    },
+    {
+        id: "401520163",
+        name: "Central Michigan Chippewas at Michigan State Spartans",
+        date: new Date("2023-09-01T23:00:00.000Z"),
+        spread: "EM -42.0",
+        homeTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Michigan State",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/127.png",
+        },
+        awayTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Central Michigan",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2117.png",
+        },
+    },
+    {
+        id: "401525463",
+        name: "Miami (OH) RedHawks at Miami Hurricanes",
+        date: new Date("2023-09-01T23:00:00.000Z"),
+        spread: "EM -42.0",
+        homeTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Miami",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png",
+        },
+        awayTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Miami (OH)",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/193.png",
+        },
+    },
+    {
+        id: "401525462",
+        name: "Louisville Cardinals at Georgia Tech Yellow Jackets",
+        date: new Date("2023-09-01T23:30:00.000Z"),
+        spread: "EM -42.0",
+        homeTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Georgia Tech",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/59.png",
+        },
+        awayTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Louisville",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/97.png",
+        },
+    },
+    {
+        id: "401525815",
+        name: "Missouri State Bears at Kansas Jayhawks",
+        date: new Date("2023-09-02T00:00:00.000Z"),
+        spread: "EM -42.0",
+        homeTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Kansas",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2305.png",
+        },
+        awayTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Missouri State",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2623.png",
+        },
+    },
+    {
+        id: "401523988",
+        name: "Stanford Cardinal at Hawai'i Rainbow Warriors",
+        date: new Date("2023-09-02T03:00:00.000Z"),
+        spread: "EM -42.0",
+        homeTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Hawai'i",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/62.png",
+        },
+        awayTeam: {
+            rank: 12,
+            record: "1-0",
+            location: "Stanford",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/24.png",
+        },
+    },
+];
