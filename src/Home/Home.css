@@ -2,6 +2,40 @@
     width: 85%;
 } */
 
+.Home .horizontalList {
+    position: sticky;
+    top: 0;
+    z-index: 3; /* To ensure it's above the content below */
+    background-color: #1d1e1f;
+    white-space: nowrap;
+    display: flex;
+    width: 100vw; 
+    overflow-x: auto;
+    box-sizing: border-box;
+    font-size: 12px;
+    font-weight: 500;
+    padding-left: 5px;
+    padding-right: 5px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+}
+
+.Home .horizontalList .item {
+    color: #a5a6a7;
+    padding-left: 9px;
+    padding-right: 9px;
+}
+
+.Home .horizontalList .item.active {
+    color: white;
+    padding-left: 9px;
+    padding-right: 9px;
+}
+
+.Home .horizontalList .item .detail{
+    margin-top: 5px;
+    font-size: 10px;
+}
+
 .body {
     width: 85%;
     margin: 0 auto; /* Centers the div horizontally */
@@ -43,32 +77,3 @@
     margin-bottom: 10px;
 }
 
-.Home .horizontalList {
-    background-color: #1d1e1f;
-    white-space: nowrap;
-    display: flex;
-    width: 100vw; 
-    overflow-x: auto;
-    box-sizing: border-box;
-    font-size: 12px;
-    font-weight: 500;
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-.Home .horizontalList .item {
-    color: #a5a6a7;
-    padding-left: 9px;
-    padding-right: 9px;
-}
-
-.Home .horizontalList .item.active {
-    color: white;
-    padding-left: 9px;
-    padding-right: 9px;
-}
-
-.Home .horizontalList .item .detail{
-    margin-top: 5px;
-    font-size: 10px;
-}
