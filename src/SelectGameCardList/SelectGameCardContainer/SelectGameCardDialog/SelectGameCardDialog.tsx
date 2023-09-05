@@ -1,19 +1,11 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { GameSelectionObject } from "../../../Utils/Utils";
+import { BetObject, GameSelectionObject } from "../../../Utils/Utils";
 import TeamPicker from "./TeamPicker/TeamPicker";
 import "./SelectGameCardDialog.css";
 import { TextField } from "@mui/material";
 import SpreadSign from "./SpreadSign/SpreadSign";
 import AddSpread from "./AddSpread/AddSpread";
 import { v4 as uuidv4 } from 'uuid';
-
-export interface BetObject {
-    uniqueId: string;
-    gameId: string;
-    team: string;
-    spread: string;
-    status?: 'final' | 'ongoing' | 'upcoming'; // Add more statuses as needed
-}
 
 interface SelectGameCardDialogProps {
     game: GameSelectionObject;

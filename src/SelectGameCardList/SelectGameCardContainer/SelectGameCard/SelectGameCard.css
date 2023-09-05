@@ -1,34 +1,21 @@
-.MuiPaper-root.MuiCard-root {
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
-}
 
-.SelectGameCard .game-item {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    color: #ffffff;
-    font-weight: 500;
-    background-color: #1d1e1f;
+.SelectGameCard {
     margin-bottom: 20px;
 }
 
-.SelectGameCard .game-item .spread{
+.SelectGameCard .MuiPaper-root.MuiCard-root {
+    color: #ffffff;
+    font-weight: 500;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+    background-color: #1d1e1f;
+}
+
+.SelectGameCard .spread{
     margin-top: 10px;
     text-align: center;
     color: #a4a5a6;
     font-weight: 100;
     font-size: medium;
-}
-
-.SelectGameCard .game-item .game-item-group {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.SelectGameCard .game-item .game-item-group .team{
-    display: flex;
-    align-items: center;
 }

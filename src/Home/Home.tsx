@@ -4,9 +4,9 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
-import { BetObject } from "../SelectGameCardList/SelectGameCardContainer/SelectGameCardDialog/SelectGameCardDialog";
 import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
 import {
+    BetObject,
     GameCalendarObject,
     GameSelectionObject,
     PlayerBetObject,

@@ -1,14 +1,15 @@
-import { Box, Card, Divider } from "@mui/material";
+import { Box } from "@mui/material";
 import React from "react";
+import { TeamInfo } from "../../Utils/Utils";
 import "./UpcomingInfo.css";
-import { PlayerBetObject } from "../../Utils/Utils";
 
 interface UpcomingInfoProps {
-    playerBet: PlayerBetObject;
+    homeTeam: TeamInfo;
+    awayTeam: TeamInfo;
 }
 
 const UpcomingInfo: React.FC<UpcomingInfoProps> = (props) => {
-    const { playerBet } = props;
+    const { homeTeam, awayTeam } = props;
 
     return (
         <div className="UpcomingInfo">
@@ -21,11 +22,11 @@ const UpcomingInfo: React.FC<UpcomingInfoProps> = (props) => {
                             width: "4vh",
                             marginRight: "10px",
                         }}
-                        src={playerBet.homeTeam.logo}
+                        src={homeTeam.logo}
                     />
-                    <div>{playerBet.homeTeam.location}</div>
+                    <div>{homeTeam.location}</div>
                 </div>
-                <div>{playerBet.homeTeam.record}</div>
+                <div>{homeTeam.record}</div>
             </div>
             <div className="divider"></div>
             <div className="team-stats">
@@ -37,11 +38,11 @@ const UpcomingInfo: React.FC<UpcomingInfoProps> = (props) => {
                             width: "4vh",
                             marginRight: "10px",
                         }}
-                        src={playerBet.awayTeam.logo}
+                        src={awayTeam.logo}
                     />
-                    <div>{playerBet.awayTeam.location}</div>
+                    <div>{awayTeam.location}</div>
                 </div>
-                <div>{playerBet.awayTeam.record}</div>
+                <div>{awayTeam.record}</div>
             </div>
         </div>
     );

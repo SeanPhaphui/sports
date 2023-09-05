@@ -1,8 +1,8 @@
 import React from "react";
-import { GameSelectionObject } from "../../Utils/Utils";
+import { BetObject, GameSelectionObject } from "../../Utils/Utils";
 import SelectGameCard from "./SelectGameCard/SelectGameCard";
 import { Dialog, DialogTitle } from "@mui/material";
-import SelectGameCardDialog, { BetObject } from "./SelectGameCardDialog/SelectGameCardDialog";
+import SelectGameCardDialog from "./SelectGameCardDialog/SelectGameCardDialog";
 
 interface SelectGameCardContainerProps {
     game: GameSelectionObject;

@@ -1,7 +1,7 @@
 import { Box, Card, Divider } from "@mui/material";
 import React from "react";
 import "./PlayerBetCard.css";
-import { PlayerBetObject, formatDate } from "../Utils/Utils";
+import { PlayerBetObject, extractTeamsFromPlayerBet, formatDate } from "../Utils/Utils";
 import Info from "./Info/Info";
 import UpcomingInfo from "./UpcomingInfo/UpcomingInfo";
 import LiveTvIcon from "@mui/icons-material/LiveTv";
@@ -88,6 +88,8 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
         }
     };
 
+    const { homeTeam, awayTeam } = extractTeamsFromPlayerBet(playerBet);
+
     return (
         <div className="PlayerBetCard">
             <Card className="card">
@@ -126,7 +128,7 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
 
                 <Divider />
                 {playerBet.status === "upcoming" ? (
-                    <UpcomingInfo playerBet={playerBet} />
+                    <UpcomingInfo homeTeam={homeTeam} awayTeam={awayTeam}/>
                 ) : (
                     <Info playerBet={playerBet} />
                 )}

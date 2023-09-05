@@ -1,43 +1,39 @@
 import { v4 as uuidv4 } from "uuid";
 
+export interface TeamInfo {
+    logo: string;
+    location: string;
+    score: string;
+    record: string;
+}
+
 export interface GameSelectionObject {
     id: string;
-    name: string;
-    date: Date;
+    eventName: string;
     spread: string;
-    homeTeam: {
-        rank: number;
-        record: string;
-        location: string;
-        logo: string;
-    };
-    awayTeam: {
-        rank: number;
-        record: string;
-        location: string;
-        logo: string;
-    };
+    date: Date;
+    status: string;
+    homeTeam: TeamInfo;
+    awayTeam: TeamInfo;
+}
+
+export interface BetObject {
+    uniqueId: string;
+    gameId: string;
+    team: string;
+    spread: string;
+    status?: 'final' | 'ongoing' | 'upcoming'; // Add more statuses as needed
 }
 
 export interface PlayerBetObject {
     id: string;
     team: string;
+    link: string;
     spread: string;
     date: Date;
     status: string;
-    link: string;
-    homeTeam: {
-        location: string;
-        score: string;
-        logo: string;
-        record: string;
-    };
-    awayTeam: {
-        location: string;
-        score: string;
-        logo: string;
-        record: string;
-    };
+    homeTeam: TeamInfo;
+    awayTeam: TeamInfo;
 }
 export interface GameCalendarObject {
     label: string;
@@ -79,56 +75,6 @@ export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
     return calendarEntries;
 };
 
-export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[]> => {
-    const proxyUrl = "https://corsproxy.io/?";
-    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}`;
-
-    const data = await fetchData(footballUrl);
-    const games: GameSelectionObject[] = [];
-    if (data?.events) {
-        for (const event of data.events) {
-            const competition = event.competitions[0];
-            if (competition && competition.competitors && competition.competitors.length >= 2) {
-                const homeTeam = competition.competitors.find(
-                    (comp: { homeAway: string }) => comp.homeAway === "home"
-                );
-                const awayTeam = competition.competitors.find(
-                    (comp: { homeAway: string }) => comp.homeAway === "away"
-                );
-
-                if (homeTeam && awayTeam) {
-                    const game: GameSelectionObject = {
-                        id: event.id,
-                        name: event.name,
-                        date: new Date(event.date),
-                        spread: competition.odds ? competition.odds[0].details : "N/A",
-                        homeTeam: {
-                            rank: homeTeam.curatedRank.current,
-                            record: homeTeam.records ? homeTeam.records[0].summary : "0-0",
-                            location: homeTeam.team.location,
-                            logo: homeTeam.team.logo
-                                ? homeTeam.team.logo
-                                : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
-                        },
-                        awayTeam: {
-                            rank: awayTeam.curatedRank.current,
-                            record: awayTeam.records ? awayTeam.records[0].summary : "0-0",
-                            location: awayTeam.team.location,
-                            logo: awayTeam.team.logo
-                                ? awayTeam.team.logo
-                                : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
-                        },
-                    };
-
-                    games.push(game);
-                }
-            }
-        }
-    }
-    console.log("From Utils - games: ", games);
-    return games;
-};
-
 const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" => {
     switch (apiStatus) {
         case "In Progress":
@@ -141,6 +87,61 @@ const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" =
             return "ongoing";
     }
 };
+
+export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[]> => {
+    const proxyUrl = "https://corsproxy.io/?";
+    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}`;
+
+    const data = await fetchData(footballUrl);
+    const games: GameSelectionObject[] = [];
+    if (data?.events) {
+        for (const event of data.events) {
+            const competition = event.competitions[0];
+            // Get the mapped status from API
+            const mappedStatus = mapStatusFromAPI(competition.status.type.description);
+            if (competition && competition.competitors && competition.competitors.length >= 2) {
+                const homeTeam = competition.competitors.find(
+                    (comp: { homeAway: string }) => comp.homeAway === "home"
+                );
+                const awayTeam = competition.competitors.find(
+                    (comp: { homeAway: string }) => comp.homeAway === "away"
+                );
+
+                if (homeTeam && awayTeam) {
+                    const game: GameSelectionObject = {
+                        id: event.id,
+                        eventName: event.name,
+                        date: new Date(event.date),
+                        spread: competition.odds ? competition.odds[0].details : "N/A",
+                        status: mappedStatus,
+                        homeTeam: {
+                            logo: homeTeam.team.logo
+                                ? homeTeam.team.logo
+                                : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
+                                location: homeTeam.team.location,
+                            score: homeTeam.score ? homeTeam.score : 0,
+                            record: homeTeam.records ? homeTeam.records[0].summary : "0-0",
+                        },
+                        awayTeam: {
+                            logo: awayTeam.team.logo
+                                ? awayTeam.team.logo
+                                : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
+                            location: awayTeam.team.location,
+                            score: awayTeam.score ? awayTeam.score : 0,
+                            record: awayTeam.records ? awayTeam.records[0].summary : "0-0",
+                        },
+                    };
+
+                    games.push(game);
+                }
+            }
+        }
+    }
+    console.log("From Utils - games: ", games);
+    return games;
+};
+
+
 
 export const getGameByID = async (
     id: string,
@@ -222,6 +223,20 @@ export const getGameByID = async (
     };
 };
 
+export const extractTeamsFromPlayerBet = (playerBet: PlayerBetObject): { homeTeam: TeamInfo, awayTeam: TeamInfo } => {
+    return {
+        homeTeam: playerBet.homeTeam,
+        awayTeam: playerBet.awayTeam
+    };
+}
+
+export const extractTeamsFromGameSelection = (gameSelection: GameSelectionObject): { homeTeam: TeamInfo, awayTeam: TeamInfo } => {
+    return {
+        homeTeam: gameSelection.homeTeam,
+        awayTeam: gameSelection.awayTeam
+    };
+}
+
 export const formatDate = (d: Date): string => {
     const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(d);
     const month = d.getMonth() + 1; // Months are 0-indexed in JavaScript
@@ -287,17 +302,18 @@ export const formatDate = (d: Date): string => {
 export const gameSelectionArrayTestObject: GameSelectionObject[] = [
     {
         id: "401532394",
-        name: "Howard Bison at Eastern Michigan Eagles",
+        eventName: "Howard Bison at Eastern Michigan Eagles",
         date: new Date("2023-09-01T22:30:00.000Z"),
         spread: "EM -42.0",
+        status: "upcoming",
         homeTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Eastern Michigan",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2199.png",
         },
         awayTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Howard",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/47.png",
@@ -305,17 +321,18 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
     },
     {
         id: "401520163",
-        name: "Central Michigan Chippewas at Michigan State Spartans",
+        eventName: "Central Michigan Chippewas at Michigan State Spartans",
         date: new Date("2023-09-01T23:00:00.000Z"),
         spread: "EM -42.0",
+        status: "upcoming",
         homeTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Michigan State",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/127.png",
         },
         awayTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Central Michigan",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2117.png",
@@ -323,17 +340,18 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
     },
     {
         id: "401525463",
-        name: "Miami (OH) RedHawks at Miami Hurricanes",
+        eventName: "Miami (OH) RedHawks at Miami Hurricanes",
         date: new Date("2023-09-01T23:00:00.000Z"),
         spread: "EM -42.0",
+        status: "upcoming",
         homeTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Miami",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png",
         },
         awayTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Miami (OH)",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/193.png",
@@ -341,17 +359,18 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
     },
     {
         id: "401525462",
-        name: "Louisville Cardinals at Georgia Tech Yellow Jackets",
+        eventName: "Louisville Cardinals at Georgia Tech Yellow Jackets",
         date: new Date("2023-09-01T23:30:00.000Z"),
         spread: "EM -42.0",
+        status: "upcoming",
         homeTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Georgia Tech",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/59.png",
         },
         awayTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Louisville",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/97.png",
@@ -359,17 +378,18 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
     },
     {
         id: "401525815",
-        name: "Missouri State Bears at Kansas Jayhawks",
+        eventName: "Missouri State Bears at Kansas Jayhawks",
         date: new Date("2023-09-02T00:00:00.000Z"),
         spread: "EM -42.0",
+        status: "upcoming",
         homeTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Kansas",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2305.png",
         },
         awayTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Missouri State",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2623.png",
@@ -377,17 +397,18 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
     },
     {
         id: "401523988",
-        name: "Stanford Cardinal at Hawai'i Rainbow Warriors",
+        eventName: "Stanford Cardinal at Hawai'i Rainbow Warriors",
         date: new Date("2023-09-02T03:00:00.000Z"),
         spread: "EM -42.0",
+        status: "upcoming",
         homeTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Hawai'i",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/62.png",
         },
         awayTeam: {
-            rank: 12,
+            score: "0",
             record: "1-0",
             location: "Stanford",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/24.png",
