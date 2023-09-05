@@ -1,5 +1,10 @@
-.Home {
+/* .Home {
     width: 85%;
+} */
+
+.body {
+    width: 85%;
+    margin: 0 auto; /* Centers the div horizontally */
 }
 
 .Home .title {
@@ -12,23 +17,6 @@
     margin-bottom: 20px;
 }
 
-/* Start Date CSS */
-/* .MuiButtonBase-root.MuiPickersDay-root {
-    color: white;
-}
-
-.MuiTypography-root.MuiDayCalendar-weekDayLabel {
-    color: white;
-}
-.MuiButtonBase-root.MuiIconButton-root.MuiPickersCalendarHeader-switchViewButton{
-    color: white;
-}
-
-.MuiButtonBase-root.MuiIconButton-root.MuiPickersArrowSwitcher-button {
-    color: white;
-} */
-/* End Date CSS */
-
 .Home .search-parameters {
     margin-top: 20px;
     background-color: #2b2c2d;
@@ -39,22 +27,48 @@
     display: flex;
 }
 
-.Home .search-parameters .search-parameters-item {
-    width: 100%;
-}
-
-.Home .search-parameters .search-parameters-item .MuiFormLabel-root.MuiInputLabel-root {
+.Home .search-parameters .MuiFormLabel-root.MuiInputLabel-root {
     color: rgba(255, 255, 255, 0.9);
 }
-.Home .search-parameters .search-parameters-item .MuiInputBase-root.MuiOutlinedInput-root {
+.Home .search-parameters .MuiInputBase-root.MuiOutlinedInput-root {
     color: rgba(255, 255, 255, 0.9);
 }
 
-.Home .search-parameters .search-parameters-item .MuiOutlinedInput-notchedOutline {
+.Home .search-parameters .MuiOutlinedInput-notchedOutline {
     color: rgba(255, 255, 255, 0.9);
     border-color: rgba(255, 255, 255, 0.9);
 }
 
 .divider {
     margin-bottom: 10px;
+}
+
+.Home .horizontalList {
+    background-color: #1d1e1f;
+    white-space: nowrap;
+    display: flex;
+    width: 100vw; 
+    overflow-x: auto;
+    box-sizing: border-box;
+    font-size: 12px;
+    font-weight: 500;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.Home .horizontalList .item {
+    color: #a5a6a7;
+    padding-left: 9px;
+    padding-right: 9px;
+}
+
+.Home .horizontalList .item.active {
+    color: white;
+    padding-left: 9px;
+    padding-right: 9px;
+}
+
+.Home .horizontalList .item .detail{
+    margin-top: 5px;
+    font-size: 10px;
 }

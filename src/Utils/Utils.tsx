@@ -39,17 +39,51 @@ export interface PlayerBetObject {
         record: string;
     };
 }
+export interface GameCalendarObject {
+    label: string;
+    detail: string;
+}
 
-const getOption = async (url: string) => {
+const fetchData = async (url: string) => {
     const response = await fetch(url);
     return response.json();
+};
+
+export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
+    const proxyUrl = "https://corsproxy.io/?";
+    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard`;
+
+    const responseData = await fetchData(footballUrl);
+    const calendarEntries: GameCalendarObject[] = [];
+
+    // Validate and process the data
+    if (responseData?.leagues) {
+        const leaguesCalendar = responseData.leagues[0].calendar;
+
+        for (const singleCalendarKey in leaguesCalendar) {
+            const singleCalendar = leaguesCalendar[singleCalendarKey];
+            
+            for (const entry of singleCalendar.entries) {
+                const gameCalendarEntry: GameCalendarObject = {
+                    label: entry.label.toUpperCase(),
+                    detail: entry.detail.toUpperCase()
+                }
+                calendarEntries.push(gameCalendarEntry);
+            }
+        }
+    }
+
+    // Optionally, you can remove the console log if not needed.
+    console.log("From Utils - calendar: ", calendarEntries);
+    
+    return calendarEntries;
 };
 
 export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[]> => {
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}`;
 
-    const data = await getOption(footballUrl);
+    const data = await fetchData(footballUrl);
     const games: GameSelectionObject[] = [];
     if (data?.events) {
         for (const event of data.events) {
@@ -70,15 +104,15 @@ export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[
                         spread: competition.odds ? competition.odds[0].details : "N/A",
                         homeTeam: {
                             rank: homeTeam.curatedRank.current,
-                            record: homeTeam.records[0].summary,
+                            record: homeTeam.records ? homeTeam.records[0].summary : "0-0",
                             location: homeTeam.team.location,
-                            logo: homeTeam.team.logo,
+                            logo: homeTeam.team.logo ? homeTeam.team.logo : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
                         },
                         awayTeam: {
                             rank: awayTeam.curatedRank.current,
-                            record: awayTeam.records[0].summary,
+                            record: awayTeam.records ? awayTeam.records[0].summary : "0-0",
                             location: awayTeam.team.location,
-                            logo: awayTeam.team.logo,
+                            logo: awayTeam.team.logo ? awayTeam.team.logo : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
                         },
                     };
 
@@ -113,7 +147,7 @@ export const getGameByID = async (
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event=${id}`;
 
-    const data = await getOption(footballUrl);
+    const data = await fetchData(footballUrl);
     if (data) {
         console.log("API Response Data:", data);
         const competition = data.header.competitions[0];

@@ -1,26 +1,22 @@
 import {
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
+    List,
     TextField
 } from "@mui/material";
-import dayjs, { Dayjs } from "dayjs";
 import React, { useEffect, useState } from "react";
 import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
 import { BetObject } from "../SelectGameCardList/SelectGameCardContainer/SelectGameCardDialog/SelectGameCardDialog";
 import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
 import {
+    GameCalendarObject,
     GameSelectionObject,
     PlayerBetObject,
+    fetchGameCalendar,
     getGameByID,
-    getGamesByWeek
+    getGamesByWeek,
 } from "../Utils/Utils";
 import "./Home.css";
 
 const Home: React.FC = () => {
-    const [startDate, setStart] = useState<Dayjs | null>(dayjs());
     const [games, setGames] = useState<GameSelectionObject[]>([
         {
             id: "401532394",
@@ -140,10 +136,14 @@ const Home: React.FC = () => {
 
     const [week, setWeek] = useState<string>();
 
+    const [gameCalendar, setGameCalendar] = useState<GameCalendarObject[]>([]);
 
-    const handleChangeWeek = (event: SelectChangeEvent) => {
-        setWeek(event.target.value as string);
-    };
+    useEffect(() => {
+        // Assuming fetchGameCalendar is the function to fetch the GameCalendarObjects
+        fetchGameCalendar().then((data) => {
+            setGameCalendar(data);
+        });
+    }, []);
 
     useEffect(() => {
         if (week) {
@@ -151,14 +151,6 @@ const Home: React.FC = () => {
             // console.log(getGamesByDate(formattedDate))
         }
     }, [week]);
-
-    useEffect(() => {
-        if (startDate) {
-            const formattedDate = startDate.format("YYYYMMDD");
-            // getGamesByDate(formattedDate).then(setGames);
-            // console.log(getGamesByDate(formattedDate))
-        }
-    }, [startDate]);
 
     useEffect(() => {
         if (bets.length > 0) {
@@ -190,43 +182,45 @@ const Home: React.FC = () => {
         setBets((prevArray) => [...prevArray, bet]);
         console.log(bet);
     };
+
+    const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
+
     return (
         <div className="Home">
-            <div className="search-parameters">
-                <FormControl fullWidth>
-                    <InputLabel>Week</InputLabel>
-                    <Select value={week} label="Week" onChange={handleChangeWeek}>
-                        <MenuItem value={1}>1</MenuItem>
-                        <MenuItem value={2}>2</MenuItem>
-                        <MenuItem value={3}>3</MenuItem>
-                        <MenuItem value={4}>4</MenuItem>
-                        <MenuItem value={5}>5</MenuItem>
-                        <MenuItem value={6}>6</MenuItem>
-                        <MenuItem value={7}>7</MenuItem>
-                        <MenuItem value={8}>8</MenuItem>
-                        <MenuItem value={9}>9</MenuItem>
-                        <MenuItem value={10}>10</MenuItem>
-                        <MenuItem value={11}>11</MenuItem>
-                        <MenuItem value={12}>12</MenuItem>
-                        <MenuItem value={13}>13</MenuItem>
-                        <MenuItem value={14}>14</MenuItem>
-                    </Select>
-                </FormControl>
-                <TextField
-                    className="search-parameters-item"
-                    label="Search list"
-                    value={filterText}
-                    onChange={(event) => setFilterText(event.target.value)}
+            <List className="horizontalList">
+                {gameCalendar.map((gameCalObj, index) => (
+                    <div
+                        key={index}
+                        className={`item ${index === activeItemIndex ? "active" : ""}`}
+                        onClick={() => {
+                            setActiveItemIndex(index);
+                            setWeek((index + 1).toString()); // set the week based on the clicked index
+                            console.log(gameCalObj.label);
+                        }}
+                    >
+                        <div>{gameCalObj.label}</div>
+                        <div className="detail">{gameCalObj.detail}</div>
+                    </div>
+                ))}
+            </List>
+            <div className="body">
+                <div className="search-parameters">
+                    <TextField
+                        className="search-parameters-item-search"
+                        label="Search list"
+                        value={filterText}
+                        onChange={(event) => setFilterText(event.target.value)}
+                    />
+                </div>
+                {playerBets.map((playerBet) => (
+                    <PlayerBetCard key={playerBet.id} playerBet={playerBet} />
+                ))}
+                <SelectGameCardList
+                    gameSelections={games}
+                    filterText={filterText}
+                    onAdd={handleAddBet}
                 />
             </div>
-            {playerBets.map((playerBet) => (
-                <PlayerBetCard key={playerBet.id} playerBet={playerBet} />
-            ))}
-            <SelectGameCardList
-                gameSelections={games}
-                filterText={filterText}
-                onAdd={handleAddBet}
-            />
         </div>
     );
 };
