@@ -94,6 +94,7 @@ const Home: React.FC = () => {
                         onClick={() => {
                             setActiveItemIndex(index);
                             setWeek((index + 1).toString()); // set the week based on the clicked index
+                            setFilterText("")
                             console.log(gameCalObj.label);
                         }}
                     >
