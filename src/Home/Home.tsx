@@ -1,7 +1,4 @@
-import {
-    List,
-    TextField
-} from "@mui/material";
+import { List, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
 import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
@@ -30,19 +27,23 @@ const Home: React.FC = () => {
 
     const [gameCalendar, setGameCalendar] = useState<GameCalendarObject[]>([]);
 
+    const [loading, setLoading] = useState<boolean>(true);
+
     useEffect(() => {
+        setLoading(true); // Set loading when fetch starts
         // Assuming fetchGameCalendar is the function to fetch the GameCalendarObjects
         fetchGameCalendar().then((data) => {
             setGameCalendar(data);
-            
+
             // Setting the week after gameCalendar has been set
             // This is just an example. Modify the logic as per your requirements.
-            if(data && data.length > 0) {
+            if (data && data.length > 0) {
                 setWeek("1"); // setting the first week for simplicity, modify as needed
             }
+
+            setLoading(false); // Set loading to false once fetch is complete
         });
     }, []);
-    
 
     useEffect(() => {
         if (week) {
@@ -86,23 +87,35 @@ const Home: React.FC = () => {
 
     return (
         <div className="Home">
-            <List className="horizontalList">
-                {gameCalendar.map((gameCalObj, index) => (
-                    <div
-                        key={index}
-                        className={`item ${index === activeItemIndex ? "active" : ""}`}
-                        onClick={() => {
-                            setActiveItemIndex(index);
-                            setWeek((index + 1).toString()); // set the week based on the clicked index
-                            setFilterText("")
-                            console.log(gameCalObj.label);
-                        }}
-                    >
-                        <div>{gameCalObj.label}</div>
-                        <div className="detail">{gameCalObj.detail}</div>
-                    </div>
-                ))}
-            </List>
+            {loading ? (
+                <List className="horizontalList">
+                    {Array.from({ length: 10 }).map((_, index) => (
+                        <div key={index} className="load-item">
+                            <div className="pulsating-placeholder-top"></div>
+                            <div className="pulsating-placeholder-bottom"></div>
+                        </div>
+                    ))}
+                </List>
+            ) : (
+                <List className="horizontalList">
+                    {gameCalendar.map((gameCalObj, index) => (
+                        <div
+                            key={index}
+                            className={`item ${index === activeItemIndex ? "active" : ""}`}
+                            onClick={() => {
+                                setActiveItemIndex(index);
+                                setWeek((index + 1).toString()); // set the week based on the clicked index
+                                setFilterText("");
+                                console.log(gameCalObj.label);
+                            }}
+                        >
+                            <div>{gameCalObj.label}</div>
+                            <div className="detail">{gameCalObj.detail}</div>
+                        </div>
+                    ))}
+                </List>
+            )}
+
             <div className="body">
                 <div className="search-parameters">
                     <TextField
