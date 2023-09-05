@@ -24,6 +24,7 @@ export interface PlayerBetObject {
     spread: string;
     date: Date;
     status: string;
+    link: string;
     homeTeam: {
         location: string;
         score: string;
@@ -98,7 +99,7 @@ const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" =
         case "Final":
             return "final";
         default:
-            throw new Error(`Unknown status from API: ${apiStatus}`);
+            return "ongoing";
     }
 };
 
@@ -114,6 +115,7 @@ export const getGameByID = async (
     if (data) {
         console.log("API Response Data:", data);
         const competition = data.header.competitions[0];
+        const link = data.header.links[0];
         // Get the mapped status from API
         const mappedStatus = mapStatusFromAPI(competition.status.type.description);
 
@@ -133,6 +135,7 @@ export const getGameByID = async (
                     spread: spread,
                     date: new Date(competition.date),
                     status: mappedStatus,
+                    link: link.href,
                     homeTeam: {
                         location: homeTeam.team.location,
                         score: homeTeam.score ? homeTeam.score : 0,
@@ -162,6 +165,7 @@ export const getGameByID = async (
             spread: spread,
             date: new Date(),
             status: "upcoming",
+            link: "",
             homeTeam: {
                 location: "",
                 score: "",

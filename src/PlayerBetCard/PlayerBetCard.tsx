@@ -4,6 +4,7 @@ import "./PlayerBetCard.css";
 import { PlayerBetObject, formatDate } from "../Utils/Utils";
 import Info from "./Info/Info";
 import UpcomingInfo from "./UpcomingInfo/UpcomingInfo";
+import LiveTvIcon from "@mui/icons-material/LiveTv";
 
 interface PlayerBetCardProps {
     playerBet: PlayerBetObject;
@@ -93,17 +94,29 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
                 {playerBet.status === "upcoming" && (
                     <div className="date">{formatDate(playerBet.date)}</div>
                 )}
-                <div
-                    className="card-group-top"
-                    style={{
-                        color:
-                            playerBet.status === "final"
-                                ? calculateBetStatus(playerBet).color
-                                : undefined,
-                    }}
-                >
-                    {playerBet.team + ": " + playerBet.spread}
-                </div>
+                {playerBet.status === "ongoing" && (
+                    <div className="ongoing-top">
+                        <a href={playerBet.link} target="_blank" rel="noopener noreferrer">
+                            <LiveTvIcon />
+                        </a>
+                        <div>{playerBet.team + ": " + playerBet.spread}</div>
+                        <div></div>
+                    </div>
+                )}
+                {playerBet.status === "final" && (
+                    <div
+                        className="card-group-top"
+                        style={{
+                            color:
+                                playerBet.status === "final"
+                                    ? calculateBetStatus(playerBet).color
+                                    : undefined,
+                        }}
+                    >
+                        {playerBet.team + ": " + playerBet.spread}
+                    </div>
+                )}
+
                 <Divider />
                 {playerBet.status === "upcoming" ? (
                     <UpcomingInfo playerBet={playerBet} />

@@ -20,6 +20,38 @@
     margin-bottom: 20px;
 }
 
+.PlayerBetCard .card .ongoing-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.PlayerBetCard .card .ongoing-top > .MuiSvgIcon-root,
+.ongoing-top > div:last-child {
+    width: 24px; /* This is an example width; set this to the actual width of the LiveTvIcon or as required */
+    flex-shrink: 0; /* This ensures that the icon and the div don't shrink */
+}
+
+@keyframes pulsateGlow {
+    0% {
+        filter: drop-shadow(0 0 5px #4CAF50);
+    }
+    50% {
+        filter: drop-shadow(0 0 10px #66FF66) drop-shadow(0 0 20px #33FF33);
+    }
+    100% {
+        filter: drop-shadow(0 0 5px #4CAF50);
+    }
+}
+
+
+.PlayerBetCard .card .ongoing-top .MuiSvgIcon-root {
+    color: #4CAF50;  /* Set the icon color to a shade of green */
+    filter: drop-shadow(0 0 5px #4CAF50) drop-shadow(0 0 10px #66FF66) drop-shadow(0 0 15px #33FF33);
+    animation: pulsateGlow 3s infinite;
+}
+
+
 .PlayerBetCard .card .date {
     margin-bottom: 10px;
     text-align: left;
