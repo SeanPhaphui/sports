@@ -103,6 +103,13 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
                         <div></div>
                     </div>
                 )}
+                {playerBet.status === "upcoming" && (
+                    <div
+                        className="card-group-top"
+                    >
+                        {playerBet.team + ": " + playerBet.spread}
+                    </div>
+                )}
                 {playerBet.status === "final" && (
                     <div
                         className="card-group-top"

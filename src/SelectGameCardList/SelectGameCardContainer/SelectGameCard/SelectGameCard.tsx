@@ -47,6 +47,7 @@ const SelectGameCard: React.FC<SelectGameCardProps> = (props) => {
                     </div>
                     <div>{game.homeTeam.record}</div>
                 </div>
+                <div className="spread">{"Current Spread: " + game.spread}</div>
             </Card>
         </div>
     );

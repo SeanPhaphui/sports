@@ -36,6 +36,7 @@
     margin-bottom: 20px;
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+    display: flex;
 }
 
 .Home .search-parameters .search-parameters-item {

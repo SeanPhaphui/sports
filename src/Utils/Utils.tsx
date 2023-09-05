@@ -4,6 +4,7 @@ export interface GameSelectionObject {
     id: string;
     name: string;
     date: Date;
+    spread: string;
     homeTeam: {
         rank: number;
         record: string;
@@ -44,9 +45,9 @@ const getOption = async (url: string) => {
     return response.json();
 };
 
-export const getGamesByDate = async (date: string): Promise<GameSelectionObject[]> => {
+export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[]> => {
     const proxyUrl = "https://corsproxy.io/?";
-    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?dates=${date}`;
+    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}`;
 
     const data = await getOption(footballUrl);
     const games: GameSelectionObject[] = [];
@@ -57,7 +58,6 @@ export const getGamesByDate = async (date: string): Promise<GameSelectionObject[
                 const homeTeam = competition.competitors.find(
                     (comp: { homeAway: string }) => comp.homeAway === "home"
                 );
-                console.log("Home Team: ", homeTeam);
                 const awayTeam = competition.competitors.find(
                     (comp: { homeAway: string }) => comp.homeAway === "away"
                 );
@@ -67,6 +67,7 @@ export const getGamesByDate = async (date: string): Promise<GameSelectionObject[
                         id: event.id,
                         name: event.name,
                         date: new Date(event.date),
+                        spread: competition.odds ? competition.odds[0].details : "N/A",
                         homeTeam: {
                             rank: homeTeam.curatedRank.current,
                             record: homeTeam.records[0].summary,
@@ -89,6 +90,7 @@ export const getGamesByDate = async (date: string): Promise<GameSelectionObject[
     console.log("From Utils - games: ", games);
     return games;
 };
+
 
 const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" => {
     switch (apiStatus) {

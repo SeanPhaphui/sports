@@ -1,12 +1,23 @@
-import { DateCalendar, MobileDatePicker } from "@mui/x-date-pickers";
+import {
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+    TextField
+} from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import React, { useEffect, useState } from "react";
-import "./Home.css";
-import { GameSelectionObject, PlayerBetObject, getGameByID, getGamesByDate } from "../Utils/Utils";
-import { Autocomplete, Box, Card, Paper, TextField } from "@mui/material";
-import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
-import { BetObject } from "../SelectGameCardList/SelectGameCardContainer/SelectGameCardDialog/SelectGameCardDialog";
 import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
+import { BetObject } from "../SelectGameCardList/SelectGameCardContainer/SelectGameCardDialog/SelectGameCardDialog";
+import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
+import {
+    GameSelectionObject,
+    PlayerBetObject,
+    getGameByID,
+    getGamesByWeek
+} from "../Utils/Utils";
+import "./Home.css";
 
 const Home: React.FC = () => {
     const [startDate, setStart] = useState<Dayjs | null>(dayjs());
@@ -15,6 +26,7 @@ const Home: React.FC = () => {
             id: "401532394",
             name: "Howard Bison at Eastern Michigan Eagles",
             date: new Date("2023-09-01T22:30:00.000Z"),
+            spread: "EM -42.0",
             homeTeam: {
                 rank: 12,
                 record: "1-0",
@@ -32,6 +44,7 @@ const Home: React.FC = () => {
             id: "401520163",
             name: "Central Michigan Chippewas at Michigan State Spartans",
             date: new Date("2023-09-01T23:00:00.000Z"),
+            spread: "EM -42.0",
             homeTeam: {
                 rank: 12,
                 record: "1-0",
@@ -49,6 +62,7 @@ const Home: React.FC = () => {
             id: "401525463",
             name: "Miami (OH) RedHawks at Miami Hurricanes",
             date: new Date("2023-09-01T23:00:00.000Z"),
+            spread: "EM -42.0",
             homeTeam: {
                 rank: 12,
                 record: "1-0",
@@ -66,6 +80,7 @@ const Home: React.FC = () => {
             id: "401525462",
             name: "Louisville Cardinals at Georgia Tech Yellow Jackets",
             date: new Date("2023-09-01T23:30:00.000Z"),
+            spread: "EM -42.0",
             homeTeam: {
                 rank: 12,
                 record: "1-0",
@@ -83,6 +98,7 @@ const Home: React.FC = () => {
             id: "401525815",
             name: "Missouri State Bears at Kansas Jayhawks",
             date: new Date("2023-09-02T00:00:00.000Z"),
+            spread: "EM -42.0",
             homeTeam: {
                 rank: 12,
                 record: "1-0",
@@ -100,6 +116,7 @@ const Home: React.FC = () => {
             id: "401523988",
             name: "Stanford Cardinal at Hawai'i Rainbow Warriors",
             date: new Date("2023-09-02T03:00:00.000Z"),
+            spread: "EM -42.0",
             homeTeam: {
                 rank: 12,
                 record: "1-0",
@@ -121,10 +138,24 @@ const Home: React.FC = () => {
 
     const [playerBets, setPlayerBets] = useState<PlayerBetObject[]>([]);
 
+    const [week, setWeek] = useState<string>();
+
+
+    const handleChangeWeek = (event: SelectChangeEvent) => {
+        setWeek(event.target.value as string);
+    };
+
+    useEffect(() => {
+        if (week) {
+            getGamesByWeek(parseInt(week)).then(setGames);
+            // console.log(getGamesByDate(formattedDate))
+        }
+    }, [week]);
+
     useEffect(() => {
         if (startDate) {
             const formattedDate = startDate.format("YYYYMMDD");
-            getGamesByDate(formattedDate).then(setGames);
+            // getGamesByDate(formattedDate).then(setGames);
             // console.log(getGamesByDate(formattedDate))
         }
     }, [startDate]);
@@ -162,13 +193,25 @@ const Home: React.FC = () => {
     return (
         <div className="Home">
             <div className="search-parameters">
-                <MobileDatePicker
-                    className="search-parameters-item"
-                    label="Pick date"
-                    value={startDate}
-                    onChange={(newValue: Dayjs | null) => setStart(newValue)}
-                />
-                <div className="divider"></div>
+                <FormControl fullWidth>
+                    <InputLabel>Week</InputLabel>
+                    <Select value={week} label="Week" onChange={handleChangeWeek}>
+                        <MenuItem value={1}>1</MenuItem>
+                        <MenuItem value={2}>2</MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
+                        <MenuItem value={4}>4</MenuItem>
+                        <MenuItem value={5}>5</MenuItem>
+                        <MenuItem value={6}>6</MenuItem>
+                        <MenuItem value={7}>7</MenuItem>
+                        <MenuItem value={8}>8</MenuItem>
+                        <MenuItem value={9}>9</MenuItem>
+                        <MenuItem value={10}>10</MenuItem>
+                        <MenuItem value={11}>11</MenuItem>
+                        <MenuItem value={12}>12</MenuItem>
+                        <MenuItem value={13}>13</MenuItem>
+                        <MenuItem value={14}>14</MenuItem>
+                    </Select>
+                </FormControl>
                 <TextField
                     className="search-parameters-item"
                     label="Search list"
