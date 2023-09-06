@@ -112,6 +112,10 @@
     border-color: rgba(255, 255, 255, 0.9);
 }
 
+.Home .bets {
+    color: #ba0c2f;
+}
+
 .divider {
     margin-bottom: 10px;
 }

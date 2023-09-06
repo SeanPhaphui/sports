@@ -28,11 +28,11 @@ const TeamPicker: React.FC<TeamPickerProps> = (props) => {
                 exclusive
                 onChange={handleChange}
             >
-                <ToggleButton className="left-toggle-button" value={homeTeam}>
-                    {homeTeam}
-                </ToggleButton>
-                <ToggleButton className="right-toggle-button" value={awayTeam}>
+                <ToggleButton className="left-toggle-button" value={awayTeam}>
                     {awayTeam}
+                </ToggleButton>
+                <ToggleButton className="right-toggle-button" value={homeTeam}>
+                    {homeTeam}
                 </ToggleButton>
             </ToggleButtonGroup>
         </div>

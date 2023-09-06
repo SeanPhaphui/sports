@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 
 export interface TeamInfo {
+    color: string;
     logo: string;
     location: string;
     score: string;
@@ -22,7 +23,7 @@ export interface BetObject {
     gameId: string;
     team: string;
     spread: string;
-    status?: 'final' | 'ongoing' | 'upcoming'; // Add more statuses as needed
+    status?: "final" | "ongoing" | "upcoming"; // Add more statuses as needed
 }
 
 export interface PlayerBetObject {
@@ -115,14 +116,16 @@ export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[
                         spread: competition.odds ? competition.odds[0].details : "N/A",
                         status: mappedStatus,
                         homeTeam: {
+                            color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
                             logo: homeTeam.team.logo
                                 ? homeTeam.team.logo
                                 : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
-                                location: homeTeam.team.location,
+                            location: homeTeam.team.location,
                             score: homeTeam.score ? homeTeam.score : 0,
                             record: homeTeam.records ? homeTeam.records[0].summary : "0-0",
                         },
                         awayTeam: {
+                            color: awayTeam.team.color ? "#" + awayTeam.team.color : "#ffffff",
                             logo: awayTeam.team.logo
                                 ? awayTeam.team.logo
                                 : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
@@ -140,8 +143,6 @@ export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[
     console.log("From Utils - games: ", games);
     return games;
 };
-
-
 
 export const getGameByID = async (
     id: string,
@@ -177,12 +178,14 @@ export const getGameByID = async (
                     status: mappedStatus,
                     link: link.href,
                     homeTeam: {
+                        color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
                         location: homeTeam.team.location,
                         score: homeTeam.score ? homeTeam.score : 0,
                         logo: homeTeam.team.logos[0].href,
                         record: homeTeam.record[0].summary,
                     },
                     awayTeam: {
+                        color: awayTeam.team.color ? "#" + awayTeam.team.color : "#ffffff",
                         location: awayTeam.team.location,
                         score: awayTeam.score ? awayTeam.score : 0,
                         logo: awayTeam.team.logos[0].href,
@@ -207,12 +210,14 @@ export const getGameByID = async (
             status: "upcoming",
             link: "",
             homeTeam: {
+                color: "",
                 location: "",
                 score: "",
                 logo: "",
                 record: "",
             },
             awayTeam: {
+                color: "",
                 location: "",
                 score: "",
                 logo: "",
@@ -223,19 +228,23 @@ export const getGameByID = async (
     };
 };
 
-export const extractTeamsFromPlayerBet = (playerBet: PlayerBetObject): { homeTeam: TeamInfo, awayTeam: TeamInfo } => {
+export const extractTeamsFromPlayerBet = (
+    playerBet: PlayerBetObject
+): { homeTeam: TeamInfo; awayTeam: TeamInfo } => {
     return {
         homeTeam: playerBet.homeTeam,
-        awayTeam: playerBet.awayTeam
+        awayTeam: playerBet.awayTeam,
     };
-}
+};
 
-export const extractTeamsFromGameSelection = (gameSelection: GameSelectionObject): { homeTeam: TeamInfo, awayTeam: TeamInfo } => {
+export const extractTeamsFromGameSelection = (
+    gameSelection: GameSelectionObject
+): { homeTeam: TeamInfo; awayTeam: TeamInfo } => {
     return {
         homeTeam: gameSelection.homeTeam,
-        awayTeam: gameSelection.awayTeam
+        awayTeam: gameSelection.awayTeam,
     };
-}
+};
 
 export const formatDate = (d: Date): string => {
     const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(d);
@@ -307,12 +316,14 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         spread: "EM -42.0",
         status: "upcoming",
         homeTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Eastern Michigan",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2199.png",
         },
         awayTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Howard",
@@ -326,12 +337,14 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         spread: "EM -42.0",
         status: "upcoming",
         homeTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Michigan State",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/127.png",
         },
         awayTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Central Michigan",
@@ -345,12 +358,14 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         spread: "EM -42.0",
         status: "upcoming",
         homeTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Miami",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png",
         },
         awayTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Miami (OH)",
@@ -364,12 +379,14 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         spread: "EM -42.0",
         status: "upcoming",
         homeTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Georgia Tech",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/59.png",
         },
         awayTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Louisville",
@@ -383,12 +400,14 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         spread: "EM -42.0",
         status: "upcoming",
         homeTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Kansas",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2305.png",
         },
         awayTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Missouri State",
@@ -402,12 +421,14 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         spread: "EM -42.0",
         status: "upcoming",
         homeTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Hawai'i",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/62.png",
         },
         awayTeam: {
+            color: "#ffffff",
             score: "0",
             record: "1-0",
             location: "Stanford",
