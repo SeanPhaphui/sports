@@ -31,9 +31,9 @@ const Info: React.FC<InfoProps> = (props) => {
                             width: "4vh",
                             marginRight: "10px",
                         }}
-                        src={homeTeam.logo}
+                        src={awayTeam.logo}
                     />
-                    <div style={{ color: homeColor }}>{homeTeam.location}</div>
+                    <div style={{ color: awayColor }}>{awayTeam.location}</div>
                 </div>
                 <div className="info-divider"></div>
                 <div className="logo-and-name">
@@ -44,28 +44,28 @@ const Info: React.FC<InfoProps> = (props) => {
                             width: "4vh",
                             marginRight: "10px",
                         }}
-                        src={awayTeam.logo}
+                        src={homeTeam.logo}
                     />
-                    <div style={{ color: awayColor }}>{awayTeam.location}</div>
+                    <div style={{ color: homeColor }}>{homeTeam.location}</div>
                 </div>
             </div>
             <div className="right">
                 <div className="scores">
-                    <div className="score" style={{ color: homeColor }}>
-                        {homeTeam.score}
-                    </div>
-                    <div className="info-divider"></div>
                     <div className="score" style={{ color: awayColor }}>
                         {awayTeam.score}
+                    </div>
+                    <div className="info-divider"></div>
+                    <div className="score" style={{ color: homeColor }}>
+                        {homeTeam.score}
                     </div>
                 </div>
 
                 <Divider orientation="vertical" flexItem />
                 {showRecord ? (
                     <div className="records">
-                        <div className="record">{homeTeam.record}</div>
-                        <div className="info-divider"></div>
                         <div className="record">{awayTeam.record}</div>
+                        <div className="info-divider"></div>
+                        <div className="record">{homeTeam.record}</div>
                     </div>
                 ) : (
                     <div className="gap">

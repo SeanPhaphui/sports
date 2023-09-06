@@ -22,11 +22,11 @@ const UpcomingInfo: React.FC<UpcomingInfoProps> = (props) => {
                             width: "4vh",
                             marginRight: "10px",
                         }}
-                        src={homeTeam.logo}
+                        src={awayTeam.logo}
                     />
-                    <div>{homeTeam.location}</div>
+                    <div>{awayTeam.location}</div>
                 </div>
-                <div>{homeTeam.record}</div>
+                <div>{awayTeam.record}</div>
             </div>
             <div className="divider"></div>
             <div className="team-stats">
@@ -38,11 +38,11 @@ const UpcomingInfo: React.FC<UpcomingInfoProps> = (props) => {
                             width: "4vh",
                             marginRight: "10px",
                         }}
-                        src={awayTeam.logo}
+                        src={homeTeam.logo}
                     />
-                    <div>{awayTeam.location}</div>
+                    <div>{homeTeam.location}</div>
                 </div>
-                <div>{awayTeam.record}</div>
+                <div>{homeTeam.record}</div>
             </div>
         </div>
     );
