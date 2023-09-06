@@ -126,11 +126,11 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
                     </div>
                 )}
 
-                <Divider />
+                <Divider className="bet-divider"/>
                 {playerBet.status === "upcoming" ? (
                     <UpcomingInfo homeTeam={homeTeam} awayTeam={awayTeam}/>
                 ) : (
-                    <Info playerBet={playerBet} />
+                    <Info homeTeam={homeTeam} awayTeam={awayTeam} showRecord={false}/>
                 )}
 
                 {playerBet.status === "ongoing" && (

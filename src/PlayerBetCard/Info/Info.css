@@ -4,18 +4,46 @@
     justify-content: space-between;
 }
 
-.Info .team-stats {
+.Info .left .logo-and-name {
+    display: flex;
+    align-items: center;
+}
+
+.Info .info-divider {
+    margin-bottom: 10px;
+}
+
+.Info .MuiDivider-root {
+    border-color: rgba(255, 255, 255, 0.12);
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.Info .right {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.Info .team-stats .logo-and-name{
+.Info .right .scores,
+.Info .right .records {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    margin-right: 20px;
+    justify-content: center;
 }
 
-.Info .current-spread {
+.Info .right .scores .score,
+.Info .right .records .record {
+    height: 4vh;
+    width: 4vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.Info .gap {
     text-align: center;
 }

@@ -1,10 +1,10 @@
 .PlayerBetCard .MuiPaper-root.MuiCard-root {
-    padding: 25px;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
 }
 
-.PlayerBetCard .MuiDivider-root {
+.PlayerBetCard .card .bet-divider {
     border-color: rgba(255, 255, 255, 0.12);
     margin-top: 10px;
     margin-bottom: 10px;

@@ -7,6 +7,7 @@ import {
 } from "../../../Utils/Utils";
 import "./SelectGameCard.css";
 import UpcomingInfo from "../../../PlayerBetCard/UpcomingInfo/UpcomingInfo";
+import Info from "../../../PlayerBetCard/Info/Info";
 
 interface SelectGameCardProps {
     game: GameSelectionObject;
@@ -20,8 +21,14 @@ const SelectGameCard: React.FC<SelectGameCardProps> = (props) => {
     return (
         <div className="SelectGameCard">
             <Card onClick={openDialog}>
-                <UpcomingInfo homeTeam={homeTeam} awayTeam={awayTeam} />
-                <div className="spread">{"Current Spread: " + game.spread}</div>
+                {game.status === "final" ? (
+                    <Info homeTeam={homeTeam} awayTeam={awayTeam} showRecord={true}/>
+                ) : (
+                    <div>
+                        <UpcomingInfo homeTeam={homeTeam} awayTeam={awayTeam} />
+                        <div className="spread">{"Current Spread: " + game.spread}</div>
+                    </div>
+                )}
             </Card>
         </div>
     );
