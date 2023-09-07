@@ -91,7 +91,7 @@ const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" =
 
 export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[]> => {
     const proxyUrl = "https://corsproxy.io/?";
-    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}`;
+    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}&groups=80`;
 
     const data = await fetchData(footballUrl);
     const games: GameSelectionObject[] = [];
