@@ -2,112 +2,59 @@
     width: 85%;
 } */
 
-.Home .horizontalList {
+.Home .top-bar {
     position: sticky;
     top: 0;
     z-index: 3; /* To ensure it's above the content below */
-    background-color: #1d1e1f;
-    white-space: nowrap;
+}
+
+.Home .top-bar .header {
+    background-color: #252627;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
     display: flex;
-    width: 100vw; 
-    overflow-x: auto;
-    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Home .top-bar .header .back {
+    color: white;
+    margin-left: 10px;
+    margin-right: 15px;
+}
+
+.Home .top-bar .header .buttons .MuiButtonBase-root {
+    border-radius: 30px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
     font-size: 12px;
     font-weight: 500;
-    padding-left: 5px;
-    padding-right: 5px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
-.Home .horizontalList .load-item {
-    color: #a5a6a7;
-    padding-left: 9px;
-    padding-right: 9px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* styles.css or your preferred stylesheet */
-@keyframes pulsate {
-    0% {
-      opacity: 0.6;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0.6;
-    }
-  }
-  
-  .pulsating-placeholder-top {
-    width: 41px; /* or your preferred size */
-    height: 16px; /* or your preferred size */
-    border-radius: 5px;
-    background-color: #888; /* placeholder color */
-    animation: pulsate 1s infinite; /* apply the pulsating animation */
-  }
-
-  .pulsating-placeholder-bottom {
-    width: 50px; /* or your preferred size */
-    height: 14px; /* or your preferred size */
-    margin-top: 5px;
-    border-radius: 5px;
-    background-color: #888; /* placeholder color */
-    animation: pulsate 1s infinite; /* apply the pulsating animation */
-  }
-
-.Home .horizontalList .item {
-    color: #a5a6a7;
-    padding-left: 9px;
-    padding-right: 9px;
-}
-
-.Home .horizontalList .item.active {
-    color: white;
-    padding-left: 9px;
-    padding-right: 9px;
-}
-
-.Home .horizontalList .item .detail{
-    margin-top: 5px;
-    font-size: 10px;
-}
-
-.body {
-    width: 85%;
-    margin: 0 auto; /* Centers the div horizontally */
-}
-
-.Home .title {
-    font-family: "Plus Jakarta Sans";
-    font-weight: 800;
-    font-size: 36px;
-}
-
-.Home .MuiSnackbar-root {
-    margin-bottom: 20px;
-}
-
-.Home .search-parameters {
-    margin-top: 20px;
-    background-color: #2b2c2d;
-    padding: 25px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+.Home .top-bar .header .buttons {
+    padding-top: 11px;
+    padding-bottom: 11px;
     display: flex;
 }
 
-.Home .search-parameters .MuiFormLabel-root.MuiInputLabel-root {
-    color: rgba(255, 255, 255, 0.9);
+.Home .top-bar .header .buttons .divider{
+    width: 5px;
 }
-.Home .search-parameters .MuiInputBase-root.MuiOutlinedInput-root {
+
+.Home .top-bar .header .MuiFormControl-root.MuiTextField-root{
+    width: 200px;
+    transform: scale(0.75);
+}
+
+.Home .top-bar .header .MuiFormLabel-root.MuiInputLabel-root {
     color: rgba(255, 255, 255, 0.9);
 }
 
-.Home .search-parameters .MuiOutlinedInput-notchedOutline {
+.Home .top-bar .header .MuiInputBase-root.MuiOutlinedInput-root {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.Home .top-bar .header .MuiOutlinedInput-notchedOutline {
     color: rgba(255, 255, 255, 0.9);
     border-color: rgba(255, 255, 255, 0.9);
 }
@@ -115,7 +62,17 @@
 
 
 
+
+
+.body {
+    width: 85%;
+    margin: 0 auto; /* Centers the div horizontally */
+}
+
+
+
+
+
 .divider {
     margin-bottom: 10px;
 }
-

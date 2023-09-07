@@ -1,6 +1,10 @@
-import { Box, List, ListItemButton, ListItemIcon, ListItemText, TextField } from "@mui/material";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import {
+    Button,
+    TextField
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
-import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
+import PlayerPicks from "../PlayerPicks/PlayerPicks";
 import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
 import {
     BetObject,
@@ -8,14 +12,11 @@ import {
     GameSelectionObject,
     PlayerBet,
     fetchGameCalendar,
-    gameSelectionArrayTestObject,
     getGameByID,
-    getGamesByWeek,
-    playerBetArrayTestObject,
+    getGamesByWeek
 } from "../Utils/Utils";
+import Weeks from "../Weeks/Weeks";
 import "./Home.css";
-import { Dns, KeyboardArrowDown, People, PermMedia, Public } from "@mui/icons-material";
-import PlayerPicks from "../PlayerPicks/PlayerPicks";
 
 const Home: React.FC = () => {
     const [games, setGames] = useState<GameSelectionObject[]>([]);
@@ -28,34 +29,16 @@ const Home: React.FC = () => {
 
     const [week, setWeek] = useState<string>();
 
-    const [gameCalendar, setGameCalendar] = useState<GameCalendarObject[]>([]);
-
-    const [loading, setLoading] = useState<boolean>(true);
-
     const [open, setOpen] = React.useState(true);
 
-    useEffect(() => {
-        setLoading(true); // Set loading when fetch starts
-        // Assuming fetchGameCalendar is the function to fetch the GameCalendarObjects
-        fetchGameCalendar().then((data) => {
-            setGameCalendar(data);
-
-            // Setting the week after gameCalendar has been set
-            // This is just an example. Modify the logic as per your requirements.
-            if (data && data.length > 0) {
-                setWeek("1"); // setting the first week for simplicity, modify as needed
-            }
-
-            setLoading(false); // Set loading to false once fetch is complete
-        });
-    }, []);
+    const [activeButton, setActiveButton] = useState<string>("Top 25");
 
     useEffect(() => {
         if (week) {
-            getGamesByWeek(parseInt(week)).then(setGames);
+            getGamesByWeek(parseInt(week), activeButton === "Top 25" ? true : false).then(setGames);
             // console.log(getGamesByDate(formattedDate))
         }
-    }, [week]);
+    }, [week, activeButton]);
 
     useEffect(() => {
         if (bets.length > 0) {
@@ -89,48 +72,50 @@ const Home: React.FC = () => {
         console.log(bet);
     };
 
-    const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
+    const handleWeekChange = (week: string) => {
+        setWeek(week);
+        setFilterText("");
+    };
 
     return (
         <div className="Home">
-            {loading ? (
-                <List className="horizontalList">
-                    {Array.from({ length: 10 }).map((_, index) => (
-                        <div key={index} className="load-item">
-                            <div className="pulsating-placeholder-top"></div>
-                            <div className="pulsating-placeholder-bottom"></div>
-                        </div>
-                    ))}
-                </List>
-            ) : (
-                <List className="horizontalList">
-                    {gameCalendar.map((gameCalObj, index) => (
-                        <div
-                            key={index}
-                            className={`item ${index === activeItemIndex ? "active" : ""}`}
-                            onClick={() => {
-                                setActiveItemIndex(index);
-                                setWeek((index + 1).toString()); // set the week based on the clicked index
-                                setFilterText("");
-                                console.log(gameCalObj.label);
+            <div className="top-bar">
+                <div className="header">
+                    <ArrowBackIosNewIcon className="back" />
+                    <div className="buttons">
+                        <Button
+                            style={{
+                                color: activeButton === "Top 25" ? "white" : "#919293",
+                                backgroundColor: activeButton === "Top 25" ? "#151617" : "#3a3b3c",
+                                textTransform: "none",
                             }}
+                            onClick={() => setActiveButton("Top 25")}
                         >
-                            <div>{gameCalObj.label}</div>
-                            <div className="detail">{gameCalObj.detail}</div>
-                        </div>
-                    ))}
-                </List>
-            )}
-
-            <div className="body">
-                <div className="search-parameters">
+                            Top 25
+                        </Button>
+                        <div className="divider"></div>
+                        <Button
+                            style={{
+                                color: activeButton === "FBS (I-A)" ? "white" : "#919293",
+                                backgroundColor:
+                                    activeButton === "FBS (I-A)" ? "#151617" : "#3a3b3c",
+                            }}
+                            onClick={() => setActiveButton("FBS (I-A)")}
+                        >
+                            FBS (I-A)
+                        </Button>
+                    </div>
                     <TextField
-                        className="search-parameters-item-search"
-                        label="Search list"
+                        size="small"
+                        label="Search"
                         value={filterText}
                         onChange={(event) => setFilterText(event.target.value)}
                     />
                 </div>
+                <Weeks handleWeekChange={handleWeekChange} />
+            </div>
+
+            <div className="body">
                 {/* <div className="bets">
                     <ListItemButton
                         alignItems="flex-start"
@@ -161,9 +146,7 @@ const Home: React.FC = () => {
                         />
                     </ListItemButton>
                 </div> */}
-                {playerBets.length >= 1 && (
-                    <PlayerPicks playerBets={playerBets}/>
-                )}
+                {playerBets.length >= 1 && <PlayerPicks playerBets={playerBets} />}
                 {/* {playerBets.map((playerBet) => (
                     <PlayerBetCard key={playerBet.id} playerBet={playerBet} />
                 ))} */}

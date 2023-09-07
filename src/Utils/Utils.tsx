@@ -89,11 +89,13 @@ const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" =
     }
 };
 
-export const getGamesByWeek = async (week: number): Promise<GameSelectionObject[]> => {
+export const getGamesByWeek = async (week: number, top25true: boolean): Promise<GameSelectionObject[]> => {
     const proxyUrl = "https://corsproxy.io/?";
-    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}&groups=80`;
+    const top25Url =`https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}`;
+    const fbsIAUrl = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}&groups=80`;
+    const completeUrl = top25true ? `${proxyUrl}${top25Url}` : `${proxyUrl}${fbsIAUrl}`;
 
-    const data = await fetchData(footballUrl);
+    const data = await fetchData(completeUrl);
     const games: GameSelectionObject[] = [];
     if (data?.events) {
         for (const event of data.events) {
