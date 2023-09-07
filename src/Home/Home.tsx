@@ -7,10 +7,12 @@ import {
     GameSelectionObject,
     PlayerBet,
     getGameByID,
-    getGamesByWeek
+    getGamesByWeek,
+    playerBetArrayTestObject,
 } from "../Utils/Utils";
 import Weeks from "../Weeks/Weeks";
 import "./Home.css";
+import Experimental from "../Experimental/Experimental";
 
 const Home: React.FC = () => {
     const [games, setGames] = useState<GameSelectionObject[]>([]);
@@ -19,7 +21,7 @@ const Home: React.FC = () => {
 
     const [bets, setBets] = useState<BetObject[]>([]);
 
-    const [playerBets, setPlayerBets] = useState<PlayerBet[]>([]);
+    const [playerBets, setPlayerBets] = useState<PlayerBet[]>(playerBetArrayTestObject);
 
     const [week, setWeek] = useState<string>();
 
@@ -83,7 +85,8 @@ const Home: React.FC = () => {
             </div>
 
             <div className="body">
-                <PlayerPicks playerBets={playerBets} />
+                <Experimental playerBets={playerBets}/>
+                {/* <PlayerPicks playerBets={playerBets} /> */}
                 {/* {playerBets.map((playerBet) => (
                     <PlayerBetCard key={playerBet.id} playerBet={playerBet} />
                 ))} */}
