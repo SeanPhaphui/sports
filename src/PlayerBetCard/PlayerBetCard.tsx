@@ -1,13 +1,13 @@
 import { Box, Card, Divider } from "@mui/material";
 import React from "react";
 import "./PlayerBetCard.css";
-import { PlayerBetObject, extractTeamsFromPlayerBet, formatDate } from "../Utils/Utils";
+import { PlayerBet, extractTeamsFromPlayerBet, formatDate } from "../Utils/Utils";
 import Info from "./Info/Info";
 import UpcomingInfo from "./UpcomingInfo/UpcomingInfo";
 import LiveTvIcon from "@mui/icons-material/LiveTv";
 
 interface PlayerBetCardProps {
-    playerBet: PlayerBetObject;
+    playerBet: PlayerBet;
 }
 
 const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
@@ -22,7 +22,7 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
     const awayColor = awayScore >= homeScore ? "white" : "#6c6d6f";
 
     const getTeamScores = (
-        playerBet: PlayerBetObject
+        playerBet: PlayerBet
     ): { teamScore: number; opponentScore: number } => {
         let teamScore: number, opponentScore: number;
 
@@ -59,7 +59,7 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
         }
     };
 
-    const calculateBetStatus = (playerBet: PlayerBetObject): { message: string; color: string } => {
+    const calculateBetStatus = (playerBet: PlayerBet): { message: string; color: string } => {
         const spread = parseFloat(playerBet.spread);
         const { teamScore, opponentScore } = getTeamScores(playerBet);
         const gapFromSpread = getGapFromSpread(teamScore, opponentScore, spread);

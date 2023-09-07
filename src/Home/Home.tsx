@@ -6,13 +6,16 @@ import {
     BetObject,
     GameCalendarObject,
     GameSelectionObject,
-    PlayerBetObject,
+    PlayerBet,
     fetchGameCalendar,
+    gameSelectionArrayTestObject,
     getGameByID,
     getGamesByWeek,
+    playerBetArrayTestObject,
 } from "../Utils/Utils";
 import "./Home.css";
 import { Dns, KeyboardArrowDown, People, PermMedia, Public } from "@mui/icons-material";
+import PlayerPicks from "../PlayerPicks/PlayerPicks";
 
 const Home: React.FC = () => {
     const [games, setGames] = useState<GameSelectionObject[]>([]);
@@ -21,7 +24,7 @@ const Home: React.FC = () => {
 
     const [bets, setBets] = useState<BetObject[]>([]);
 
-    const [playerBets, setPlayerBets] = useState<PlayerBetObject[]>([]);
+    const [playerBets, setPlayerBets] = useState<PlayerBet[]>([]);
 
     const [week, setWeek] = useState<string>();
 
@@ -30,13 +33,6 @@ const Home: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
 
     const [open, setOpen] = React.useState(true);
-
-    const data = [
-        { icon: <People />, label: "Authentication" },
-        { icon: <Dns />, label: "Database" },
-        { icon: <PermMedia />, label: "Storage" },
-        { icon: <Public />, label: "Hosting" },
-    ];
 
     useEffect(() => {
         setLoading(true); // Set loading when fetch starts
@@ -64,7 +60,7 @@ const Home: React.FC = () => {
     useEffect(() => {
         if (bets.length > 0) {
             const fetchPlayerBets = async () => {
-                const newPlayerBets: PlayerBetObject[] = [];
+                const newPlayerBets: PlayerBet[] = [];
 
                 for (let i = 0; i < bets.length; i++) {
                     const bet = bets[i];
@@ -81,6 +77,7 @@ const Home: React.FC = () => {
                 }
 
                 setPlayerBets(newPlayerBets);
+                console.log("newPlayerBets: ", newPlayerBets);
             };
 
             fetchPlayerBets();
@@ -164,40 +161,9 @@ const Home: React.FC = () => {
                         />
                     </ListItemButton>
                 </div> */}
-                {playerBets.map((playerBet) => {
-                    // Determine the teamInfo based on the team in playerBet
-                    const teamInfo =
-                        playerBet.team === playerBet.homeTeam.location
-                            ? playerBet.homeTeam
-                            : playerBet.awayTeam;
-
-                    // Adjust the tint opacity (e.g., 50% opacity)
-                    const tintOpacity = 0.5; // Change this value as needed
-
-                    // Create a tinted color by adjusting the alpha channel
-                    const tintedColor =
-                        teamInfo.color +
-                        Math.round(tintOpacity * 255)
-                            .toString(16)
-                            .padStart(2, "0");
-
-                    return (
-                        <Box
-                            key={playerBet.id}
-                            component="img"
-                            sx={{
-                                padding: "10px",
-                                height: "4vh",
-                                width: "4vh",
-                                marginRight: "10px",
-                                backgroundColor: tintedColor, // Use the tinted color as the background
-                                borderRadius: "100%",
-                            }}
-                            src={teamInfo.logo} // Use the logo from teamInfo
-                        />
-                    );
-                })}
-
+                {playerBets.length >= 1 && (
+                    <PlayerPicks playerBets={playerBets}/>
+                )}
                 {/* {playerBets.map((playerBet) => (
                     <PlayerBetCard key={playerBet.id} playerBet={playerBet} />
                 ))} */}
