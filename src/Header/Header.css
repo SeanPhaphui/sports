@@ -1,0 +1,51 @@
+.Header {
+    background-color: #252627;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Header .back {
+    color: white;
+    margin-left: 10px;
+    margin-right: 15px;
+}
+
+.Header .buttons .MuiButtonBase-root {
+    border-radius: 30px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.Header .buttons {
+    padding-top: 11px;
+    padding-bottom: 11px;
+    display: flex;
+}
+
+.Header .buttons .divider{
+    width: 5px;
+}
+
+.Header .MuiFormControl-root.MuiTextField-root{
+    width: 200px;
+    transform: scale(0.75);
+}
+
+.Header .MuiFormLabel-root.MuiInputLabel-root {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.Header .MuiInputBase-root.MuiOutlinedInput-root {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.Header .MuiOutlinedInput-notchedOutline {
+    color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.9);
+}

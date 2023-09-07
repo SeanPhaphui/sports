@@ -54,42 +54,68 @@ const PlayerPicks: React.FC<PlayerPicksProps> = (props) => {
 
     return (
         <div className="PlayerPicks">
-            {/* <KeyboardArrowDown
-                    sx={{
-                        mr: -1,
-                        opacity: 0,
-                        transform: open ? "rotate(-180deg)" : "rotate(0)",
-                        transition: "0.2s",
-                    }}
-                /> */}
-            <div className="bets-top">PICKS</div>
-            <div className="bets-bar" style={gradientBackground}></div>
-            <div className="bets-bottom">
-                {playerBets.map((playerBet) => {
-                    // Determine the teamInfo based on the team in playerBet
-                    const teamInfo = getTeamInfo(playerBet);
+            {playerBets.length >= 1 && (
+                <div>
+                    <div className="bets-top">PICKS</div>
+                    <div className="bets-bar" style={gradientBackground}></div>
+                    <div className="bets-bottom">
+                        {playerBets.map((playerBet) => {
+                            // Determine the teamInfo based on the team in playerBet
+                            const teamInfo = getTeamInfo(playerBet);
 
-                    // Create a tinted color by adjusting the alpha channel
-                    const tintedColor = getTintedColor(teamInfo);
+                            // Create a tinted color by adjusting the alpha channel
+                            const tintedColor = getTintedColor(teamInfo);
 
-                    return (
-                        <Grow in={true} timeout={500} key={playerBet.id}>
-                            <Box
-                                component="img"
-                                sx={{
-                                    padding: "10px",
-                                    height: "3vh",
-                                    width: "3vh",
-                                    mx: "5px",
-                                    backgroundColor: tintedColor, // Use the tinted color as the background
-                                    borderRadius: "100%",
-                                }}
-                                src={teamInfo.logo} // Use the logo from teamInfo
-                            />
-                        </Grow>
-                    );
-                })}
-            </div>
+                            return (
+                                <Grow in={true} timeout={500} key={playerBet.id}>
+                                    <Box
+                                        component="img"
+                                        sx={{
+                                            padding: "10px",
+                                            height: "3vh",
+                                            width: "3vh",
+                                            mx: "5px",
+                                            backgroundColor: tintedColor, // Use the tinted color as the background
+                                            borderRadius: "100%",
+                                        }}
+                                        src={teamInfo.logo} // Use the logo from teamInfo
+                                    />
+                                </Grow>
+                            );
+                        })}
+                    </div>
+                    {/* <div className="bets">
+                    <ListItemButton
+                        alignItems="flex-start"
+                        onClick={() => setOpen(!open)}
+                        sx={{
+                            px: 3,
+                            pt: 2.5,
+                            pb: open ? 0 : 2.5,
+                            "&:hover, &:focus": { "& svg": { opacity: open ? 1 : 0 } },
+                        }}
+                    >
+                        <ListItemText
+                            primary="Picks: "
+                            primaryTypographyProps={{
+                                fontSize: 15,
+                                fontWeight: "medium",
+                                lineHeight: "20px",
+                                mb: "2px",
+                            }}
+                        />
+                        <KeyboardArrowDown
+                            sx={{
+                                mr: -1,
+                                opacity: 0,
+                                transform: open ? "rotate(-180deg)" : "rotate(0)",
+                                transition: "0.2s",
+                            }}
+                        />
+                    </ListItemButton>
+                </div> */}
+                </div>
+            )}
         </div>
     );
 };
