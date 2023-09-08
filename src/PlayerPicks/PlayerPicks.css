@@ -38,21 +38,20 @@
     box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
 }
 
-.PlayerPicks .bets-bottom-logo {
-    background-color: #1d1e1f;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
-}
-
-.PlayerPicks .bets-bottom-list {
+.PlayerPicks .bets-bottom {
   background-color: #1d1e1f;
   margin-bottom: 20px;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+}
+
+.PlayerPicks .bets-bottom-logo {
+    padding: 20px;
+}
+
+.PlayerPicks .bets-bottom-list {
+
 }
 
 .PlayerPicks .bets-bottom-list .testing {

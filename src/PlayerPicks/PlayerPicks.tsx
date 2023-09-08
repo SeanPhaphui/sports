@@ -1,4 +1,5 @@
 import { KeyboardArrowDown } from "@mui/icons-material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
     Avatar,
     Box,
@@ -12,20 +13,16 @@ import {
     ListItemText,
 } from "@mui/material";
 import React, { useState } from "react";
-import { Bet, PlayerBet, TeamInfo } from "../Utils/Utils";
-import "./PlayerPicks.css";
 import { TransitionGroup } from "react-transition-group";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ImageIcon from "@mui/icons-material/Image";
+import { Bet, TeamInfo } from "../Utils/Utils";
+import "./PlayerPicks.css";
 
 export interface PlayerPicksProps {
     playerBets: Bet[];
     handleRemoveBet: (item: Bet) => void;
 }
 
-const PlayerPicks: React.FC<PlayerPicksProps> = (props) => {
-    const { playerBets, handleRemoveBet } = props;
-
+const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }) => {
     const getTeamInfo = (playerBet: Bet) => {
         return playerBet.team === playerBet.game.homeTeam.location
             ? playerBet.game.homeTeam
@@ -40,51 +37,32 @@ const PlayerPicks: React.FC<PlayerPicksProps> = (props) => {
 
     const getTintedColor = (teamInfo: TeamInfo) => {
         const tintOpacity = 0.5;
-        const tintedColor =
+        return (
             teamInfo.color +
             Math.round(tintOpacity * 255)
                 .toString(16)
-                .padStart(2, "0");
-        return tintedColor;
+                .padStart(2, "0")
+        );
     };
 
-    // const [open, setOpen] = React.useState(true);
+    const gradientBackground =
+        playerBets.length === 1
+            ? {
+                  background: `linear-gradient(to right, black, ${
+                      getTeamInfo(playerBets[0]).color
+                  }, black)`,
+                  animation: "pulsateBar 4s infinite",
+              }
+            : {
+                  background: `linear-gradient(to right, ${playerBets
+                      .map((playerBet) => getTeamInfo(playerBet).color)
+                      .join(", ")})`,
+                  animation: "pulsateBar 4s infinite",
+              };
 
-    let gradientBackground;
-
-    if (playerBets.length === 1) {
-        // When there's only one playerBet, create a specific gradient
-        const teamInfo = getTeamInfo(playerBets[0]);
-        const singlePlayerBetGradient = `black, ${teamInfo.color}, black`;
-        gradientBackground = {
-            background: `linear-gradient(to right, ${singlePlayerBetGradient})`,
-            animation: "pulsateBar 4s infinite",
-        };
-    } else {
-        // When there are multiple playerBets, calculate the gradient normally
-        const gradientColors = playerBets.map((playerBet) => {
-            const teamInfo = getTeamInfo(playerBet);
-            return teamInfo.color;
-        });
-        const gradientColorString = gradientColors.join(", ");
-        gradientBackground = {
-            background: `linear-gradient(to right, ${gradientColorString})`,
-            animation: "pulsateBar 4s infinite",
-        };
-    }
-
-    interface RenderItemOptions {
-        playerBet: Bet;
-    }
-
-    function renderItem({ playerBet }: RenderItemOptions) {
-        // Determine the teamInfo based on the team in playerBet
+    const renderItem = (playerBet: Bet) => {
         const teamInfo = getTeamInfo(playerBet);
-
-        // Determine the teamInfo based on the team in playerBet
-        const opponentTeamInfo = getOpponentTeamInfo(playerBet);
-
-        // Create a tinted color by adjusting the alpha channel
+        const opponentTeamInfo = playerBet.team === teamInfo.location ? playerBet.game.awayTeam : playerBet.game.homeTeam;
         const tintedColor = getTintedColor(teamInfo);
         return (
             <ListItem
@@ -100,12 +78,7 @@ const PlayerPicks: React.FC<PlayerPicksProps> = (props) => {
                 }
             >
                 <ListItemAvatar>
-                    <Avatar
-                        sx={{
-                            backgroundColor: tintedColor, // Use the tinted color as the background
-                        }}
-                        src={teamInfo.logo}
-                    />
+                    <Avatar sx={{ backgroundColor: tintedColor }} src={teamInfo.logo} />
                 </ListItemAvatar>
                 <ListItemText
                     primary={`${playerBet.team}: ${playerBet.spread}`}
@@ -113,7 +86,7 @@ const PlayerPicks: React.FC<PlayerPicksProps> = (props) => {
                 />
             </ListItem>
         );
-    }
+    };
 
     const [playerView, setPlayerView] = useState<boolean>(true);
 
@@ -131,72 +104,87 @@ const PlayerPicks: React.FC<PlayerPicksProps> = (props) => {
     }
 
     return (
-            <Collapse in={shown}>
-        <div className="PlayerPicks">
-                    <Grow in={true} timeout={1000}>
-                        <div>
-                            <div className="bets-top">
-                                <div className="left">PICKS</div>
-                                <KeyboardArrowDown
-                                    fontSize="medium"
-                                    className="right"
-                                    onClick={handleViewChange}
-                                    sx={{
-                                        transform: !playerView ? "rotate(-180deg)" : "rotate(0)",
-                                        transition: "0.2s",
-                                    }}
-                                />
-                            </div>
-                            <div className="bets-bar" style={gradientBackground}></div>
-                            <div className={playerView ? "bets-bottom-logo" : "bets-bottom-list"}>
-                                {playerView ? (
-                                    <div>
-                                        {playerBets.map((playerBet) => {
-                                            // Determine the teamInfo based on the team in playerBet
-                                            const teamInfo = getTeamInfo(playerBet);
+        <TransitionGroup>
+            {playerBets.length >= 1 && (
+                <Collapse in={shown}>
+                    <div className="PlayerPicks">
+                        <Grow in={true} timeout={1000}>
+                            <div>
+                                <div className="bets-top">
+                                    <div className="left">PICKS</div>
+                                    <KeyboardArrowDown
+                                        fontSize="medium"
+                                        className="right"
+                                        onClick={handleViewChange}
+                                        sx={{
+                                            transform: !playerView
+                                                ? "rotate(-180deg)"
+                                                : "rotate(0)",
+                                            transition: "0.2s",
+                                        }}
+                                    />
+                                </div>
+                                <div className="bets-bar" style={gradientBackground}></div>
+                                <div className="bets-bottom">
+                                    <div
+                                        className={
+                                            playerView ? "bets-bottom-logo" : "bets-bottom-list"
+                                        }
+                                    >
+                                        {playerView ? (
+                                            <div>
+                                                {playerBets.map((playerBet) => {
+                                                    // Determine the teamInfo based on the team in playerBet
+                                                    const teamInfo = getTeamInfo(playerBet);
 
-                                            // Create a tinted color by adjusting the alpha channel
-                                            const tintedColor = getTintedColor(teamInfo);
+                                                    // Create a tinted color by adjusting the alpha channel
+                                                    const tintedColor = getTintedColor(teamInfo);
 
-                                            return (
-                                                <Grow in={true} timeout={1000} key={playerBet.id}>
-                                                    <Box
-                                                        component="img"
-                                                        sx={{
-                                                            padding: "10px",
-                                                            height: "3vh",
-                                                            width: "3vh",
-                                                            mx: "5px",
-                                                            backgroundColor: tintedColor, // Use the tinted color as the background
-                                                            borderRadius: "100%",
-                                                        }}
-                                                        src={teamInfo.logo} // Use the logo from teamInfo
-                                                    />
-                                                </Grow>
-                                            );
-                                        })}
+                                                    return (
+                                                        <Grow
+                                                            in={true}
+                                                            timeout={1000}
+                                                            key={playerBet.id}
+                                                        >
+                                                            <Box
+                                                                component="img"
+                                                                sx={{
+                                                                    padding: "10px",
+                                                                    height: "3vh",
+                                                                    width: "3vh",
+                                                                    mx: "5px",
+                                                                    backgroundColor: tintedColor, // Use the tinted color as the background
+                                                                    borderRadius: "100%",
+                                                                }}
+                                                                src={teamInfo.logo} // Use the logo from teamInfo
+                                                            />
+                                                        </Grow>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <div className="testing">
+                                                <Fade in={true} timeout={500}>
+                                                    <List>
+                                                        <TransitionGroup>
+                                                            {playerBets.map((playerBet) => (
+                                                                <Collapse key={playerBet.id}>
+                                                                    {renderItem(playerBet)}
+                                                                </Collapse>
+                                                            ))}
+                                                        </TransitionGroup>
+                                                    </List>
+                                                </Fade>
+                                            </div>
+                                        )}
                                     </div>
-                                ) : (
-                                    <div className="testing">
-                                        <Fade in={true} timeout={500}>
-                                            <List>
-                                                <TransitionGroup>
-                                                    {playerBets.map((playerBet) => (
-                                                        <Collapse key={playerBet.id}>
-                                                            {renderItem({ playerBet })}
-                                                        </Collapse>
-                                                    ))}
-                                                </TransitionGroup>
-                                            </List>
-                                        </Fade>
-                                    </div>
-                                )}
+                                </div>
                             </div>
-                        </div>
-                    </Grow>
-            
-        </div>
-            </Collapse>
+                        </Grow>
+                    </div>
+                </Collapse>
+            )}
+        </TransitionGroup>
     );
 };
 
