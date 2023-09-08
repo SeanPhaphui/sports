@@ -54,6 +54,7 @@ export interface PlayerBet {
 export interface GameCalendarObject {
     label: string;
     detail: string;
+    week: string;
 }
 
 const fetchData = async (url: string) => {
@@ -69,7 +70,7 @@ export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
     const calendarEntries: GameCalendarObject[] = [];
 
     // Validate and process the data
-    if (responseData?.leagues) {
+    if (responseData?.leagues && responseData?.week) {
         const leaguesCalendar = responseData.leagues[0].calendar;
 
         for (const singleCalendarKey in leaguesCalendar) {
@@ -79,6 +80,7 @@ export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
                 const gameCalendarEntry: GameCalendarObject = {
                     label: entry.label.toUpperCase(),
                     detail: entry.detail.toUpperCase(),
+                    week: responseData.week.number
                 };
                 calendarEntries.push(gameCalendarEntry);
             }

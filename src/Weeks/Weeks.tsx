@@ -20,7 +20,8 @@ const Weeks: React.FC<WeeksProps> = (props) => {
     const [gameCalendar, setGameCalendar] = useState<GameCalendarObject[]>([]);
 
     const [loading, setLoading] = useState<boolean>(true);
-
+    
+    const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
     useEffect(() => {
         setLoading(true); // Set loading when fetch starts
         // Assuming fetchGameCalendar is the function to fetch the GameCalendarObjects
@@ -30,14 +31,14 @@ const Weeks: React.FC<WeeksProps> = (props) => {
             // Setting the week after gameCalendar has been set
             // This is just an example. Modify the logic as per your requirements.
             if (data && data.length > 0) {
-                handleWeekChange("1"); // setting the first week for simplicity, modify as needed
+                setActiveItemIndex(parseInt(data[0].week)-1);
+                handleWeekChange(data[0].week); // setting the first week for simplicity, modify as needed
             }
 
             setLoading(false); // Set loading to false once fetch is complete
         });
     }, []);
 
-    const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
 
 
 
