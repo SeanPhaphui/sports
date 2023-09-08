@@ -40,7 +40,7 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = (props) => {
 
     const buildBet = async () => {
         if (team && spread && spreadSign) {
-            const bet: Bet = await getGameByGameID(game.id, team, spread);
+            const bet: Bet = await getGameByGameID(game.id, team, spreadSign + spread);
             handleAddBet(bet);
         }
     };
