@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./AddSpread.css";
 
 interface AddSpreadProps {
@@ -20,15 +20,21 @@ const AddSpread: React.FC<AddSpreadProps> = (props) => {
         }
     }, [spread, spreadSign]);
 
+    const wasClicked = useRef(false);
+
+    const handleClick = () => {
+        if (wasClicked.current) return; // prevent subsequent clicks
+        wasClicked.current = true;
+        onAddSpreadChange();
+    };
+
     return (
         <div className="AddSpread">
             <Button
                 className="add"
                 variant="contained"
                 disabled={disabled}
-                onClick={() => {
-                    onAddSpreadChange();
-                }}
+                onClick={handleClick}
             >
                 {"Add " + spreadAndSign + " Spread"}
             </Button>
