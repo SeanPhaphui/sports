@@ -1,19 +1,19 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { BetObject, GameSelectionObject } from "../../../Utils/Utils";
+import { Bet, BetObject, GameSelectionObject, getGameByGameID } from "../../../Utils/Utils";
 import TeamPicker from "./TeamPicker/TeamPicker";
 import "./SelectGameCardDialog.css";
 import { TextField } from "@mui/material";
 import SpreadSign from "./SpreadSign/SpreadSign";
 import AddSpread from "./AddSpread/AddSpread";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 interface SelectGameCardDialogProps {
     game: GameSelectionObject;
-    onAdd: (bet: BetObject) => void;
+    handleAddBet: (bet: Bet) => void;
 }
 
 const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = (props) => {
-    const { game, onAdd } = props;
+    const { game, handleAddBet } = props;
 
     const [team, setTeam] = useState<string>();
     const [spread, setSpread] = useState<string>();
@@ -21,11 +21,7 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = (props) => {
     const [disableAddSpread, setDisableAddSpread] = useState<boolean>(true);
 
     useEffect(() => {
-        if (
-            team &&
-            spread &&
-            spreadSign
-        ) {
+        if (team && spread && spreadSign) {
             setDisableAddSpread(false);
         } else {
             setDisableAddSpread(true);
@@ -42,19 +38,10 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = (props) => {
         inputmode: "decimal",
     };
 
-    const buildBet = () => {
-        if (
-            team &&
-            spread &&
-            spreadSign
-        ) {
-            const bet: BetObject = {
-                uniqueId: uuidv4(),
-                gameId: game.id,
-                team: team,
-                spread: spreadSign + spread,
-            };
-            onAdd(bet);
+    const buildBet = async () => {
+        if (team && spread && spreadSign) {
+            const bet: Bet = await getGameByGameID(game.id, team, spread);
+            handleAddBet(bet);
         }
     };
 
@@ -77,7 +64,7 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = (props) => {
                 />
             </div>
             <div className="item">
-                <SpreadSign onSpreadSignChange={handleSpreadSignUpdate}/>
+                <SpreadSign onSpreadSignChange={handleSpreadSignUpdate} />
             </div>
             <div className="item">
                 <AddSpread

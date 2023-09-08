@@ -1,14 +1,22 @@
 .PlayerPicks .bets-top {
-    color: white;
-    font-weight: 500;
-    font-size: 14px;
-    margin-top: 20px;
-    text-align: left;
-    background-color: #1d1e1f;
-    padding: 15px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+  display: flex;
+  justify-content: space-between;
+  background-color: #1d1e1f;
+  padding: 15px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+  margin-top: 20px;
+}
+
+.PlayerPicks .bets-top .left{
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.PlayerPicks .bets-top .right{
+  color: white;
 }
 
 @keyframes pulsateBar {
@@ -30,11 +38,36 @@
     box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
 }
 
-.PlayerPicks .bets-bottom {
+.PlayerPicks .bets-bottom-logo {
     background-color: #1d1e1f;
     padding: 20px;
     margin-bottom: 20px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+}
+
+.PlayerPicks .bets-bottom-list {
+  background-color: #1d1e1f;
+  margin-bottom: 20px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+}
+
+.PlayerPicks .bets-bottom-list .testing {
+  color: white;
+}
+
+.PlayerPicks .bets-bottom-list .testing .MuiAvatar-img{
+  height: 3vh;
+  width: 3vh;
+}
+
+.PlayerPicks .bets-bottom-list .testing .MuiListItemText-secondary{
+  color: #6c6d6f;
+}
+
+.PlayerPicks .bets-bottom-list .testing .MuiSvgIcon-root {
+  color: #a5a6a7;
 }

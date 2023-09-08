@@ -1,5 +1,20 @@
 import { v4 as uuidv4 } from "uuid";
 
+export interface Bet {
+    id: string;
+    team: string;
+    spread: string;
+    game: Game;
+}
+
+export interface Game {
+    gameId: string;
+    status: string;
+    date: Date;
+    homeTeam: TeamInfo;
+    awayTeam: TeamInfo;
+}
+
 export interface TeamInfo {
     color: string;
     logo: string;
@@ -89,9 +104,12 @@ const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" =
     }
 };
 
-export const getGamesByWeek = async (week: number, top25true: boolean): Promise<GameSelectionObject[]> => {
+export const getGamesByWeek = async (
+    week: number,
+    top25true: boolean
+): Promise<GameSelectionObject[]> => {
     const proxyUrl = "https://corsproxy.io/?";
-    const top25Url =`https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}`;
+    const top25Url = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}`;
     const fbsIAUrl = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}&groups=80`;
     const completeUrl = top25true ? `${proxyUrl}${top25Url}` : `${proxyUrl}${fbsIAUrl}`;
 
@@ -146,11 +164,11 @@ export const getGamesByWeek = async (week: number, top25true: boolean): Promise<
     return games;
 };
 
-export const getGameByID = async (
+export const getGameByGameID = async (
     id: string,
     team: string,
     spread: string
-): Promise<{ playerBetObject: PlayerBet; status: "ongoing" | "upcoming" | "final" }> => {
+): Promise<Bet> => {
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event=${id}`;
 
@@ -172,45 +190,44 @@ export const getGameByID = async (
             );
 
             if (homeTeam && awayTeam) {
-                const playerBetObject: PlayerBet = {
+                const bet: Bet = {
                     id: uuidv4(),
                     team: team,
                     spread: spread,
-                    date: new Date(competition.date),
-                    status: mappedStatus,
-                    link: link.href,
-                    homeTeam: {
-                        color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
-                        location: homeTeam.team.location,
-                        score: homeTeam.score ? homeTeam.score : 0,
-                        logo: homeTeam.team.logos[0].href,
-                        record: homeTeam.record[0].summary,
-                    },
-                    awayTeam: {
-                        color: awayTeam.team.color ? "#" + awayTeam.team.color : "#ffffff",
-                        location: awayTeam.team.location,
-                        score: awayTeam.score ? awayTeam.score : 0,
-                        logo: awayTeam.team.logos[0].href,
-                        record: awayTeam.record[0].summary,
+                    game: {
+                        gameId: id,
+                        status: mappedStatus,
+                        date: new Date(competition.date),
+                        homeTeam: {
+                            color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
+                            location: homeTeam.team.location,
+                            score: homeTeam.score ? homeTeam.score : 0,
+                            logo: homeTeam.team.logos[0].href,
+                            record: homeTeam.record[0].summary,
+                        },
+                        awayTeam: {
+                            color: awayTeam.team.color ? "#" + awayTeam.team.color : "#ffffff",
+                            location: awayTeam.team.location,
+                            score: awayTeam.score ? awayTeam.score : 0,
+                            logo: awayTeam.team.logos[0].href,
+                            record: awayTeam.record[0].summary,
+                        },
                     },
                 };
-                console.log("From Utils - playerBetObject: ", playerBetObject);
-                return {
-                    playerBetObject: playerBetObject,
-                    status: mappedStatus,
-                };
+                console.log("From Utils FETCH - bet: ", bet);
+                return bet;
             }
         }
     }
-    console.log("From Utils - EMPTY BET OBJECT RETURNED");
+    console.log("From Utils - EMPTY BET RETURNED");
     return {
-        playerBetObject: {
-            id: uuidv4(),
-            team: team,
-            spread: spread,
+        id: uuidv4(),
+        team: team,
+        spread: spread,
+        game: {
+            gameId: "",
+            status: "",
             date: new Date(),
-            status: "upcoming",
-            link: "",
             homeTeam: {
                 color: "",
                 location: "",
@@ -226,7 +243,6 @@ export const getGameByID = async (
                 record: "",
             },
         },
-        status: "upcoming",
     };
 };
 
@@ -452,15 +468,15 @@ export const playerBetArrayTestObject: PlayerBet[] = [
             location: "Notre Dame",
             score: "42",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/87.png",
-            record: "1-0"
+            record: "1-0",
         },
         awayTeam: {
             color: "#131630",
             location: "Navy",
             score: "3",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2426.png",
-            record: "0-1"
-        }
+            record: "0-1",
+        },
     },
     {
         id: "26f4702b-d079-4a6e-8776-32ec238521d3",
@@ -474,80 +490,80 @@ export const playerBetArrayTestObject: PlayerBet[] = [
             location: "USC",
             score: "56",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/30.png",
-            record: "1-0"
+            record: "1-0",
         },
         awayTeam: {
             color: "#005893",
             location: "San José State",
             score: "28",
             logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/23.png",
-            record: "0-1"
-        }
+            record: "0-1",
+        },
     },
-    // {
-    //     id: "9872faa7-b5ce-426c-b900-6e755f7020e1",
-    //     team: "TCU",
-    //     spread: "-2",
-    //     date: new Date("2023-09-02T16:00:00.000Z"),
-    //     status: "final",
-    //     link: "https://www.espn.com/college-football/game/_/gameId/401523994",
-    //     homeTeam: {
-    //         color: "#4d1979",
-    //         location: "TCU",
-    //         score: "42",
-    //         logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2628.png",
-    //         record: "0-1"
-    //     },
-    //     awayTeam: {
-    //         color: "#000000",
-    //         location: "Colorado",
-    //         score: "45",
-    //         logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/38.png",
-    //         record: "1-0"
-    //     }
-    // },
-    // {
-    //     id: "9acab633-90a6-495a-a71a-b5f655541022",
-    //     team: "Oklahoma",
-    //     spread: "-2",
-    //     date: new Date("2023-09-02T16:00:00.000Z"),
-    //     status: "final",
-    //     link: "https://www.espn.com/college-football/game/_/gameId/401525822",
-    //     homeTeam: {
-    //         color: "#a32036",
-    //         location: "Oklahoma",
-    //         score: "73",
-    //         logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/201.png",
-    //         record: "1-0"
-    //     },
-    //     awayTeam: {
-    //         color: "#e81018",
-    //         location: "Arkansas State",
-    //         score: "0",
-    //         logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2032.png",
-    //         record: "0-1"
-    //     }
-    // },
-    // {
-    //     id: "39845a07-e83e-467b-a159-c51a76fc91d2",
-    //     team: "Ohio State",
-    //     spread: "-2",
-    //     date: new Date("2023-09-02T19:30:00.000Z"),
-    //     status: "final",
-    //     link: "https://www.espn.com/college-football/game/_/gameId/401520156",
-    //     homeTeam: {
-    //         color: "#990000",
-    //         location: "Indiana",
-    //         score: "3",
-    //         logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/84.png",
-    //         record: "0-1"
-    //     },
-    //     awayTeam: {
-    //         color: "#ce1141",
-    //         location: "Ohio State",
-    //         score: "23",
-    //         logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/194.png",
-    //         record: "1-0"
-    //     }
-    // }
+    {
+        id: "9872faa7-b5ce-426c-b900-6e755f7020e1",
+        team: "TCU",
+        spread: "-2",
+        date: new Date("2023-09-02T16:00:00.000Z"),
+        status: "final",
+        link: "https://www.espn.com/college-football/game/_/gameId/401523994",
+        homeTeam: {
+            color: "#4d1979",
+            location: "TCU",
+            score: "42",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2628.png",
+            record: "0-1",
+        },
+        awayTeam: {
+            color: "#000000",
+            location: "Colorado",
+            score: "45",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/38.png",
+            record: "1-0",
+        },
+    },
+    {
+        id: "9acab633-90a6-495a-a71a-b5f655541022",
+        team: "Oklahoma",
+        spread: "-2",
+        date: new Date("2023-09-02T16:00:00.000Z"),
+        status: "final",
+        link: "https://www.espn.com/college-football/game/_/gameId/401525822",
+        homeTeam: {
+            color: "#a32036",
+            location: "Oklahoma",
+            score: "73",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/201.png",
+            record: "1-0",
+        },
+        awayTeam: {
+            color: "#e81018",
+            location: "Arkansas State",
+            score: "0",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2032.png",
+            record: "0-1",
+        },
+    },
+    {
+        id: "39845a07-e83e-467b-a159-c51a76fc91d2",
+        team: "Ohio State",
+        spread: "-2",
+        date: new Date("2023-09-02T19:30:00.000Z"),
+        status: "final",
+        link: "https://www.espn.com/college-football/game/_/gameId/401520156",
+        homeTeam: {
+            color: "#990000",
+            location: "Indiana",
+            score: "3",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/84.png",
+            record: "0-1",
+        },
+        awayTeam: {
+            color: "#ce1141",
+            location: "Ohio State",
+            score: "23",
+            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/194.png",
+            record: "1-0",
+        },
+    },
 ];
