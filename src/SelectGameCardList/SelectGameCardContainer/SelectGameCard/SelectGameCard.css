@@ -12,10 +12,15 @@
     background-color: #1d1e1f;
 }
 
-.SelectGameCard .spread{
+.SelectGameCard .extra-info{
     margin-top: 10px;
-    text-align: center;
     color: #a4a5a6;
     font-weight: 100;
     font-size: medium;
+    display: flex;
+    justify-content: space-between;
+}
+
+.SelectGameCard .spread{
+
 }

@@ -11,6 +11,7 @@ export interface Game {
     gameId: string;
     status: string;
     date: Date;
+    link: string;
     homeTeam: TeamInfo;
     awayTeam: TeamInfo;
 }
@@ -27,6 +28,7 @@ export interface GameSelectionObject {
     id: string;
     eventName: string;
     spread: string;
+    overUnder: string;
     date: Date;
     status: string;
     homeTeam: TeamInfo;
@@ -136,6 +138,7 @@ export const getGamesByWeek = async (
                         eventName: event.name,
                         date: new Date(event.date),
                         spread: competition.odds ? competition.odds[0].details : "N/A",
+                        overUnder: competition.odds ? competition.odds[0].overUnder : "N/A",
                         status: mappedStatus,
                         homeTeam: {
                             color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
@@ -200,6 +203,7 @@ export const getGameByGameID = async (
                         gameId: id,
                         status: mappedStatus,
                         date: new Date(competition.date),
+                        link: link.href,
                         homeTeam: {
                             color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
                             location: homeTeam.team.location,
@@ -230,6 +234,7 @@ export const getGameByGameID = async (
             gameId: "",
             status: "",
             date: new Date(),
+            link: "",
             homeTeam: {
                 color: "",
                 location: "",
@@ -249,11 +254,11 @@ export const getGameByGameID = async (
 };
 
 export const extractTeamsFromPlayerBet = (
-    playerBet: PlayerBet
+    playerBet: Bet
 ): { homeTeam: TeamInfo; awayTeam: TeamInfo } => {
     return {
-        homeTeam: playerBet.homeTeam,
-        awayTeam: playerBet.awayTeam,
+        homeTeam: playerBet.game.homeTeam,
+        awayTeam: playerBet.game.awayTeam,
     };
 };
 
@@ -334,6 +339,7 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         eventName: "Howard Bison at Eastern Michigan Eagles",
         date: new Date("2023-09-01T22:30:00.000Z"),
         spread: "EM -42.0",
+        overUnder: "50",
         status: "upcoming",
         homeTeam: {
             color: "#ffffff",
@@ -355,6 +361,7 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         eventName: "Central Michigan Chippewas at Michigan State Spartans",
         date: new Date("2023-09-01T23:00:00.000Z"),
         spread: "EM -42.0",
+        overUnder: "50",
         status: "upcoming",
         homeTeam: {
             color: "#ffffff",
@@ -376,6 +383,7 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         eventName: "Miami (OH) RedHawks at Miami Hurricanes",
         date: new Date("2023-09-01T23:00:00.000Z"),
         spread: "EM -42.0",
+        overUnder: "50",
         status: "upcoming",
         homeTeam: {
             color: "#ffffff",
@@ -397,6 +405,7 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         eventName: "Louisville Cardinals at Georgia Tech Yellow Jackets",
         date: new Date("2023-09-01T23:30:00.000Z"),
         spread: "EM -42.0",
+        overUnder: "50",
         status: "upcoming",
         homeTeam: {
             color: "#ffffff",
@@ -418,6 +427,7 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         eventName: "Missouri State Bears at Kansas Jayhawks",
         date: new Date("2023-09-02T00:00:00.000Z"),
         spread: "EM -42.0",
+        overUnder: "50",
         status: "upcoming",
         homeTeam: {
             color: "#ffffff",
@@ -439,6 +449,7 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
         eventName: "Stanford Cardinal at Hawai'i Rainbow Warriors",
         date: new Date("2023-09-02T03:00:00.000Z"),
         spread: "EM -42.0",
+        overUnder: "50",
         status: "upcoming",
         homeTeam: {
             color: "#ffffff",
@@ -457,115 +468,30 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
     },
 ];
 
-export const playerBetArrayTestObject: PlayerBet[] = [
+export const betArrayTestObject: Bet[] = [
     {
         id: "d7baf1ab-fb7b-4897-a406-4918b27e4984",
         team: "Notre Dame",
-        spread: "-2",
-        date: new Date("2023-08-26T18:30:00.000Z"),
-        status: "final",
-        link: "https://www.espn.com/college-football/game/_/gameId/401525434",
-        homeTeam: {
-            color: "#0c2340",
-            location: "Notre Dame",
-            score: "42",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/87.png",
-            record: "1-0",
-        },
-        awayTeam: {
-            color: "#131630",
-            location: "Navy",
-            score: "3",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2426.png",
-            record: "0-1",
-        },
-    },
-    {
-        id: "26f4702b-d079-4a6e-8776-32ec238521d3",
-        team: "USC",
-        spread: "-2",
-        date: new Date("2023-08-27T00:00:00.000Z"),
-        status: "final",
-        link: "https://www.espn.com/college-football/game/_/gameId/401523986",
-        homeTeam: {
-            color: "#9e2237",
-            location: "USC",
-            score: "56",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/30.png",
-            record: "1-0",
-        },
-        awayTeam: {
-            color: "#005893",
-            location: "San José State",
-            score: "28",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/23.png",
-            record: "0-1",
-        },
-    },
-    {
-        id: "9872faa7-b5ce-426c-b900-6e755f7020e1",
-        team: "TCU",
-        spread: "-2",
-        date: new Date("2023-09-02T16:00:00.000Z"),
-        status: "final",
-        link: "https://www.espn.com/college-football/game/_/gameId/401523994",
-        homeTeam: {
-            color: "#4d1979",
-            location: "TCU",
-            score: "42",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2628.png",
-            record: "0-1",
-        },
-        awayTeam: {
-            color: "#000000",
-            location: "Colorado",
-            score: "45",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/38.png",
-            record: "1-0",
-        },
-    },
-    {
-        id: "9acab633-90a6-495a-a71a-b5f655541022",
-        team: "Oklahoma",
-        spread: "-2",
-        date: new Date("2023-09-02T16:00:00.000Z"),
-        status: "final",
-        link: "https://www.espn.com/college-football/game/_/gameId/401525822",
-        homeTeam: {
-            color: "#a32036",
-            location: "Oklahoma",
-            score: "73",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/201.png",
-            record: "1-0",
-        },
-        awayTeam: {
-            color: "#e81018",
-            location: "Arkansas State",
-            score: "0",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2032.png",
-            record: "0-1",
-        },
-    },
-    {
-        id: "39845a07-e83e-467b-a159-c51a76fc91d2",
-        team: "Ohio State",
-        spread: "-2",
-        date: new Date("2023-09-02T19:30:00.000Z"),
-        status: "final",
-        link: "https://www.espn.com/college-football/game/_/gameId/401520156",
-        homeTeam: {
-            color: "#990000",
-            location: "Indiana",
-            score: "3",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/84.png",
-            record: "0-1",
-        },
-        awayTeam: {
-            color: "#ce1141",
-            location: "Ohio State",
-            score: "23",
-            logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/194.png",
-            record: "1-0",
+        spread: "-9.5",
+        game: {
+            gameId: "401525434",
+            status: "ongoing",
+            date: new Date("2023-08-26T18:30:00.000Z"),
+            link: "https://www.espn.com/college-football/game/_/gameId/401525434",
+            homeTeam: {
+                color: "#0c2340",
+                location: "Notre Dame",
+                score: "42",
+                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/87.png",
+                record: "1-0",
+            },
+            awayTeam: {
+                color: "#131630",
+                location: "Navy",
+                score: "3",
+                logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2426.png",
+                record: "0-1",
+            },
         },
     },
 ];

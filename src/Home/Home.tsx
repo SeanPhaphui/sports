@@ -7,11 +7,12 @@ import {
     BetObject,
     GameSelectionObject,
     PlayerBet,
+    betArrayTestObject,
     getGamesByWeek,
-    playerBetArrayTestObject,
 } from "../Utils/Utils";
 import Weeks from "../Weeks/Weeks";
 import "./Home.css";
+import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
 
 const Home: React.FC = () => {
     const [games, setGames] = useState<GameSelectionObject[]>([]);
@@ -60,9 +61,9 @@ const Home: React.FC = () => {
 
             <div className="body">
                 <PlayerPicks playerBets={bets} handleRemoveBet={handleRemoveBet}/>
-                {/* {playerBets.map((playerBet) => (
-                    <PlayerBetCard key={playerBet.id} playerBet={playerBet} />
-                ))} */}
+                {bets.map((bet) => (
+                    <PlayerBetCard key={bet.id} bet={bet} />
+                ))}
                 <SelectGameCardList
                     gameSelections={games}
                     filterText={filterText}
