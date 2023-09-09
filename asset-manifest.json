@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/sports/static/css/main.8174ddde.css",
-    "main.js": "/sports/static/js/main.3caeb655.js",
+    "main.js": "/sports/static/js/main.ae84238f.js",
     "static/js/787.f87d2b1c.chunk.js": "/sports/static/js/787.f87d2b1c.chunk.js",
     "static/media/IBMPlexSans-SemiBold.ttf": "/sports/static/media/IBMPlexSans-SemiBold.fffccb38819b2f4eb6ab.ttf",
     "static/media/IBMPlexSans-Medium.ttf": "/sports/static/media/IBMPlexSans-Medium.4c69d30a49b3ad04d7df.ttf",
@@ -65,11 +65,11 @@
     "static/media/roboto-greek-ext-700-normal.woff": "/sports/static/media/roboto-greek-ext-700-normal.249853776d22a271b2b5.woff",
     "index.html": "/sports/index.html",
     "main.8174ddde.css.map": "/sports/static/css/main.8174ddde.css.map",
-    "main.3caeb655.js.map": "/sports/static/js/main.3caeb655.js.map",
+    "main.ae84238f.js.map": "/sports/static/js/main.ae84238f.js.map",
     "787.f87d2b1c.chunk.js.map": "/sports/static/js/787.f87d2b1c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.8174ddde.css",
-    "static/js/main.3caeb655.js"
+    "static/js/main.ae84238f.js"
   ]
 }
