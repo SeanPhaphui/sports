@@ -4,7 +4,6 @@ import {
 import React, { useEffect, useState } from "react";
 import {
     GameCalendarObject,
-    GameSelectionObject,
     fetchGameCalendar,
     getGamesByWeek
 } from "../Utils/Utils";

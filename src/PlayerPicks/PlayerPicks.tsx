@@ -62,7 +62,7 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
 
     const renderItem = (playerBet: Bet) => {
         const teamInfo = getTeamInfo(playerBet);
-        const opponentTeamInfo = playerBet.team === teamInfo.location ? playerBet.game.awayTeam : playerBet.game.homeTeam;
+        const opponentTeamInfo = getOpponentTeamInfo(playerBet);
         const tintedColor = getTintedColor(teamInfo);
         return (
             <ListItem

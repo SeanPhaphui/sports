@@ -59,7 +59,6 @@ const Info: React.FC<InfoProps> = (props) => {
                         {homeTeam.score}
                     </div>
                 </div>
-
                 <Divider orientation="vertical" flexItem />
                 {showRecord ? (
                     <div className="records">

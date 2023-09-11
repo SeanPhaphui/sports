@@ -36,7 +36,7 @@
 .Info .right .scores .score,
 .Info .right .records .record {
     height: 4vh;
-    width: 4vh;
+    width: 6vh;
     display: flex;
     justify-content: center;
     align-items: center;

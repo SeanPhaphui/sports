@@ -3,7 +3,6 @@ import React from "react";
 import "./PlayerBetCard.css";
 import {
   Bet,
-  PlayerBet,
   extractTeamsFromPlayerBet,
   formatDate,
 } from "../Utils/Utils";
@@ -88,7 +87,7 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
       return { message: "Currently matching the spread", color: outcomeColor };
     } else if (outcome === "win") {
       return {
-        message: `Currently winning by ${gapFromSpread} ${getPointOrPoints(
+        message: `Currently covering by ${gapFromSpread} ${getPointOrPoints(
           gapFromSpread
         )}`,
         color: outcomeColor,
