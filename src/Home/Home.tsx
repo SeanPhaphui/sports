@@ -4,18 +4,20 @@ import PlayerPicks from "../PlayerPicks/PlayerPicks";
 import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
 import {
     Bet,
-    BetObject,
-    GameSelectionObject,
-    PlayerBet,
+    Game,
     betArrayTestObject,
+    getGameByGameID,
     getGamesByWeek,
+    loadBetsFromLocalStorage,
+    updateBets,
 } from "../Utils/Utils";
 import Weeks from "../Weeks/Weeks";
 import "./Home.css";
 import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
+import DataManager from "../DataManager/DataManager";
 
 const Home: React.FC = () => {
-    const [games, setGames] = useState<GameSelectionObject[]>([]);
+    const [games, setGames] = useState<Game[]>([]);
 
     const [filterText, setFilterText] = useState<string>(""); // Step 1: State for filter text'
 
@@ -47,6 +49,32 @@ const Home: React.FC = () => {
         setFilterText("");
     };
 
+
+        // Then, in a useEffect hook, you can load the value from localStorage
+    // when the component first mounts.
+    useEffect(() => {
+        const fetchUpdatedBets = async (originalBets: Bet[]) => {
+            const updated = await updateBets(originalBets);
+            setBets(updated);
+        };
+    
+        const loadedBets = loadBetsFromLocalStorage();
+        if (loadedBets) {
+            fetchUpdatedBets(loadedBets);
+        }
+    }, []);
+    
+
+    // You can also use another useEffect to save the value to localStorage
+    // whenever it changes.   
+    useEffect(() => {
+        localStorage.setItem('Bets-Prototype-V1', JSON.stringify(bets));
+    }, [bets]);
+
+    const refreshPage = () => {
+        window.location.reload();
+    };
+
     return (
         <div className="Home">
             <div className="top-bar">
@@ -60,12 +88,14 @@ const Home: React.FC = () => {
             </div>
 
             <div className="body">
+                <DataManager bets={bets} restoreBets={(bets) => setBets(bets)} clearBets={() => setBets([])}/>
+                <button onClick={refreshPage}>Refresh Page</button>
                 <PlayerPicks playerBets={bets} handleRemoveBet={handleRemoveBet}/>
                 {bets.map((bet) => (
                     <PlayerBetCard key={bet.id} bet={bet} />
                 ))}
                 <SelectGameCardList
-                    gameSelections={games}
+                    game={games}
                     filterText={filterText}
                     handleAddBet={handleAddBet}
                 />
