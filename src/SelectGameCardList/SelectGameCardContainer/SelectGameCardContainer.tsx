@@ -1,11 +1,11 @@
 import React from "react";
-import { Bet, BetObject, GameSelectionObject } from "../../Utils/Utils";
+import { Bet, Game } from "../../Utils/Utils";
 import SelectGameCard from "./SelectGameCard/SelectGameCard";
 import { Dialog, DialogTitle } from "@mui/material";
 import SelectGameCardDialog from "./SelectGameCardDialog/SelectGameCardDialog";
 
 interface SelectGameCardContainerProps {
-    game: GameSelectionObject;
+    game: Game;
     handleAddBet: (bet: Bet) => void;
 }
 
@@ -31,7 +31,7 @@ const SelectGameCardContainer: React.FC<SelectGameCardContainerProps> = (props) 
         <div>
             <SelectGameCard game={game} openDialog={handleClickOpen}/>
             <Dialog onClose={handleClose} open={open}>
-                <DialogTitle>Pick Team & Spread</DialogTitle>
+                <DialogTitle>Place Bet</DialogTitle>
                 <SelectGameCardDialog game={game} handleAddBet={handleCloseAndAdd}/>
             </Dialog>
         </div>

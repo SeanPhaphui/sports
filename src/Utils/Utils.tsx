@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
 export interface Bet {
@@ -9,11 +10,19 @@ export interface Bet {
 
 export interface Game {
     gameId: string;
+    eventName: string;
     status: string;
+    statusDetail: string;
     date: Date;
     link: string;
+    odds: Odds;
     homeTeam: TeamInfo;
     awayTeam: TeamInfo;
+}
+
+export interface Odds {
+    spread: string;
+    overUnder: string;
 }
 
 export interface TeamInfo {
@@ -24,35 +33,6 @@ export interface TeamInfo {
     record: string;
 }
 
-export interface GameSelectionObject {
-    id: string;
-    eventName: string;
-    spread: string;
-    overUnder: string;
-    date: Date;
-    status: string;
-    homeTeam: TeamInfo;
-    awayTeam: TeamInfo;
-}
-
-export interface BetObject {
-    uniqueId: string;
-    gameId: string;
-    team: string;
-    spread: string;
-    status?: "final" | "ongoing" | "upcoming"; // Add more statuses as needed
-}
-
-export interface PlayerBet {
-    id: string;
-    team: string;
-    link: string;
-    spread: string;
-    date: Date;
-    status: string;
-    homeTeam: TeamInfo;
-    awayTeam: TeamInfo;
-}
 export interface GameCalendarObject {
     label: string;
     detail: string;
@@ -111,14 +91,14 @@ const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" =
 export const getGamesByWeek = async (
     week: number,
     top25true: boolean
-): Promise<GameSelectionObject[]> => {
+): Promise<Game[]> => {
     const proxyUrl = "https://corsproxy.io/?";
     const top25Url = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}`;
     const fbsIAUrl = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}&groups=80`;
     const completeUrl = top25true ? `${proxyUrl}${top25Url}` : `${proxyUrl}${fbsIAUrl}`;
 
     const data = await fetchData(completeUrl);
-    const games: GameSelectionObject[] = [];
+    const games: Game[] = [];
     if (data?.events) {
         for (const event of data.events) {
             const competition = event.competitions[0];
@@ -133,13 +113,17 @@ export const getGamesByWeek = async (
                 );
 
                 if (homeTeam && awayTeam) {
-                    const game: GameSelectionObject = {
-                        id: event.id,
+                    const game: Game = {
+                        gameId: event.id,
                         eventName: event.name,
-                        date: new Date(event.date),
-                        spread: competition.odds ? competition.odds[0].details : "N/A",
-                        overUnder: competition.odds ? competition.odds[0].overUnder : "N/A",
                         status: mappedStatus,
+                        statusDetail: competition.status.type.shortDetail,
+                        date: new Date(event.date),
+                        link: event.links[0].href,
+                        odds: {
+                            spread: competition.odds ? competition.odds[0].details : "N/A",
+                            overUnder: (competition.odds && competition.odds[0].overUnder) ? competition.odds[0].overUnder : "N/A",
+                        },
                         homeTeam: {
                             color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
                             logo: homeTeam.team.logo
@@ -201,9 +185,15 @@ export const getGameByGameID = async (
                     spread: spread,
                     game: {
                         gameId: id,
+                        eventName: "",
                         status: mappedStatus,
+                        statusDetail: competition.status.type.shortDetail,
                         date: new Date(competition.date),
                         link: link.href,
+                        odds: {
+                            spread: "",
+                            overUnder: ""
+                        },
                         homeTeam: {
                             color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
                             location: homeTeam.team.location,
@@ -232,9 +222,15 @@ export const getGameByGameID = async (
         spread: spread,
         game: {
             gameId: "",
+            eventName: "",
             status: "",
+            statusDetail: "",
             date: new Date(),
             link: "",
+            odds: {
+                spread: "",
+                overUnder: ""
+            },
             homeTeam: {
                 color: "",
                 location: "",
@@ -253,6 +249,22 @@ export const getGameByGameID = async (
     };
 };
 
+export const updateBets = async (bets: Bet[]): Promise<Bet[]> => {
+    const updatedBets = [];
+
+    for (let bet of bets) {
+        try {
+            const updatedBet = await getGameByGameID(bet.game.gameId, bet.team, bet.spread);
+            updatedBets.push(updatedBet);
+        } catch (error) {
+            console.error(`Failed to update bet with ID ${bet.id}`);
+            updatedBets.push(bet);  // Push the original bet if updating fails.
+        }
+    }
+
+    return updatedBets;
+};
+
 export const extractTeamsFromPlayerBet = (
     playerBet: Bet
 ): { homeTeam: TeamInfo; awayTeam: TeamInfo } => {
@@ -262,12 +274,12 @@ export const extractTeamsFromPlayerBet = (
     };
 };
 
-export const extractTeamsFromGameSelection = (
-    gameSelection: GameSelectionObject
+export const extractTeamsFromGame = (
+    game: Game
 ): { homeTeam: TeamInfo; awayTeam: TeamInfo } => {
     return {
-        homeTeam: gameSelection.homeTeam,
-        awayTeam: gameSelection.awayTeam,
+        homeTeam: game.homeTeam,
+        awayTeam: game.awayTeam,
     };
 };
 
@@ -282,6 +294,25 @@ export const formatDate = (d: Date): string => {
     const formattedMinute = minute < 10 ? `0${minute}` : minute; // to make sure minutes are always two digits
 
     return `${weekday}, ${month}/${day}, ${hour12}:${formattedMinute} ${period}`;
+};
+
+export const loadBetsFromLocalStorage = (): Bet[] | null => {
+    const storedBets = localStorage.getItem("Bets-Prototype-V1");
+    if (storedBets) {
+        const parsedBets: Bet[] = JSON.parse(storedBets);
+        const mappedBets = parsedBets.map((bet) => ({
+            ...bet,
+            date: new Date(bet.game.date),
+        }));
+        return mappedBets;
+    }
+    return null;
+};
+
+export const convertToLocalTime = (utcDate: Date): Date => {
+    const utcTime = utcDate.getTime() + utcDate.getTimezoneOffset() * 60000;
+    const localOffset = new Date().getTimezoneOffset() * 60000;  // Local device's timezone offset in milliseconds
+    return new Date(utcTime - localOffset);  // Adjust the date to local timezone
 };
 
 // Old way of getting spread relative to bet
@@ -303,37 +334,7 @@ export const formatDate = (d: Date): string => {
 //     return null; // In case neither condition matches, though based on the given logic it shouldn't be the case.
 // };
 
-// Attempt to stop unneccasry fetching
-// useEffect(() => {
-//     if (bets.length > 0) {
-//         const fetchPlayerBets = async () => {
-//             const newPlayerBets: PlayerBetObject[] = [];
-//             const newBets: BetObject[] = [...bets];  // Create a copy of bets
-
-//             for (let i = 0; i < bets.length; i++) {
-//                 const bet = bets[i];
-//                 if (bet.status !== 'final') {
-//                     try {
-//                         const { playerBetObject, status } = await getGameByID(bet.gameId, bet.team, bet.spread);
-
-//                         newPlayerBets.push(playerBetObject);
-//                         newBets[i] = { ...newBets[i], status };  // Update the status of the current bet
-
-//                     } catch (error) {
-//                         console.error(`Error fetching game for bet ${bet.gameId}:`, error);
-//                     }
-//                 }
-//             }
-
-//             setPlayerBets(newPlayerBets);
-//             setBets(newBets);  // Update the bets state with the updated statuses
-//         };
-
-//         fetchPlayerBets();
-//     }
-// }, [bets]);
-
-export const gameSelectionArrayTestObject: GameSelectionObject[] = [
+export const gameSelectionArrayTestObject = [
     {
         id: "401532394",
         eventName: "Howard Bison at Eastern Michigan Eagles",
@@ -468,7 +469,7 @@ export const gameSelectionArrayTestObject: GameSelectionObject[] = [
     },
 ];
 
-export const betArrayTestObject: Bet[] = [
+export const betArrayTestObject = [
     {
         id: "d7baf1ab-fb7b-4897-a406-4918b27e4984",
         team: "Notre Dame",

@@ -12,6 +12,47 @@
     background-color: #1d1e1f;
 }
 
+.SelectGameCard .time {
+    margin-bottom: 10px;
+    color: #a4a5a6;
+    display: flex;
+    align-items: center;
+}
+
+.SelectGameCard .time .MuiSvgIcon-root {
+    font-size: 1rem !important;
+}
+
+.SelectGameCard .live-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@keyframes pulsateGlow {
+    0% {
+        filter: drop-shadow(0 0 5px #4CAF50);
+    }
+    50% {
+        filter: drop-shadow(0 0 10px #66FF66) drop-shadow(0 0 20px #33FF33);
+    }
+    100% {
+        filter: drop-shadow(0 0 5px #4CAF50);
+    }
+}
+
+.SelectGameCard .live-status .MuiSvgIcon-root {
+    color: #4CAF50;  /* Set the icon color to a shade of green */
+    filter: drop-shadow(0 0 5px #4CAF50) drop-shadow(0 0 10px #66FF66) drop-shadow(0 0 15px #33FF33);
+    animation: pulsateGlow 3s infinite;
+}
+
+.SelectGameCard .info-divider {
+    border-color: rgba(255, 255, 255, 0.12);
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .SelectGameCard .extra-info{
     margin-top: 10px;
     color: #a4a5a6;
@@ -19,8 +60,4 @@
     font-size: medium;
     display: flex;
     justify-content: space-between;
-}
-
-.SelectGameCard .spread{
-
 }
