@@ -41,7 +41,7 @@ const SelectGameCard: React.FC<SelectGameCardProps> = (props) => {
           </div>
         )}
         {game.status === "final" ? (
-          <Info homeTeam={homeTeam} awayTeam={awayTeam} showRecord={true} />
+          <Info homeTeam={homeTeam} awayTeam={awayTeam} showRecord={true} showTotal={false}/>
         ) : (
           <div>
             <UpcomingInfo homeTeam={homeTeam} awayTeam={awayTeam} />

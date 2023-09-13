@@ -12,7 +12,7 @@ type SpreadBet = {
 type OverUnderBet = {
     id: string;
     team: string;
-    type: 'overUnder';
+    type: 'over' | 'under';
     value: string;
     game: Game;
 }
@@ -170,7 +170,7 @@ export const getGamesByWeek = async (
 export const getGameByGameID = async (
     id: string,
     team: string,
-    type: "overUnder" | "spread",
+    type: "spread" | "over" | "under",
     value: string
 ): Promise<Bet> => {
     const proxyUrl = "https://corsproxy.io/?";
@@ -494,13 +494,13 @@ export const betArrayTestObject: Bet[] = [
     {
         id: "d7baf1ab-fb7b-4897-a406-4918b27e4984",
         team: "Ball State",
-        type: "spread",
-        value: "-13",
+        type: "under",
+        value: "42",
         game: {
             gameId: "401520191",
             eventName: "",
-            status: "final",
-            statusDetail: "Final",
+            status: "ongoing",
+            statusDetail: "4th - 4:15",
             date: new Date("2023-08-26T18:30:00.000Z"),
             link: "https://www.espn.com/college-football/game/_/gameId/401525434",
             odds: {
@@ -510,7 +510,7 @@ export const betArrayTestObject: Bet[] = [
             homeTeam: {
                 color: "#0c2340",
                 location: "Notre Dame",
-                abbreviation: "",
+                abbreviation: "XYZ",
                 score: "42",
                 logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/87.png",
                 record: "1-0",
@@ -518,7 +518,7 @@ export const betArrayTestObject: Bet[] = [
             awayTeam: {
                 color: "#131630",
                 location: "Navy",
-                abbreviation: "",
+                abbreviation: "ZXC",
                 score: "3",
                 logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2426.png",
                 record: "0-1",

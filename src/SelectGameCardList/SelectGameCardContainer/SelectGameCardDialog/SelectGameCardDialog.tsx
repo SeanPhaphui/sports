@@ -6,6 +6,7 @@ import SpreadSign from "./SpreadSign/SpreadSign";
 import AddBet from "./AddBet/AddBet";
 import { TransitionGroup } from "react-transition-group";
 import "./SelectGameCardDialog.css";
+import OverUnder from "./OverUnder/OverUnder";
 
 interface SelectGameCardDialogProps {
     game: Game;
@@ -37,9 +38,10 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({ game, handl
     const initialSpreadSign =
         game.odds.spread === "N/A" ? "" : game.odds.spread.includes("-") ? "-" : "+";
     const [spreadSign, setSpreadSign] = useState<string>(initialSpreadSign);
+    const [overUnder, setOverUnder] = useState<string>("");
     const [disableAddBet, setDisableAddBet] = useState<boolean>(true);
     const [defaultTextValue, setDefaultTextValue] = useState<string>("");
-    const [betType, setBetType] = useState<"overUnder" | "spread">("spread");
+    const [betType, setBetType] = useState<"spread" | "over" | "under" | undefined>("spread");
     const [betValue, setBetValue] = useState<string>();
     const [betSelection, setBetSelection] = useState<string>("Spread");
 
@@ -64,11 +66,11 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({ game, handl
 
     useEffect(() => {
         if (betSelection === "Over/Under") {
+            setBetType(undefined);
             const newDefaultValue = game.odds.overUnder === "N/A" ? "" : game.odds.overUnder;
             if (defaultTextValue !== newDefaultValue) {
                 setDefaultTextValue(newDefaultValue);
             }
-            setBetType("overUnder");
             if (game.odds.overUnder !== "N/A") {
                 setBetValue(game.odds.overUnder);
             }
@@ -165,6 +167,17 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({ game, handl
                             <SpreadSign
                                 onSpreadSignChange={setSpreadSign}
                                 spreadSign={spreadSign}
+                            />
+                        </div>
+                    </Collapse>
+                )}
+            </TransitionGroup>
+            <TransitionGroup>
+                {betSelection !== "Spread" && (
+                    <Collapse in={true}>
+                        <div className="item">
+                            <OverUnder
+                                onOverUnderChange={setBetType}
                             />
                         </div>
                     </Collapse>

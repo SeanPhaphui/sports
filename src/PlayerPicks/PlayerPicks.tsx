@@ -48,14 +48,14 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
     const gradientBackground =
     playerBets.length === 1
         ? {
-              background: playerBets[0].type === 'overUnder'
+              background:  (playerBets[0].type === "over" || playerBets[0].type === "under")
                   ? `linear-gradient(to right, black, ${playerBets[0].game.awayTeam.color}, ${playerBets[0].game.homeTeam.color}, black)`
                   : `linear-gradient(to right, black, ${getTeamInfo(playerBets[0]).color}, black)`,
               animation: "pulsateBar 4s infinite",
           }
         : {
               background: `linear-gradient(to right, ${playerBets
-                  .map((playerBet) => playerBet.type === 'overUnder' 
+                  .map((playerBet) => (playerBet.type === "over" || playerBet.type === "under")
                       ? [playerBet.game.awayTeam.color, playerBet.game.homeTeam.color] 
                       : getTeamInfo(playerBet).color
                   )
@@ -139,7 +139,7 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText
-                            primary={`Over/Under: ${bet.value}`}
+                            primary={bet.type.charAt(0).toUpperCase() + bet.type.slice(1) + ": " + bet.value}
                             secondary={`${bet.game.awayTeam.abbreviation} vs ${bet.game.homeTeam.abbreviation}`}
                         />
                     </div>

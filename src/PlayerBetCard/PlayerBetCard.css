@@ -26,12 +26,6 @@
     align-items: center;
 }
 
-.PlayerBetCard .card .ongoing-top > .MuiSvgIcon-root,
-.ongoing-top > div:last-child {
-    width: 24px; /* This is an example width; set this to the actual width of the LiveTvIcon or as required */
-    flex-shrink: 0; /* This ensures that the icon and the div don't shrink */
-}
-
 @keyframes pulsateGlow {
     0% {
         filter: drop-shadow(0 0 5px #4CAF50);

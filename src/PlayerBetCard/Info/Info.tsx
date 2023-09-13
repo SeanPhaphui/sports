@@ -5,12 +5,13 @@ import "./Info.css";
 
 interface InfoProps {
     showRecord: boolean;
+    showTotal: boolean
     homeTeam: TeamInfo;
     awayTeam: TeamInfo;
 }
 
 const Info: React.FC<InfoProps> = (props) => {
-    const { homeTeam, awayTeam, showRecord } = props;
+    const { homeTeam, awayTeam, showRecord, showTotal } = props;
 
     // Extract scores for clarity
     const homeScore = parseFloat(homeTeam.score);
@@ -65,6 +66,11 @@ const Info: React.FC<InfoProps> = (props) => {
                         <div className="record">{awayTeam.record}</div>
                         <div className="info-divider"></div>
                         <div className="record">{homeTeam.record}</div>
+                    </div>
+                ) : showTotal ? (
+                    <div className="gap">
+                        <div>Total</div>
+                        <div>{homeScore + awayScore}</div>
                     </div>
                 ) : (
                     <div className="gap">
