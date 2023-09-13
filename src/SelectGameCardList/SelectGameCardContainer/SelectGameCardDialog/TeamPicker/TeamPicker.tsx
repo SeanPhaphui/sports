@@ -1,16 +1,17 @@
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./TeamPicker.css";
 
 interface TeamPickerProps {
     homeTeam: string;
     awayTeam: string;
+    team: string | undefined;
     onTeamChange: (team: string) => void;
 }
 
-const TeamPicker: React.FC<TeamPickerProps> = (props) => {
-    const { homeTeam, awayTeam, onTeamChange } = props;
-    const [alignment, setAlignment] = useState<string>();
+const TeamPicker: React.FC<TeamPickerProps> = ({ homeTeam, awayTeam, team, onTeamChange }) => {
+    const [alignment, setAlignment] = useState<string | undefined>(team);
+    
     const handleChange = (
         event: React.MouseEvent<HTMLElement>,
         newAlignment: string
@@ -18,6 +19,10 @@ const TeamPicker: React.FC<TeamPickerProps> = (props) => {
         setAlignment(newAlignment);
         onTeamChange(newAlignment);
     };
+
+    useEffect(() => {
+        setAlignment(team)
+    }, [team]);
 
     return (
         <div className="TeamPicker">

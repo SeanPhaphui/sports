@@ -1,107 +1,180 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Bet, Game, getGameByGameID } from "../../../Utils/Utils";
 import TeamPicker from "./TeamPicker/TeamPicker";
-import "./SelectGameCardDialog.css";
-import { TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Collapse, TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import SpreadSign from "./SpreadSign/SpreadSign";
-import AddSpread from "./AddSpread/AddSpread";
-import { v4 as uuidv4 } from "uuid";
+import AddBet from "./AddBet/AddBet";
+import { TransitionGroup } from "react-transition-group";
+import "./SelectGameCardDialog.css";
 
 interface SelectGameCardDialogProps {
-  game: Game;
-  handleAddBet: (bet: Bet) => void;
+    game: Game;
+    handleAddBet: (bet: Bet) => void;
 }
 
-const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = (props) => {
-  const { game, handleAddBet } = props;
+const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({ game, handleAddBet }) => {
+    const extractSpreadDetails = (spread: string) => {
+        const spreadPattern = /([A-Z]+)\s*([-+]?)\s*([\d.]+)/;
+        const spreadMatch = spread.match(spreadPattern);
+        if (spreadMatch) {
+            return {
+                teamAbbreviation: spreadMatch[1],
+                spreadSign: spreadMatch[2] || "+",
+                spreadValue: spreadMatch[3],
+            };
+        }
+        return null;
+    };
+    const initialTeam =
+        extractSpreadDetails(game.odds.spread)?.teamAbbreviation === game.homeTeam.abbreviation
+            ? game.homeTeam.location
+            : extractSpreadDetails(game.odds.spread)?.teamAbbreviation ===
+              game.awayTeam.abbreviation
+            ? game.awayTeam.location
+            : undefined;
+    const [team, setTeam] = useState<string | undefined>(initialTeam);
 
-  const [team, setTeam] = useState<string>();
-  const [spread, setSpread] = useState<string>();
-  const [spreadSign, setSpreadSign] = useState<string>();
-  const [disableAddSpread, setDisableAddSpread] = useState<boolean>(true);
+    const initialSpreadSign =
+        game.odds.spread === "N/A" ? "" : game.odds.spread.includes("-") ? "-" : "+";
+    const [spreadSign, setSpreadSign] = useState<string>(initialSpreadSign);
+    const [disableAddBet, setDisableAddBet] = useState<boolean>(true);
+    const [defaultTextValue, setDefaultTextValue] = useState<string>("");
+    const [betType, setBetType] = useState<"overUnder" | "spread">("spread");
+    const [betValue, setBetValue] = useState<string>();
+    const [betSelection, setBetSelection] = useState<string>("Spread");
 
-  useEffect(() => {
-    if (team && spread && spreadSign) {
-      setDisableAddSpread(false);
-    } else {
-      setDisableAddSpread(true);
-    }
-  }, [team, spread, spreadSign]);
 
-  const handleSpreadSignUpdate = (spreadSign: string) => {
-    setSpreadSign(spreadSign);
-  };
 
-  const inputProps = {
-    type: "tel",
-    pattern: "-?[0-9]*\\.?[0-9]+",
-    inputmode: "decimal",
-  };
+    const inputProps = {
+        type: "tel",
+        pattern: "-?[0-9]*\\.?[0-9]+",
+        inputmode: "decimal",
+    };
 
-  const buildBet = async () => {
-    if (team && spread && spreadSign) {
-      const bet: Bet = await getGameByGameID(game.gameId, team, spreadSign + spread);
-      handleAddBet(bet);
-    }
-  };
+    const handleChange = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
+        if (newAlignment !== null) {
+            setBetSelection(newAlignment);
+        }
+    };
 
-  const [alignment, setAlignment] = useState<string>();
-  const handleChange = (
-      event: React.MouseEvent<HTMLElement>,
-      newAlignment: string
-  ) => {
-      setAlignment(newAlignment);
-  };
+    const handleBetValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setBetValue(e.target.value);
+        setDefaultTextValue(e.target.value);
+    };
 
-  return (
-    <div className="SelectGameCardDialog">
-      <div className="item">
-        <div className="TeamPicker">
-          <ToggleButtonGroup
-            color="primary"
-            fullWidth
-            value={alignment}
-            exclusive
-            onChange={handleChange}
-          >
-            <ToggleButton className="left-toggle-button" value="Spread">
-              Spread
-            </ToggleButton>
-            <ToggleButton className="right-toggle-button" value="OU">
-              Over Under
-            </ToggleButton>
-          </ToggleButtonGroup>
+    useEffect(() => {
+        if (betSelection === "Over/Under") {
+            const newDefaultValue = game.odds.overUnder === "N/A" ? "" : game.odds.overUnder;
+            if (defaultTextValue !== newDefaultValue) {
+                setDefaultTextValue(newDefaultValue);
+            }
+            setBetType("overUnder");
+            if (game.odds.overUnder !== "N/A") {
+                setBetValue(game.odds.overUnder);
+            }
+            setTeam(`${game.awayTeam.location}\\${game.homeTeam.location}`);
+        } else {
+            const teamAbbreviation = extractSpreadDetails(game.odds.spread)?.teamAbbreviation;
+            const spreadSignValue = extractSpreadDetails(game.odds.spread)?.spreadSign || "+"; // Defaults to positive if no sign captured
+            const spreadValue = extractSpreadDetails(game.odds.spread)?.spreadValue;
+
+            setSpreadSign(spreadSignValue);
+            if (spreadValue) {
+                setDefaultTextValue(spreadValue);
+            } else {
+                setDefaultTextValue("");
+            }
+            setBetValue(spreadValue);
+
+            // Check for teamAbbreviation match and set the team location
+            if (teamAbbreviation === game.homeTeam.abbreviation) {
+                setTeam(game.homeTeam.location);
+            } else if (teamAbbreviation === game.awayTeam.abbreviation) {
+                setTeam(game.awayTeam.location);
+            } else {
+                setTeam(undefined); // reset the team state if no match
+            }
+            setBetType("spread");
+        }
+    }, [betSelection]);
+
+    useEffect(() => {
+        if (team && betType && betValue) {
+            setDisableAddBet(false);
+        } else {
+            setDisableAddBet(true);
+        }
+    }, [team, betType, betValue]);
+
+    const buildBet = async () => {
+        if (team && betType && betValue) {
+            const adjustedBetValue = betType === "spread" ? spreadSign + betValue : betValue;
+            const bet: Bet = await getGameByGameID(game.gameId, team, betType, adjustedBetValue);
+            handleAddBet(bet);
+        }
+    };
+
+    return (
+        <div className="SelectGameCardDialog">
+            <div className="item">
+                <div className="TeamPicker">
+                    <ToggleButtonGroup
+                        color="primary"
+                        fullWidth
+                        value={betSelection}
+                        exclusive
+                        onChange={handleChange}
+                    >
+                        <ToggleButton className="left-toggle-button" value="Spread">
+                            Spread
+                        </ToggleButton>
+                        <ToggleButton className="right-toggle-button" value="Over/Under">
+                            Over/Under
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                </div>
+            </div>
+            <TransitionGroup>
+                {betSelection === "Spread" && (
+                    <Collapse in={true}>
+                        <div className="item">
+                            <TeamPicker
+                                homeTeam={game.homeTeam.location}
+                                awayTeam={game.awayTeam.location}
+                                team={team}
+                                onTeamChange={(team: string) => setTeam(team)}
+                            />
+                        </div>
+                    </Collapse>
+                )}
+            </TransitionGroup>
+            <div className="item">
+                <TextField
+                    label={betSelection}
+                    InputProps={{
+                        inputProps: inputProps,
+                    }}
+                    value={defaultTextValue} // Changed this line
+                    onChange={handleBetValueChange}
+                />
+            </div>
+            <TransitionGroup>
+                {betSelection === "Spread" && (
+                    <Collapse in={true}>
+                        <div className="item">
+                            <SpreadSign
+                                onSpreadSignChange={setSpreadSign}
+                                spreadSign={spreadSign}
+                            />
+                        </div>
+                    </Collapse>
+                )}
+            </TransitionGroup>
+            <div className="item">
+                <AddBet disabled={disableAddBet} onAddBetChange={() => buildBet()} />
+            </div>
         </div>
-      </div>
-      <div className="item">
-        <TeamPicker
-          homeTeam={game.homeTeam.location}
-          awayTeam={game.awayTeam.location}
-          onTeamChange={(team: string) => setTeam(team)}
-        />
-      </div>
-      <div className="item">
-        <TextField
-          label="Spread"
-          InputProps={{
-            inputProps: inputProps,
-          }}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setSpread(e.target.value)}
-        />
-      </div>
-      <div className="item">
-        <SpreadSign onSpreadSignChange={handleSpreadSignUpdate} />
-      </div>
-      <div className="item">
-        <AddSpread
-          spread={spread}
-          spreadSign={spreadSign}
-          disabled={disableAddSpread}
-          onAddSpreadChange={() => buildBet()}
-        />
-      </div>
-    </div>
-  );
+    );
 };
 
 export default SelectGameCardDialog;

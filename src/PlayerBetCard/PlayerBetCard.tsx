@@ -72,7 +72,7 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
   const calculateBetStatus = (
     playerBet: Bet
   ): { message: string; color: string } => {
-    const spread = parseFloat(playerBet.spread);
+    const spread = parseFloat(playerBet.value);
     const { teamScore, opponentScore } = getTeamScores(playerBet);
     const gapFromSpread = getGapFromSpread(teamScore, opponentScore, spread);
 
@@ -115,12 +115,12 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
             <a href={bet.game.link} target="_blank" rel="noopener noreferrer">
               <LiveTvIcon />
             </a>
-            <div>{bet.team + ": " + bet.spread}</div>
+            <div>{bet.team + ": " + bet.value}</div>
             <div></div>
           </div>
         )}
         {bet.game.status === "upcoming" && (
-          <div className="card-group-top">{bet.team + ": " + bet.spread}</div>
+          <div className="card-group-top">{bet.team + ": " + bet.value}</div>
         )}
         {bet.game.status === "final" && (
           <div
@@ -132,7 +132,7 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
                   : undefined,
             }}
           >
-            {bet.team + ": " + bet.spread}
+            {bet.team + ": " + bet.value}
           </div>
         )}
 

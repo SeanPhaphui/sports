@@ -1,12 +1,23 @@
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
-export interface Bet {
+type SpreadBet = {
     id: string;
     team: string;
-    spread: string;
+    type: 'spread';
+    value: string;
     game: Game;
 }
+
+type OverUnderBet = {
+    id: string;
+    team: string;
+    type: 'overUnder';
+    value: string;
+    game: Game;
+}
+
+export type Bet = SpreadBet | OverUnderBet;
 
 export interface Game {
     gameId: string;
@@ -29,6 +40,7 @@ export interface TeamInfo {
     color: string;
     logo: string;
     location: string;
+    abbreviation: string;
     score: string;
     record: string;
 }
@@ -130,6 +142,7 @@ export const getGamesByWeek = async (
                                 ? homeTeam.team.logo
                                 : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
                             location: homeTeam.team.location,
+                            abbreviation: homeTeam.team.abbreviation,
                             score: homeTeam.score ? homeTeam.score : 0,
                             record: homeTeam.records ? homeTeam.records[0].summary : "0-0",
                         },
@@ -139,6 +152,7 @@ export const getGamesByWeek = async (
                                 ? awayTeam.team.logo
                                 : "https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png",
                             location: awayTeam.team.location,
+                            abbreviation: awayTeam.team.abbreviation,
                             score: awayTeam.score ? awayTeam.score : 0,
                             record: awayTeam.records ? awayTeam.records[0].summary : "0-0",
                         },
@@ -156,7 +170,8 @@ export const getGamesByWeek = async (
 export const getGameByGameID = async (
     id: string,
     team: string,
-    spread: string
+    type: "overUnder" | "spread",
+    value: string
 ): Promise<Bet> => {
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event=${id}`;
@@ -182,7 +197,8 @@ export const getGameByGameID = async (
                 const bet: Bet = {
                     id: uuidv4(),
                     team: team,
-                    spread: spread,
+                    type: type,
+                    value: value,
                     game: {
                         gameId: id,
                         eventName: "",
@@ -197,6 +213,7 @@ export const getGameByGameID = async (
                         homeTeam: {
                             color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
                             location: homeTeam.team.location,
+                            abbreviation: homeTeam.team.abbreviation,
                             score: homeTeam.score ? homeTeam.score : 0,
                             logo: homeTeam.team.logos[0].href,
                             record: homeTeam.record[0].summary,
@@ -204,6 +221,7 @@ export const getGameByGameID = async (
                         awayTeam: {
                             color: awayTeam.team.color ? "#" + awayTeam.team.color : "#ffffff",
                             location: awayTeam.team.location,
+                            abbreviation: awayTeam.team.abbreviation,
                             score: awayTeam.score ? awayTeam.score : 0,
                             logo: awayTeam.team.logos[0].href,
                             record: awayTeam.record[0].summary,
@@ -218,8 +236,9 @@ export const getGameByGameID = async (
     console.log("From Utils - EMPTY BET RETURNED");
     return {
         id: uuidv4(),
-        team: team,
-        spread: spread,
+        team: "",
+        type: "spread",
+        value: "",
         game: {
             gameId: "",
             eventName: "",
@@ -234,6 +253,7 @@ export const getGameByGameID = async (
             homeTeam: {
                 color: "",
                 location: "",
+                abbreviation: "",
                 score: "",
                 logo: "",
                 record: "",
@@ -241,6 +261,7 @@ export const getGameByGameID = async (
             awayTeam: {
                 color: "",
                 location: "",
+                abbreviation: "",
                 score: "",
                 logo: "",
                 record: "",
@@ -254,7 +275,7 @@ export const updateBets = async (bets: Bet[]): Promise<Bet[]> => {
 
     for (let bet of bets) {
         try {
-            const updatedBet = await getGameByGameID(bet.game.gameId, bet.team, bet.spread);
+            const updatedBet = await getGameByGameID(bet.game.gameId, bet.team, bet.type, bet.value);
             updatedBets.push(updatedBet);
         } catch (error) {
             console.error(`Failed to update bet with ID ${bet.id}`);
@@ -469,19 +490,27 @@ export const gameSelectionArrayTestObject = [
     },
 ];
 
-export const betArrayTestObject = [
+export const betArrayTestObject: Bet[] = [
     {
         id: "d7baf1ab-fb7b-4897-a406-4918b27e4984",
-        team: "Notre Dame",
-        spread: "-9.5",
+        team: "Ball State",
+        type: "spread",
+        value: "-13",
         game: {
-            gameId: "401525434",
-            status: "ongoing",
+            gameId: "401520191",
+            eventName: "",
+            status: "final",
+            statusDetail: "Final",
             date: new Date("2023-08-26T18:30:00.000Z"),
             link: "https://www.espn.com/college-football/game/_/gameId/401525434",
+            odds: {
+                spread: "",
+                overUnder: ""
+            },
             homeTeam: {
                 color: "#0c2340",
                 location: "Notre Dame",
+                abbreviation: "",
                 score: "42",
                 logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/87.png",
                 record: "1-0",
@@ -489,6 +518,7 @@ export const betArrayTestObject = [
             awayTeam: {
                 color: "#131630",
                 location: "Navy",
+                abbreviation: "",
                 score: "3",
                 logo: "https://a.espncdn.com/i/teamlogos/ncaa/500/2426.png",
                 record: "0-1",

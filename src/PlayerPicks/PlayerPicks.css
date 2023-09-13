@@ -50,12 +50,18 @@
     padding: 20px;
 }
 
-.PlayerPicks .bets-bottom-list {
-
+.PlayerPicks .bets-bottom-logo .logo2 {
+  display: flex;
+  justify-content: center;
 }
 
 .PlayerPicks .bets-bottom-list .testing {
   color: white;
+}
+
+.PlayerPicks .bets-bottom-list .testing .list{
+  display: flex;
+  align-items: center;
 }
 
 .PlayerPicks .bets-bottom-list .testing .MuiAvatar-img{

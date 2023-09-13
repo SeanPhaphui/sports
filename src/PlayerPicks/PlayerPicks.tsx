@@ -46,24 +46,31 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
     };
 
     const gradientBackground =
-        playerBets.length === 1
-            ? {
-                  background: `linear-gradient(to right, black, ${
-                      getTeamInfo(playerBets[0]).color
-                  }, black)`,
-                  animation: "pulsateBar 4s infinite",
-              }
-            : {
-                  background: `linear-gradient(to right, ${playerBets
-                      .map((playerBet) => getTeamInfo(playerBet).color)
-                      .join(", ")})`,
-                  animation: "pulsateBar 4s infinite",
-              };
+    playerBets.length === 1
+        ? {
+              background: playerBets[0].type === 'overUnder'
+                  ? `linear-gradient(to right, black, ${playerBets[0].game.awayTeam.color}, ${playerBets[0].game.homeTeam.color}, black)`
+                  : `linear-gradient(to right, black, ${getTeamInfo(playerBets[0]).color}, black)`,
+              animation: "pulsateBar 4s infinite",
+          }
+        : {
+              background: `linear-gradient(to right, ${playerBets
+                  .map((playerBet) => playerBet.type === 'overUnder' 
+                      ? [playerBet.game.awayTeam.color, playerBet.game.homeTeam.color] 
+                      : getTeamInfo(playerBet).color
+                  )
+                  .flat()
+                  .join(", ")})`,
+              animation: "pulsateBar 4s infinite",
+          };
 
-    const renderItem = (playerBet: Bet) => {
-        const teamInfo = getTeamInfo(playerBet);
-        const opponentTeamInfo = getOpponentTeamInfo(playerBet);
-        const tintedColor = getTintedColor(teamInfo);
+
+    const renderItem = (bet: Bet) => {
+        const teamInfo = getTeamInfo(bet);
+        const opponentTeamInfo = getOpponentTeamInfo(bet);
+        const teamTintedColor = getTintedColor(teamInfo);
+        const opponentTintedColor = getTintedColor(opponentTeamInfo);
+
         return (
             <ListItem
                 secondaryAction={
@@ -71,27 +78,80 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                         edge="end"
                         aria-label="delete"
                         title="Delete"
-                        onClick={() => handleRemoveBet(playerBet)}
+                        onClick={() => handleRemoveBet(bet)}
                     >
                         <DeleteIcon />
                     </IconButton>
                 }
             >
-                <ListItemAvatar>
-                    <Avatar sx={{ backgroundColor: tintedColor }} src={teamInfo.logo} />
-                </ListItemAvatar>
-                <ListItemText
-                    primary={`${playerBet.team}: ${playerBet.spread}`}
-                    secondary={`vs ${opponentTeamInfo.location}`}
-                />
+                {bet.type === "spread" ? (
+                    <div className="list">
+                        <ListItemAvatar>
+                            <Avatar sx={{ backgroundColor: teamTintedColor }} src={teamInfo.logo} />
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={`Spread: ${bet.team} ${bet.value}`}
+                            secondary={`${bet.game.awayTeam.abbreviation} vs ${bet.game.homeTeam.abbreviation}`}
+                        />
+                    </div>
+                ) : (
+                    <div className="list">
+                        <ListItemAvatar>
+                            <Avatar
+                                sx={{
+                                    background: `linear-gradient(to right, ${teamTintedColor}, ${opponentTintedColor})`, // Gradient from team to opponent color
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                {/* Container for the logos */}
+                                <Box
+                                    sx={{
+                                        width: "75%",
+                                        height: "75%",
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                    }}
+                                >
+                                    {/* First logo */}
+                                    <Box
+                                        component="img"
+                                        sx={{
+                                            height: "100%",
+                                            width: "50%", // Each logo takes up half the width
+                                            objectFit: "contain", // Ensure the logo isn't distorted
+                                        }}
+                                        src={teamInfo.logo}
+                                    />
+
+                                    {/* Second logo */}
+                                    <Box
+                                        component="img"
+                                        sx={{
+                                            height: "100%",
+                                            width: "50%",
+                                            objectFit: "contain",
+                                        }}
+                                        src={opponentTeamInfo.logo}
+                                    />
+                                </Box>
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={`Over/Under: ${bet.value}`}
+                            secondary={`${bet.game.awayTeam.abbreviation} vs ${bet.game.homeTeam.abbreviation}`}
+                        />
+                    </div>
+                )}
             </ListItem>
         );
     };
 
-    const [playerView, setPlayerView] = useState<boolean>(true);
+    const [isLogoView, setIsLogoView] = useState<boolean>(true);
 
     const handleViewChange = () => {
-        playerView ? setPlayerView(false) : setPlayerView(true);
+        isLogoView ? setIsLogoView(false) : setIsLogoView(true);
     };
 
     const [isVisible, setIsVisible] = useState(true);
@@ -117,7 +177,7 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                                         className="right"
                                         onClick={handleViewChange}
                                         sx={{
-                                            transform: !playerView
+                                            transform: !isLogoView
                                                 ? "rotate(-180deg)"
                                                 : "rotate(0)",
                                             transition: "0.2s",
@@ -128,15 +188,16 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                                 <div className="bets-bottom">
                                     <div
                                         className={
-                                            playerView ? "bets-bottom-logo" : "bets-bottom-list"
+                                            isLogoView ? "bets-bottom-logo" : "bets-bottom-list"
                                         }
                                     >
-                                        {playerView ? (
-                                            <div>
+                                        {isLogoView ? (
+                                            <div className="logo2">
                                                 {playerBets.map((playerBet) => {
                                                     // Determine the teamInfo based on the team in playerBet
                                                     const teamInfo = getTeamInfo(playerBet);
-
+                                                    const opponentTeamInfo =
+                                                        getOpponentTeamInfo(playerBet);
                                                     // Create a tinted color by adjusting the alpha channel
                                                     const tintedColor = getTintedColor(teamInfo);
 
@@ -146,18 +207,76 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                                                             timeout={1000}
                                                             key={playerBet.id}
                                                         >
-                                                            <Box
-                                                                component="img"
-                                                                sx={{
-                                                                    padding: "10px",
-                                                                    height: "3vh",
-                                                                    width: "3vh",
-                                                                    mx: "5px",
-                                                                    backgroundColor: tintedColor, // Use the tinted color as the background
-                                                                    borderRadius: "100%",
-                                                                }}
-                                                                src={teamInfo.logo} // Use the logo from teamInfo
-                                                            />
+                                                            {playerBet.type === "spread" ? (
+                                                                <Box
+                                                                    component="img"
+                                                                    sx={{
+                                                                        padding: "10px",
+                                                                        height: "3vh",
+                                                                        width: "3vh",
+                                                                        mx: "5px",
+                                                                        backgroundColor:
+                                                                            tintedColor, // Use the tinted color as the background
+                                                                        borderRadius: "100%",
+                                                                    }}
+                                                                    src={teamInfo.logo} // Use the logo from teamInfo
+                                                                />
+                                                            ) : (
+                                                                <Box
+                                                                    sx={{
+                                                                        padding: "10px",
+                                                                        height: "3vh",
+                                                                        width: "3vh",
+                                                                        mx: "5px",
+                                                                        background: `linear-gradient(to right, ${getTintedColor(
+                                                                            teamInfo
+                                                                        )}, ${getTintedColor(
+                                                                            opponentTeamInfo
+                                                                        )})`, // Split gradient between team and opponent
+                                                                        borderRadius: "100%",
+                                                                        display: "flex", // Use flex to layout children (the two logos) side by side
+                                                                        justifyContent: "center", // Center the logos horizontally
+                                                                        alignItems: "center", // Center the logos vertically
+                                                                    }}
+                                                                >
+                                                                    {/* Container for the logos */}
+                                                                    <Box
+                                                                        sx={{
+                                                                            width: "100%",
+                                                                            height: "100%",
+                                                                            display: "flex",
+                                                                            justifyContent:
+                                                                                "space-between",
+                                                                        }}
+                                                                    >
+                                                                        {/* First logo */}
+                                                                        <Box
+                                                                            component="img"
+                                                                            sx={{
+                                                                                height: "100%",
+                                                                                width: "50%", // Each logo takes up half the width
+                                                                                objectFit:
+                                                                                    "contain", // Ensure the logo isn't distorted
+                                                                            }}
+                                                                            src={teamInfo.logo} // Use the first logo source
+                                                                        />
+
+                                                                        {/* Second logo */}
+                                                                        <Box
+                                                                            component="img"
+                                                                            sx={{
+                                                                                height: "100%",
+                                                                                width: "50%",
+                                                                                objectFit:
+                                                                                    "contain",
+                                                                            }}
+                                                                            src={
+                                                                                opponentTeamInfo.logo
+                                                                            } // Use the second logo source
+                                                                        />
+                                                                    </Box>
+                                                                </Box>
+                                                            )}
                                                         </Grow>
                                                     );
                                                 })}

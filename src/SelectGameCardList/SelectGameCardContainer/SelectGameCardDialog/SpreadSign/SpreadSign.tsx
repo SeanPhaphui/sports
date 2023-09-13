@@ -1,17 +1,17 @@
-import { Button, ButtonGroup, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import React, { useEffect, useState } from "react";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import React, { useState } from "react";
 import "./SpreadSign.css";
 
 interface SpreadSignProps {
     onSpreadSignChange: (spread: string) => void;
+    spreadSign: string;
 }
 
-const SpreadSign: React.FC<SpreadSignProps> = (props) => {
-    const { onSpreadSignChange } = props;
+const SpreadSign: React.FC<SpreadSignProps> = ({ onSpreadSignChange, spreadSign }) => {
+    const [alignment, setAlignment] = useState<string>(spreadSign);
 
-    const [alignment, setAlignment] = useState<string>();
     const handleChange = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
         setAlignment(newAlignment);
         onSpreadSignChange(newAlignment);
