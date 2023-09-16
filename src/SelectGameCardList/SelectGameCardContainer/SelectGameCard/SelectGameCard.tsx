@@ -40,7 +40,7 @@ const SelectGameCard: React.FC<SelectGameCardProps> = (props) => {
             <Divider className="info-divider" />
           </div>
         )}
-        {game.status === "final" ? (
+        {(game.status === "final" || game.status === "ongoing") ? (
           <Info homeTeam={homeTeam} awayTeam={awayTeam} showRecord={true} showTotal={false}/>
         ) : (
           <div>
