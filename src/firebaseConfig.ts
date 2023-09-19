@@ -71,7 +71,7 @@ export const fetchAllBetsForWeek = async (week: string): Promise<{ uid: string, 
                     allUsersBets.push({
                         uid,
                         bets: userBets,
-                        displayName: usersData[uid].displayName || "N/A" // Default to "N/A" if no displayName found
+                        displayName: usersData[uid].displayName || usersData[uid].email || "N/A" // Default to "N/A" if no displayName found
                     });
                 }
             }
