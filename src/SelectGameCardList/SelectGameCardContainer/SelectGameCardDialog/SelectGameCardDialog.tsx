@@ -1,12 +1,12 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { Bet, Game, getGameByGameID } from "../../../Utils/Utils";
-import TeamPicker from "./TeamPicker/TeamPicker";
-import { Collapse, TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import SpreadSign from "./SpreadSign/SpreadSign";
-import AddBet from "./AddBet/AddBet";
+import { Collapse, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { TransitionGroup } from "react-transition-group";
-import "./SelectGameCardDialog.css";
+import { Bet, Game, getGameByGameID } from "../../../Utils/Utils";
+import AddBet from "./AddBet/AddBet";
 import OverUnder from "./OverUnder/OverUnder";
+import "./SelectGameCardDialog.css";
+import SpreadSign from "./SpreadSign/SpreadSign";
+import TeamPicker from "./TeamPicker/TeamPicker";
 
 interface SelectGameCardDialogProps {
     game: Game;
@@ -38,30 +38,16 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({ game, handl
     const initialSpreadSign =
         game.odds.spread === "N/A" ? "" : game.odds.spread.includes("-") ? "-" : "+";
     const [spreadSign, setSpreadSign] = useState<string>(initialSpreadSign);
-    const [overUnder, setOverUnder] = useState<string>("");
     const [disableAddBet, setDisableAddBet] = useState<boolean>(true);
     const [defaultTextValue, setDefaultTextValue] = useState<string>("");
     const [betType, setBetType] = useState<"spread" | "over" | "under" | undefined>("spread");
     const [betValue, setBetValue] = useState<string>();
     const [betSelection, setBetSelection] = useState<string>("Spread");
 
-
-
-    const inputProps = {
-        type: "tel",
-        pattern: "-?[0-9]*\\.?[0-9]+",
-        inputmode: "decimal",
-    };
-
     const handleChange = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
         if (newAlignment !== null) {
             setBetSelection(newAlignment);
         }
-    };
-
-    const handleBetValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setBetValue(e.target.value);
-        setDefaultTextValue(e.target.value);
     };
 
     useEffect(() => {
@@ -151,14 +137,9 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({ game, handl
                 )}
             </TransitionGroup>
             <div className="item">
-                <TextField
-                    label={betSelection}
-                    InputProps={{
-                        inputProps: inputProps,
-                    }}
-                    value={defaultTextValue} // Changed this line
-                    onChange={handleBetValueChange}
-                />
+                <Typography variant="body1" gutterBottom>
+                    {betSelection}: {defaultTextValue}
+                </Typography>
             </div>
             <TransitionGroup>
                 {betSelection === "Spread" && (
@@ -176,9 +157,7 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({ game, handl
                 {betSelection !== "Spread" && (
                     <Collapse in={true}>
                         <div className="item">
-                            <OverUnder
-                                onOverUnderChange={setBetType}
-                            />
+                            <OverUnder onOverUnderChange={setBetType} />
                         </div>
                     </Collapse>
                 )}
