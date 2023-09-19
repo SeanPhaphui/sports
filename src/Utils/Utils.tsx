@@ -1,6 +1,11 @@
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
+// Define types for userBets and bet
+export type UserBets = {
+    [uid: string]: Bet[]; // Bet[] is an array of your bet objects
+};
+
 type SpreadBet = {
     id: string;
     team: string;
@@ -56,6 +61,20 @@ const fetchData = async (url: string) => {
     return response.json();
 };
 
+export const fetchCurrentWeek = async (): Promise<number | null> => {
+    const proxyUrl = "https://corsproxy.io/?";
+    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard`;
+
+    const responseData = await fetchData(footballUrl);
+
+    // Validate and process the data
+    if (responseData?.week && responseData.week.number) {
+        return responseData.week.number;
+    }
+
+    return null;
+};
+
 export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard`;
@@ -74,7 +93,7 @@ export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
                 const gameCalendarEntry: GameCalendarObject = {
                     label: entry.label.toUpperCase(),
                     detail: entry.detail.toUpperCase(),
-                    week: responseData.week.number
+                    week: responseData.week.number,
                 };
                 calendarEntries.push(gameCalendarEntry);
             }
@@ -100,10 +119,7 @@ const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" =
     }
 };
 
-export const getGamesByWeek = async (
-    week: number,
-    top25true: boolean
-): Promise<Game[]> => {
+export const getGamesByWeek = async (week: number, top25true: boolean): Promise<Game[]> => {
     const proxyUrl = "https://corsproxy.io/?";
     const top25Url = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}`;
     const fbsIAUrl = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=-1&week=${week}&groups=80`;
@@ -134,7 +150,10 @@ export const getGamesByWeek = async (
                         link: event.links[0].href,
                         odds: {
                             spread: competition.odds ? competition.odds[0].details : "N/A",
-                            overUnder: (competition.odds && competition.odds[0].overUnder) ? competition.odds[0].overUnder : "N/A",
+                            overUnder:
+                                competition.odds && competition.odds[0].overUnder
+                                    ? competition.odds[0].overUnder
+                                    : "N/A",
                         },
                         homeTeam: {
                             color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
@@ -208,7 +227,7 @@ export const getGameByGameID = async (
                         link: link.href,
                         odds: {
                             spread: "",
-                            overUnder: ""
+                            overUnder: "",
                         },
                         homeTeam: {
                             color: homeTeam.team.color ? "#" + homeTeam.team.color : "#ffffff",
@@ -248,7 +267,7 @@ export const getGameByGameID = async (
             link: "",
             odds: {
                 spread: "",
-                overUnder: ""
+                overUnder: "",
             },
             homeTeam: {
                 color: "",
@@ -275,11 +294,16 @@ export const updateBets = async (bets: Bet[]): Promise<Bet[]> => {
 
     for (let bet of bets) {
         try {
-            const updatedBet = await getGameByGameID(bet.game.gameId, bet.team, bet.type, bet.value);
+            const updatedBet = await getGameByGameID(
+                bet.game.gameId,
+                bet.team,
+                bet.type,
+                bet.value
+            );
             updatedBets.push(updatedBet);
         } catch (error) {
             console.error(`Failed to update bet with ID ${bet.id}`);
-            updatedBets.push(bet);  // Push the original bet if updating fails.
+            updatedBets.push(bet); // Push the original bet if updating fails.
         }
     }
 
@@ -295,9 +319,7 @@ export const extractTeamsFromPlayerBet = (
     };
 };
 
-export const extractTeamsFromGame = (
-    game: Game
-): { homeTeam: TeamInfo; awayTeam: TeamInfo } => {
+export const extractTeamsFromGame = (game: Game): { homeTeam: TeamInfo; awayTeam: TeamInfo } => {
     return {
         homeTeam: game.homeTeam,
         awayTeam: game.awayTeam,
@@ -332,8 +354,8 @@ export const loadBetsFromLocalStorage = (): Bet[] | null => {
 
 export const convertToLocalTime = (utcDate: Date): Date => {
     const utcTime = utcDate.getTime() + utcDate.getTimezoneOffset() * 60000;
-    const localOffset = new Date().getTimezoneOffset() * 60000;  // Local device's timezone offset in milliseconds
-    return new Date(utcTime - localOffset);  // Adjust the date to local timezone
+    const localOffset = new Date().getTimezoneOffset() * 60000; // Local device's timezone offset in milliseconds
+    return new Date(utcTime - localOffset); // Adjust the date to local timezone
 };
 
 // Old way of getting spread relative to bet
@@ -505,7 +527,7 @@ export const betArrayTestObject: Bet[] = [
             link: "https://www.espn.com/college-football/game/_/gameId/401525434",
             odds: {
                 spread: "",
-                overUnder: ""
+                overUnder: "",
             },
             homeTeam: {
                 color: "#0c2340",

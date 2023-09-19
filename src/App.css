@@ -36,3 +36,19 @@
     transform: rotate(360deg);
   }
 }
+
+.App .bottom-nav .MuiBottomNavigation-root{
+  background-color: black;
+}
+
+.App .bottom-nav .MuiBottomNavigation-root .MuiSvgIcon-root{
+  color: #6c6d6f;
+}
+
+.App .bottom-nav .MuiBottomNavigation-root .Mui-selected .MuiSvgIcon-root{
+  color: white;
+}
+
+.App .bottom-nav .MuiBottomNavigation-root .MuiBottomNavigationAction-label{
+  color: white;
+}

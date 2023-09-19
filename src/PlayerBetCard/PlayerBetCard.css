@@ -16,7 +16,7 @@
     text-align: left;
     color: #ffffff;
     font-weight: 500;
-    background-color: #1d1e1f;
+    background-color: #1d1e1f !important;
     margin-bottom: 20px;
 }
 

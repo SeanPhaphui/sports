@@ -15,14 +15,15 @@ import {
 import React, { useState } from "react";
 import { TransitionGroup } from "react-transition-group";
 import { Bet, TeamInfo } from "../Utils/Utils";
-import "./PlayerPicks.css";
+import "./PlayerPicksHome.css";
+import { User } from "firebase/auth";
 
-export interface PlayerPicksProps {
+export interface PlayerPicksHomeProps {
     playerBets: Bet[];
-    handleRemoveBet: (item: Bet) => void;
+    displayName: string;
 }
 
-const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }) => {
+const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayName }) => {
     const getTeamInfo = (playerBet: Bet) => {
         return playerBet.team === playerBet.game.homeTeam.location
             ? playerBet.game.homeTeam
@@ -46,24 +47,27 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
     };
 
     const gradientBackground =
-    playerBets.length === 1
-        ? {
-              background:  (playerBets[0].type === "over" || playerBets[0].type === "under")
-                  ? `linear-gradient(to right, black, ${playerBets[0].game.awayTeam.color}, ${playerBets[0].game.homeTeam.color}, black)`
-                  : `linear-gradient(to right, black, ${getTeamInfo(playerBets[0]).color}, black)`,
-              animation: "pulsateBar 4s infinite",
-          }
-        : {
-              background: `linear-gradient(to right, ${playerBets
-                  .map((playerBet) => (playerBet.type === "over" || playerBet.type === "under")
-                      ? [playerBet.game.awayTeam.color, playerBet.game.homeTeam.color] 
-                      : getTeamInfo(playerBet).color
-                  )
-                  .flat()
-                  .join(", ")})`,
-              animation: "pulsateBar 4s infinite",
-          };
-
+        playerBets.length === 1
+            ? {
+                  background:
+                      playerBets[0].type === "over" || playerBets[0].type === "under"
+                          ? `linear-gradient(to right, black, ${playerBets[0].game.awayTeam.color}, ${playerBets[0].game.homeTeam.color}, black)`
+                          : `linear-gradient(to right, black, ${
+                                getTeamInfo(playerBets[0]).color
+                            }, black)`,
+                  animation: "pulsateBar 4s infinite",
+              }
+            : {
+                  background: `linear-gradient(to right, ${playerBets
+                      .map((playerBet) =>
+                          playerBet.type === "over" || playerBet.type === "under"
+                              ? [playerBet.game.awayTeam.color, playerBet.game.homeTeam.color]
+                              : getTeamInfo(playerBet).color
+                      )
+                      .flat()
+                      .join(", ")})`,
+                  animation: "pulsateBar 4s infinite",
+              };
 
     const renderItem = (bet: Bet) => {
         const teamInfo = getTeamInfo(bet);
@@ -72,18 +76,7 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
         const opponentTintedColor = getTintedColor(opponentTeamInfo);
 
         return (
-            <ListItem
-                secondaryAction={
-                    <IconButton
-                        edge="end"
-                        aria-label="delete"
-                        title="Delete"
-                        onClick={() => handleRemoveBet(bet)}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
-                }
-            >
+            <ListItem>
                 {bet.type === "spread" ? (
                     <div className="list">
                         <ListItemAvatar>
@@ -139,7 +132,12 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText
-                            primary={bet.type.charAt(0).toUpperCase() + bet.type.slice(1) + ": " + bet.value}
+                            primary={
+                                bet.type.charAt(0).toUpperCase() +
+                                bet.type.slice(1) +
+                                ": " +
+                                bet.value
+                            }
                             secondary={`${bet.game.awayTeam.abbreviation} vs ${bet.game.homeTeam.abbreviation}`}
                         />
                     </div>
@@ -163,15 +161,16 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
         shown = false;
     }
 
+
     return (
         <TransitionGroup>
             {playerBets.length >= 1 && (
                 <Collapse in={shown}>
-                    <div className="PlayerPicks">
+                    <div className="PlayerPicksHome">
                         <Grow in={true} timeout={1000}>
                             <div>
                                 <div className="bets-top">
-                                    <div className="left">Your Picks</div>
+                                    <div className="left">{`${displayName}'s picks`}</div>
                                     <KeyboardArrowDown
                                         fontSize="medium"
                                         className="right"
@@ -307,4 +306,4 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
     );
 };
 
-export default PlayerPicks;
+export default PlayerPicksHome;

@@ -1,106 +1,92 @@
-import React, { useEffect, useState } from "react";
-import Header from "../Header/Header";
-import PlayerPicks from "../PlayerPicks/PlayerPicks";
-import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
+import { Card, Fade, Grow } from "@mui/material";
 import {
-    Bet,
-    Game,
-    betArrayTestObject,
-    getGameByGameID,
-    getGamesByWeek,
-    loadBetsFromLocalStorage,
-    updateBets,
-} from "../Utils/Utils";
-import Weeks from "../Weeks/Weeks";
-import "./Home.css";
+    User
+} from "firebase/auth";
+import React, { useEffect, useState } from "react";
+import { TransitionGroup } from "react-transition-group";
+import HomeHeader from "../HomeHeader/HomeHeader";
 import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
-import DataManager from "../DataManager/DataManager";
+import PlayerPicksHome from "../PlayerPicksHome/PlayerPicksHome";
+import { Bet, fetchCurrentWeek } from "../Utils/Utils";
+import { fetchAllBetsForWeek, fetchUserBets } from "../firebaseConfig";
+import "./Home.css";
 
-const Home: React.FC = () => {
-    const [games, setGames] = useState<Game[]>([]);
+interface HomeProps {
+    user: User | null;
+}
 
-    const [filterText, setFilterText] = useState<string>(""); // Step 1: State for filter text'
-
+const Home: React.FC<HomeProps> = ({ user }) => {
     const [bets, setBets] = useState<Bet[]>([]);
-
-    const [week, setWeek] = useState<string>();
-
-    const [open, setOpen] = React.useState(true);
-
-    const [activeButton, setActiveButton] = useState<string>("Top 25");
+    const [allUsersBets, setAllUsersBets] = useState<{ uid: string, bets: Bet[], displayName: string }[]>([]);
 
     useEffect(() => {
-        if (week) {
-            getGamesByWeek(parseInt(week), activeButton === "Top 25" ? true : false).then(setGames);
-        }
-    }, [week, activeButton]);
+        // Assuming you have the user's UID
+        const uid = user?.uid;
 
-    const handleAddBet = (bet: Bet) => {
-        setBets((prevArray) => [...prevArray, bet]);
-        console.log(bet);
-    };
-
-    const handleRemoveBet = (bet: Bet) => {
-        setBets((prev) => prev.filter((prevBet) => prevBet.id !== bet.id));
-    };
-
-    const handleWeekChange = (week: string) => {
-        setWeek(week);
-        setFilterText("");
-    };
-
-
-        // Then, in a useEffect hook, you can load the value from localStorage
-    // when the component first mounts.
-    useEffect(() => {
-        const fetchUpdatedBets = async (originalBets: Bet[]) => {
-            const updated = await updateBets(originalBets);
-            setBets(updated);
+        const loadUserBets = async () => {
+            const weekNumber = await fetchCurrentWeek();
+            console.log("UUUIU: ", uid);
+            if (uid && weekNumber !== null) {
+                const currentWeek = `week${weekNumber}`;
+                const userBets = await fetchUserBets(uid, currentWeek);
+                const formattedBets = userBets.map(
+                    (bet: { game: { date: string | number | Date } }) => ({
+                        ...bet,
+                        game: {
+                            ...bet.game,
+                            date: new Date(bet.game.date), // Convert string back to Date object
+                        },
+                    })
+                );
+                setBets(formattedBets);
+            }
         };
-    
-        const loadedBets = loadBetsFromLocalStorage();
-        if (loadedBets) {
-            fetchUpdatedBets(loadedBets);
-        }
-    }, []);
-    
 
-    // You can also use another useEffect to save the value to localStorage
-    // whenever it changes.   
+        loadUserBets();
+    }, [user]);
+
     useEffect(() => {
-        localStorage.setItem('Bets-Prototype-V1', JSON.stringify(bets));
-    }, [bets]);
+        const loadAllBets = async () => {
+            const weekNumber = await fetchCurrentWeek();
+            if (weekNumber !== null) {
+                const currentWeek = `week${weekNumber}`;
+                const usersBetsForWeek = await fetchAllBetsForWeek(currentWeek);
+                setAllUsersBets(usersBetsForWeek);
+            }
+        };
 
-    const refreshPage = () => {
-        window.location.reload();
-    };
+        loadAllBets();
+    }, [user]);
 
     return (
-        <div className="Home">
-            <div className="top-bar">
-                <Header
-                    activeButton={activeButton}
-                    setActiveButton={setActiveButton}
-                    filterText={filterText}
-                    setFilterText={setFilterText}
-                />
-                <Weeks handleWeekChange={handleWeekChange} />
+        <Fade in={true} timeout={500}>
+            <div className="Home">
+                <div className="top-bar">
+                    <HomeHeader user={user} />
+                </div>
+                <div className="body">
+                    {allUsersBets.map((object, index) => (
+                        <PlayerPicksHome
+                            key={index}
+                            playerBets={object.bets}
+                            displayName={object.displayName}
+                        />
+                    ))}
+                    <TransitionGroup>
+                        {bets.length >= 1 && (
+                            <Grow in={true} timeout={500}>
+                                <Card className="pick-list">
+                                    <h4>Your Week's Picks</h4>
+                                    {bets.map((bet) => (
+                                        <PlayerBetCard key={bet.id} bet={bet} />
+                                    ))}
+                                </Card>
+                            </Grow>
+                        )}
+                    </TransitionGroup>
+                </div>
             </div>
-
-            <div className="body">
-                <DataManager bets={bets} restoreBets={(bets) => setBets(bets)} clearBets={() => setBets([])}/>
-                <button onClick={refreshPage}>Refresh Page</button>
-                <PlayerPicks playerBets={bets} handleRemoveBet={handleRemoveBet}/>
-                {bets.map((bet) => (
-                    <PlayerBetCard key={bet.id} bet={bet} />
-                ))}
-                <SelectGameCardList
-                    game={games}
-                    filterText={filterText}
-                    handleAddBet={handleAddBet}
-                />
-            </div>
-        </div>
+        </Fade>
     );
 };
 

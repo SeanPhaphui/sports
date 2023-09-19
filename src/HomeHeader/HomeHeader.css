@@ -1,0 +1,26 @@
+.HomeHeader {
+    color: white;
+    background-color: #252627;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 53px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.HomeHeader .buttons {
+    padding-top: 11px;
+    padding-bottom: 11px;
+    display: flex;
+}
+
+.HomeHeader .buttons .divider{
+    width: 5px;
+}
+
+
+
+

@@ -1,6 +1,5 @@
-import React from "react";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Button, TextField } from "@mui/material";
+import React from "react";
 import "./Header.css";
 
 interface HeaderProps {
@@ -18,7 +17,6 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
     return (
         <div className="Header">
-            <ArrowBackIosNewIcon className="back" />
             <div className="buttons">
                 <Button
                     style={{

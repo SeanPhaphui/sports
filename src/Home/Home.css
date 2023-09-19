@@ -1,6 +1,7 @@
-/* .Home {
-    width: 85%;
-} */
+.Home {
+    width: 100%;
+    padding-bottom: 71px;
+}
 
 .Home .top-bar {
     position: sticky;
@@ -8,11 +9,30 @@
     z-index: 3; /* To ensure it's above the content below */
 }
 
-.body {
+.Home .body {
     width: 95%;
     margin: 0 auto; /* Centers the div horizontally */
 }
 
-.divider {
-    margin-bottom: 10px;
+.Home .body .pick-list{
+    margin-top: 20px;
+}
+
+.Home .body .MuiPaper-root.MuiCard-root {
+    color: #ffffff;
+    font-weight: 500;
+    border-radius: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+    background-color: #252627;
+    margin-bottom: 20px;
+  }
+
+.Home .firebaseui-container.mdl-card {
+    border-radius: 10px;
+}
+
+.Home .firebaseui-container.mdl-card .firebaseui-id-submit{
+    border-radius: 10px;
 }
