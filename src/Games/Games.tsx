@@ -56,7 +56,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         const uid = user?.uid;
 
         const loadUserBets = async () => {
-            if (uid) {
+            if (uid && week) {
                 const currentWeek = `week${week}`;
                 const userBets = await fetchUserBets(uid, currentWeek);
                 const formattedBets = userBets.map(
@@ -81,7 +81,6 @@ const Games: React.FC<GamesProps> = ({ user }) => {
 
     // Saving bets to the database
     useEffect(() => {
-        console.log("UGHHHGHG: ", bets);
         const uid = user?.uid;
         const currentWeek = `week${week}`;
 

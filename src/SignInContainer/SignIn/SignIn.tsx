@@ -33,7 +33,6 @@ const SignIn: React.FC<SignInProps> = ({ onSubmit }) => {
             );
             // Access user information from userCredential.user
             const user = userCredential.user;
-            console.log(user);
             // Redirect or perform some other action on successful login
             onSubmit();
         } catch (error) {

@@ -31,7 +31,7 @@ export const fetchUserBets = async (uid: string, week: string) => {
 
 // Save user bets
 export const saveUserBets = async (uid: string, week: string, bets: Bet[]) => {
-    console.log("Firebase Config Save Bets: ", bets);
+    console.log("FIREBASE - Saving User Bets: ", bets);
 
     const formattedBets = bets.map((bet) => ({
         ...bet,
@@ -65,8 +65,6 @@ export const fetchAllBetsForWeek = async (week: string): Promise<{ uid: string, 
                             }
                         };
                     });
-    
-                    console.log("usersdata: ", usersData[uid])
     
                     allUsersBets.push({
                         uid,

@@ -112,7 +112,6 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({ game, handl
         if (team && betType && betValue) {
             const adjustedBetValue = betType === "spread" ? spreadSign + betValue : betValue;
             const bet: Bet = await getGameByGameID(game.gameId, team, betType, adjustedBetValue);
-            console.log("BET BUILDER: ", bet)
             handleAddBet(bet);
         }
     };

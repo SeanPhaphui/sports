@@ -25,7 +25,6 @@ const Home: React.FC<HomeProps> = ({ user }) => {
 
         const loadUserBets = async () => {
             const weekNumber = await fetchCurrentWeek();
-            console.log("UUUIU: ", uid);
             if (uid && weekNumber !== null) {
                 const currentWeek = `week${weekNumber}`;
                 const userBets = await fetchUserBets(uid, currentWeek);
