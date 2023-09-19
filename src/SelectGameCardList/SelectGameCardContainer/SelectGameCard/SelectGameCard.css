@@ -12,14 +12,16 @@
     background-color: #1d1e1f;
 }
 
-.SelectGameCard .time {
+.SelectGameCard .time,
+.SelectGameCard .external-link {
     margin-bottom: 10px;
     color: #a4a5a6;
     display: flex;
     align-items: center;
 }
 
-.SelectGameCard .time .MuiSvgIcon-root {
+.SelectGameCard .time .MuiSvgIcon-root,
+.SelectGameCard .external-link .MuiSvgIcon-root {
     font-size: 1rem !important;
 }
 
