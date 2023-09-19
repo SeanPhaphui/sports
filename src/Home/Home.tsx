@@ -1,7 +1,5 @@
 import { Card, Fade, Grow } from "@mui/material";
-import {
-    User
-} from "firebase/auth";
+import { User } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { TransitionGroup } from "react-transition-group";
 import HomeHeader from "../HomeHeader/HomeHeader";
@@ -17,7 +15,9 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ user }) => {
     const [bets, setBets] = useState<Bet[]>([]);
-    const [allUsersBets, setAllUsersBets] = useState<{ uid: string, bets: Bet[], displayName: string }[]>([]);
+    const [allUsersBets, setAllUsersBets] = useState<
+        { uid: string; bets: Bet[]; displayName: string }[]
+    >([]);
 
     useEffect(() => {
         // Assuming you have the user's UID
@@ -57,6 +57,16 @@ const Home: React.FC<HomeProps> = ({ user }) => {
         loadAllBets();
     }, [user]);
 
+    // Grab the current user's UID
+    const currentUserId = user?.uid;
+
+    const combinedBets = [
+        ...(bets.length > 0 ? [{ uid: currentUserId, bets: bets, displayName: "Your" }] : []),
+        ...allUsersBets.filter(obj => obj.uid !== currentUserId)
+    ];
+    
+    
+
     return (
         <Fade in={true} timeout={500}>
             <div className="Home">
@@ -71,18 +81,22 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                             displayName={object.displayName}
                         />
                     ))}
-                    <TransitionGroup>
-                        {bets.length >= 1 && (
-                            <Grow in={true} timeout={500}>
-                                <Card className="pick-list">
-                                    <h4>Your Week's Picks</h4>
-                                    {bets.map((bet) => (
-                                        <PlayerBetCard key={bet.id} bet={bet} />
-                                    ))}
-                                </Card>
-                            </Grow>
-                        )}
-                    </TransitionGroup>
+                <TransitionGroup>
+                    {combinedBets.map((betObject, index) => (
+                        <Grow in={true} key={index} timeout={500}>
+                            <Card className="pick-list">
+                                <h4>
+                                    {betObject.displayName === "Your" 
+                                        ? `${betObject.displayName} Week's Picks` 
+                                        : `${betObject.displayName}'s Picks`}
+                                </h4>
+                                {betObject.bets.map((bet) => (
+                                    <PlayerBetCard key={bet.id} bet={bet} />
+                                ))}
+                            </Card>
+                        </Grow>
+                    ))}
+                </TransitionGroup>
                 </div>
             </div>
         </Fade>
