@@ -12,6 +12,14 @@
     background-color: #1d1e1f;
 }
 
+.SelectGameCard .BetsForGame .player{
+    color: #ffac00;
+    font-weight: 100;
+    font-size: small;
+    display: flex;
+    align-items: center;
+}
+
 .SelectGameCard .time,
 .SelectGameCard .external-link {
     margin-bottom: 10px;

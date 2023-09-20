@@ -7,10 +7,10 @@ import SelectGameCardDialog from "./SelectGameCardDialog/SelectGameCardDialog";
 interface SelectGameCardContainerProps {
     game: Game;
     handleAddBet: (bet: Bet) => void;
+    allBetsForWeek: { uid: string; bets: Bet[]; displayName: string }[];
 }
 
-const SelectGameCardContainer: React.FC<SelectGameCardContainerProps> = (props) => {
-    const { game, handleAddBet } = props;
+const SelectGameCardContainer: React.FC<SelectGameCardContainerProps> = ({ game, handleAddBet, allBetsForWeek}) => {
 
     const [open, setOpen] = React.useState(false);
 
@@ -29,7 +29,7 @@ const SelectGameCardContainer: React.FC<SelectGameCardContainerProps> = (props) 
 
     return (
         <div>
-            <SelectGameCard game={game} openDialog={handleClickOpen}/>
+            <SelectGameCard game={game} openDialog={handleClickOpen} allBetsForWeek={allBetsForWeek}/>
             <Dialog onClose={handleClose} open={open}>
                 <DialogTitle>Place Bet</DialogTitle>
                 <SelectGameCardDialog game={game} handleAddBet={handleCloseAndAdd}/>

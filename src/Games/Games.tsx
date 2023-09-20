@@ -10,7 +10,7 @@ import {
     getGamesByWeek
 } from "../Utils/Utils";
 import Weeks from "../Weeks/Weeks";
-import { fetchUserBets, saveUserBets } from "../firebaseConfig";
+import { fetchAllBetsForWeek, fetchUserBets, saveUserBets } from "../firebaseConfig";
 import "./Games.css";
 
 interface GamesProps {
@@ -90,6 +90,17 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         }
     }, [bets, hasFetchedBets]);
 
+    const [allBetsForWeek, setAllBetsForWeek] = useState<{ uid: string; bets: Bet[]; displayName: string }[]>([]);
+
+    useEffect(() => {
+        // ... existing code to fetch games ...
+    
+        // Fetch all user bets for the week
+        const currentWeek = `week${week}`;
+        fetchAllBetsForWeek(currentWeek).then(bets => setAllBetsForWeek(bets));
+    
+    }, [week]);
+
     return (
         <Fade in={true} timeout={500}>
             <div className="Games">
@@ -108,6 +119,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                         game={games}
                         filterText={filterText}
                         handleAddBet={handleAddBet}
+                        allBetsForWeek={allBetsForWeek}
                     />
                 </div>
             </div>

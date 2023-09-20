@@ -9,10 +9,10 @@ interface SelectGameCardListProps {
     game: Game[];
     filterText: string;
     handleAddBet: (bet: Bet) => void;
+    allBetsForWeek: { uid: string; bets: Bet[]; displayName: string }[];
 }
 
-const SelectGameCardList: React.FC<SelectGameCardListProps> = (props) => {
-    const { game, filterText, handleAddBet } = props;
+const SelectGameCardList: React.FC<SelectGameCardListProps> = ({ game, filterText, handleAddBet, allBetsForWeek}) => {
 
     const sortedGameSelections = [...game].sort((a, b) => {
         if (a.status === 'ongoing' && b.status !== 'ongoing') return -1;
@@ -71,7 +71,7 @@ const SelectGameCardList: React.FC<SelectGameCardListProps> = (props) => {
                     {games
                         .filter(game => game.eventName.toLowerCase().includes(filterText.toLowerCase())) // Apply filter
                         .map(game => (
-                            <SelectGameCardContainer key={game.gameId} game={game} handleAddBet={handleAddBet} />
+                            <SelectGameCardContainer key={game.gameId} game={game} handleAddBet={handleAddBet} allBetsForWeek={allBetsForWeek}/>
                         ))}
                 </Card>
             ))}

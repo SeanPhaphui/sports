@@ -10,18 +10,18 @@ export type UserBets = {
 type SpreadBet = {
     id: string;
     team: string;
-    type: 'spread';
+    type: "spread";
     value: string;
     game: Game;
-}
+};
 
 type OverUnderBet = {
     id: string;
     team: string;
-    type: 'over' | 'under';
+    type: "over" | "under";
     value: string;
     game: Game;
-}
+};
 
 export type Bet = SpreadBet | OverUnderBet;
 
@@ -361,15 +361,15 @@ export const convertToLocalTime = (utcDate: Date): Date => {
 
 export const getLetter = (user: User | null) => {
     if (user && user.displayName) {
-        const names = user.displayName.split(' ').slice(0, 2); // split by spaces and get the first two words
-        const initials = names.map(name => name.charAt(0).toUpperCase()).join(''); // get the first letter of each word
+        const names = user.displayName.split(" ").slice(0, 2); // split by spaces and get the first two words
+        const initials = names.map((name) => name.charAt(0).toUpperCase()).join(""); // get the first letter of each word
         return initials;
     } else if (user && user.email) {
         return user.email.charAt(0).toUpperCase();
     } else {
-        return ''; // Default case if somehow displayName and email both don't exist or are empty
+        return ""; // Default case if somehow displayName and email both don't exist or are empty
     }
-}
+};
 
 
 // Old way of getting spread relative to bet
