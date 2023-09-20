@@ -1,6 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { child, get, getDatabase, ref, set } from "firebase/database";
+import {
+    getDownloadURL,
+    getMetadata,
+    getStorage,
+    ref as storageRef,
+    uploadBytesResumable,
+} from "firebase/storage";
 import { Bet } from "./Utils/Utils";
 
 const firebaseConfig = {
@@ -20,6 +27,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 const db = getDatabase(app);
+
+// Initialize Cloud Storage and get a reference to the service
+// const storage = getStorage(app);
 
 // Fetch user bets
 export const fetchUserBets = async (uid: string, week: string) => {
@@ -45,15 +55,17 @@ export const saveUserBets = async (uid: string, week: string, bets: Bet[]) => {
     await set(betsRef, formattedBets);
 };
 
-export const fetchAllBetsForWeek = async (week: string): Promise<{ uid: string, bets: Bet[], displayName: string }[]> => {
-    const allUsersBets: { uid: string, bets: Bet[], displayName: string }[] = [];
-    const usersRef = ref(db, 'users');
-    try{
+export const fetchAllBetsForWeek = async (
+    week: string
+): Promise<{ uid: string; bets: Bet[]; displayName: string }[]> => {
+    const allUsersBets: { uid: string; bets: Bet[]; displayName: string }[] = [];
+    const usersRef = ref(db, "users");
+    try {
         const usersSnapshot = await get(usersRef);
-    
+
         if (usersSnapshot.exists()) {
             const usersData = usersSnapshot.val();
-    
+
             for (let uid in usersData) {
                 if (usersData[uid].bets && usersData[uid].bets[week]) {
                     const userBets: Bet[] = usersData[uid].bets[week].map((bet: any) => {
@@ -61,25 +73,58 @@ export const fetchAllBetsForWeek = async (week: string): Promise<{ uid: string, 
                             ...bet,
                             game: {
                                 ...bet.game,
-                                date: new Date(bet.game.date)
-                            }
+                                date: new Date(bet.game.date),
+                            },
                         };
                     });
-    
+
                     allUsersBets.push({
                         uid,
                         bets: userBets,
-                        displayName: usersData[uid].displayName || usersData[uid].email || "N/A" // Default to "N/A" if no displayName found
+                        displayName: usersData[uid].displayName || usersData[uid].email || "N/A", // Default to "N/A" if no displayName found
                     });
                 }
             }
         }
-
-    }catch (error) {
+    } catch (error) {
         console.error("Error fetching data:", error);
     }
 
     return allUsersBets;
 };
+
+// export const fetchAvatarURL = async (uid: string): Promise<string | null> => {
+//     try {
+//         const avatarRef = storageRef(storage, `avatars/${uid}`);
+//         const metadata = await getMetadata(avatarRef);
+//         console.log(metadata.cacheControl);
+//         const url = await getDownloadURL(avatarRef);
+//         return url;
+//     } catch (error) {
+//         console.error("Error fetching avatar URL: ", error);
+//         return null;
+//     }
+// };
+
+// export const uploadAvatar = async (uid: string, file: File): Promise<string | null> => {
+//     const avatarReference = storageRef(storage, `avatars/${uid}`);
+
+//     // Metadata to set cache control for 1 day
+//     const metadata = {
+//         cacheControl: "public, max-age=86400", // 1 day
+//     };
+
+//     try {
+//         // Upload the file
+//         const snapshot = await uploadBytesResumable(avatarReference, file, metadata);
+
+//         // Get the download URL after successful upload
+//         const url = await getDownloadURL(snapshot.ref);
+//         return url;
+//     } catch (error) {
+//         console.error("Error uploading avatar: ", error);
+//         return null;
+//     }
+// };
 
 export { app, auth, db };

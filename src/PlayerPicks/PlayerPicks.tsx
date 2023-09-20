@@ -46,24 +46,27 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
     };
 
     const gradientBackground =
-    playerBets.length === 1
-        ? {
-              background:  (playerBets[0].type === "over" || playerBets[0].type === "under")
-                  ? `linear-gradient(to right, black, ${playerBets[0].game.awayTeam.color}, ${playerBets[0].game.homeTeam.color}, black)`
-                  : `linear-gradient(to right, black, ${getTeamInfo(playerBets[0]).color}, black)`,
-              animation: "pulsateBar 4s infinite",
-          }
-        : {
-              background: `linear-gradient(to right, ${playerBets
-                  .map((playerBet) => (playerBet.type === "over" || playerBet.type === "under")
-                      ? [playerBet.game.awayTeam.color, playerBet.game.homeTeam.color] 
-                      : getTeamInfo(playerBet).color
-                  )
-                  .flat()
-                  .join(", ")})`,
-              animation: "pulsateBar 4s infinite",
-          };
-
+        playerBets.length === 1
+            ? {
+                  background:
+                      playerBets[0].type === "over" || playerBets[0].type === "under"
+                          ? `linear-gradient(to right, black, ${playerBets[0].game.awayTeam.color}, ${playerBets[0].game.homeTeam.color}, black)`
+                          : `linear-gradient(to right, black, ${
+                                getTeamInfo(playerBets[0]).color
+                            }, black)`,
+                  animation: "pulsateBar 4s infinite",
+              }
+            : {
+                  background: `linear-gradient(to right, ${playerBets
+                      .map((playerBet) =>
+                          playerBet.type === "over" || playerBet.type === "under"
+                              ? [playerBet.game.awayTeam.color, playerBet.game.homeTeam.color]
+                              : getTeamInfo(playerBet).color
+                      )
+                      .flat()
+                      .join(", ")})`,
+                  animation: "pulsateBar 4s infinite",
+              };
 
     const renderItem = (bet: Bet) => {
         const teamInfo = getTeamInfo(bet);
@@ -87,7 +90,13 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                 {bet.type === "spread" ? (
                     <div className="list">
                         <ListItemAvatar>
-                            <Avatar sx={{ backgroundColor: teamTintedColor }} src={teamInfo.logo} />
+                            <Avatar
+                                sx={{
+                                    backgroundColor: teamTintedColor,
+                                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
+                                }}
+                                src={teamInfo.logo}
+                            />
                         </ListItemAvatar>
                         <ListItemText
                             primary={`Spread: ${bet.team} ${bet.value}`}
@@ -100,6 +109,7 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                             <Avatar
                                 sx={{
                                     background: `linear-gradient(to right, ${teamTintedColor}, ${opponentTintedColor})`, // Gradient from team to opponent color
+                                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
@@ -139,7 +149,12 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText
-                            primary={bet.type.charAt(0).toUpperCase() + bet.type.slice(1) + ": " + bet.value}
+                            primary={
+                                bet.type.charAt(0).toUpperCase() +
+                                bet.type.slice(1) +
+                                ": " +
+                                bet.value
+                            }
                             secondary={`${bet.game.awayTeam.abbreviation} vs ${bet.game.homeTeam.abbreviation}`}
                         />
                     </div>
@@ -218,6 +233,8 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                                                                         backgroundColor:
                                                                             tintedColor, // Use the tinted color as the background
                                                                         borderRadius: "100%",
+                                                                        boxShadow:
+                                                                            "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
                                                                     }}
                                                                     src={teamInfo.logo} // Use the logo from teamInfo
                                                                 />
@@ -234,6 +251,8 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
                                                                             opponentTeamInfo
                                                                         )})`, // Split gradient between team and opponent
                                                                         borderRadius: "100%",
+                                                                        boxShadow:
+                                                                            "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
                                                                         display: "flex", // Use flex to layout children (the two logos) side by side
                                                                         justifyContent: "center", // Center the logos horizontally
                                                                         alignItems: "center", // Center the logos vertically

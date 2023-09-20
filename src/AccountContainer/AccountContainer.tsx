@@ -1,7 +1,7 @@
 import { Avatar, Dialog } from "@mui/material";
-import { deepPurple } from "@mui/material/colors";
 import { User } from "firebase/auth";
 import React from "react";
+import { getLetter } from "../Utils/Utils";
 import Account from "./Account/Account";
 import './AccountContainer.css';
 
@@ -22,7 +22,7 @@ const AccountContainer: React.FC<AccountContainerProps> = ({user}) => {
 
     return (
         <div className="AccountContainer">
-            <Avatar onClick={handleClickOpen} sx={{ bgcolor: deepPurple[500], width: 24, height: 24 }}></Avatar>
+            <Avatar onClick={handleClickOpen} sx={{ bgcolor: "#101113"}}>{getLetter(user)}</Avatar>
             <Dialog onClose={handleClose} open={open}>
                 <Account user={user} onSubmit={handleClose}/>
             </Dialog>

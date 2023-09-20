@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { User } from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
 
 // Define types for userBets and bet
@@ -357,6 +358,19 @@ export const convertToLocalTime = (utcDate: Date): Date => {
     const localOffset = new Date().getTimezoneOffset() * 60000; // Local device's timezone offset in milliseconds
     return new Date(utcTime - localOffset); // Adjust the date to local timezone
 };
+
+export const getLetter = (user: User | null) => {
+    if (user && user.displayName) {
+        const names = user.displayName.split(' ').slice(0, 2); // split by spaces and get the first two words
+        const initials = names.map(name => name.charAt(0).toUpperCase()).join(''); // get the first letter of each word
+        return initials;
+    } else if (user && user.email) {
+        return user.email.charAt(0).toUpperCase();
+    } else {
+        return ''; // Default case if somehow displayName and email both don't exist or are empty
+    }
+}
+
 
 // Old way of getting spread relative to bet
 // const calculateSpread = () => {

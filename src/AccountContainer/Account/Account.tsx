@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import { User, updateProfile } from "firebase/auth";
 import * as React from "react";
 import { db } from "../../firebaseConfig";
+import { getLetter } from "../../Utils/Utils";
 
 interface AccountProps {
     user: User | null;
@@ -20,6 +21,7 @@ const Account: React.FC<AccountProps> = ({ user }) => {
     const [feedbackMessage, setFeedbackMessage] = React.useState("");
     const [isSuccess, setIsSuccess] = React.useState<boolean | null>(null);
     const [currentDisplayName, setCurrentDisplayName] = React.useState<string | null>(null);
+    const [disableChangeDisplayName, setDisableChangeDisplayName] = React.useState<boolean>(true);
 
     React.useEffect(() => {
         if (user) {
@@ -29,18 +31,18 @@ const Account: React.FC<AccountProps> = ({ user }) => {
 
     const handleChangeDisplayName = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-    
+
         if (user) {
             try {
                 // Update displayName in Firebase Authentication
                 await updateProfile(user, {
                     displayName: newDisplayName,
                 });
-    
+
                 // Update displayName in Firebase Realtime Database
                 const userRef = ref(db, `users/${user.uid}/displayName`);
                 await set(userRef, newDisplayName);
-    
+
                 setCurrentDisplayName(newDisplayName);
                 setIsSuccess(true);
                 setFeedbackMessage("Display name updated successfully.");
@@ -58,6 +60,14 @@ const Account: React.FC<AccountProps> = ({ user }) => {
         }
     };
 
+    React.useEffect(() => {
+        if (newDisplayName) {
+            setDisableChangeDisplayName(false);
+        } else {
+            setDisableChangeDisplayName(true);
+        }
+    }, [newDisplayName]);
+
     return (
         <Container component="main" maxWidth="xs">
             <Box
@@ -68,16 +78,22 @@ const Account: React.FC<AccountProps> = ({ user }) => {
                     alignItems: "center",
                 }}
             >
-                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                    <AccountCircleOutlinedIcon />
+                <Avatar
+                    sx={{ m: 1, bgcolor: "#101113" }}
+                >
+                    {getLetter(user)}
                 </Avatar>
-                <Typography component="h1" variant="h5">
-                    Current Display Name: {currentDisplayName}
+                <Typography component="h1" variant="h5" align="center">
+                    Current Display Name
                 </Typography>
-                <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-                    This display name is how others will see you. If not set, your email will be used.
+                <Typography component="h1" variant="h6" align="center" sx={{ mb: 1 }}>
+                    {currentDisplayName}
                 </Typography>
-                <Box component="form" onSubmit={handleChangeDisplayName} noValidate sx={{ mt: 1 }}>
+                <Typography variant="body2" color="textSecondary">
+                    This display name is how others will see you. If not set, your email will be
+                    used.
+                </Typography>
+                <Box component="form" onSubmit={handleChangeDisplayName} noValidate>
                     <TextField
                         margin="normal"
                         fullWidth
@@ -88,7 +104,13 @@ const Account: React.FC<AccountProps> = ({ user }) => {
                         value={newDisplayName}
                         onChange={(e) => setNewDisplayName(e.target.value)}
                     />
-                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                    <Button
+                        type="submit"
+                        disabled={disableChangeDisplayName}
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 1, mb: 1 }}
+                    >
                         Change Display Name
                     </Button>
                 </Box>

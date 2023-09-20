@@ -80,7 +80,13 @@ const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayNa
                 {bet.type === "spread" ? (
                     <div className="list">
                         <ListItemAvatar>
-                            <Avatar sx={{ backgroundColor: teamTintedColor }} src={teamInfo.logo} />
+                            <Avatar
+                                sx={{
+                                    backgroundColor: teamTintedColor,
+                                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
+                                }}
+                                src={teamInfo.logo}
+                            />
                         </ListItemAvatar>
                         <ListItemText
                             primary={`Spread: ${bet.team} ${bet.value}`}
@@ -93,6 +99,7 @@ const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayNa
                             <Avatar
                                 sx={{
                                     background: `linear-gradient(to right, ${teamTintedColor}, ${opponentTintedColor})`, // Gradient from team to opponent color
+                                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
@@ -161,7 +168,6 @@ const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayNa
         shown = false;
     }
 
-
     return (
         <TransitionGroup>
             {playerBets.length >= 1 && (
@@ -217,6 +223,8 @@ const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayNa
                                                                         backgroundColor:
                                                                             tintedColor, // Use the tinted color as the background
                                                                         borderRadius: "100%",
+                                                                        boxShadow:
+                                                                            "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
                                                                     }}
                                                                     src={teamInfo.logo} // Use the logo from teamInfo
                                                                 />
@@ -233,6 +241,8 @@ const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayNa
                                                                             opponentTeamInfo
                                                                         )})`, // Split gradient between team and opponent
                                                                         borderRadius: "100%",
+                                                                        boxShadow:
+                                                                            "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
                                                                         display: "flex", // Use flex to layout children (the two logos) side by side
                                                                         justifyContent: "center", // Center the logos horizontally
                                                                         alignItems: "center", // Center the logos vertically
