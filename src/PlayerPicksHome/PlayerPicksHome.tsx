@@ -17,6 +17,7 @@ import { TransitionGroup } from "react-transition-group";
 import { Bet, TeamInfo } from "../Utils/Utils";
 import "./PlayerPicksHome.css";
 import { User } from "firebase/auth";
+import { calculateBetStatusColor } from "../Utils/BetUtils";
 
 export interface PlayerPicksHomeProps {
     playerBets: Bet[];
@@ -84,6 +85,11 @@ const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayNa
                                 sx={{
                                     backgroundColor: teamTintedColor,
                                     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
+                                    border: `3px solid ${
+                                        bet.game.status === "final"
+                                            ? calculateBetStatusColor(bet)
+                                            : "transparent"  // Make it transparent if the status is not "final"
+                                    }`
                                 }}
                                 src={teamInfo.logo}
                             />
@@ -100,6 +106,11 @@ const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayNa
                                 sx={{
                                     background: `linear-gradient(to right, ${teamTintedColor}, ${opponentTintedColor})`, // Gradient from team to opponent color
                                     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
+                                    border: `3px solid ${
+                                        bet.game.status === "final"
+                                            ? calculateBetStatusColor(bet)
+                                            : "#1d1e1f"  // Match it with the background color if the status is not "final"
+                                    }`,
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
@@ -167,7 +178,7 @@ const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayNa
     } else {
         shown = false;
     }
-
+    
     return (
         <TransitionGroup>
             {playerBets.length >= 1 && (
@@ -225,6 +236,11 @@ const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayNa
                                                                         borderRadius: "100%",
                                                                         boxShadow:
                                                                             "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
+                                                                            border: `3px solid ${
+                                                                                playerBet.game.status === "final"
+                                                                                    ? calculateBetStatusColor(playerBet)
+                                                                                    : "transparent"  // Make it transparent if the status is not "final"
+                                                                            }`
                                                                     }}
                                                                     src={teamInfo.logo} // Use the logo from teamInfo
                                                                 />
@@ -243,6 +259,11 @@ const PlayerPicksHome: React.FC<PlayerPicksHomeProps> = ({ playerBets, displayNa
                                                                         borderRadius: "100%",
                                                                         boxShadow:
                                                                             "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
+                                                                            border: `3px solid ${
+                                                                                playerBet.game.status === "final"
+                                                                                    ? calculateBetStatusColor(playerBet)
+                                                                                    : "#1d1e1f"  // Match it with the background color if the status is not "final"
+                                                                            }`,
                                                                         display: "flex", // Use flex to layout children (the two logos) side by side
                                                                         justifyContent: "center", // Center the logos horizontally
                                                                         alignItems: "center", // Center the logos vertically
