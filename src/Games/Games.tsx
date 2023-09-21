@@ -37,16 +37,17 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         }
     }, [week, activeButton]);
 
-    const [betAdded, setBetAdded] = useState(false);
+    const [betAddedOrRemoved, setBetAddedOrRemoved] = useState(false);
 
     const handleAddBet = (bet: Bet) => {
         setBets((prevArray) => [...prevArray, bet]);
         console.log(bet);
-        setBetAdded(true);
+        setBetAddedOrRemoved(true);
     };
 
     const handleRemoveBet = (bet: Bet) => {
         setBets((prev) => prev.filter((prevBet) => prevBet.id !== bet.id));
+        setBetAddedOrRemoved(true);
     };
 
     const handleWeekChange = (week: string) => {
@@ -99,14 +100,14 @@ const Games: React.FC<GamesProps> = ({ user }) => {
 
     useEffect(() => {
         // This will now fetch all bets initially and whenever a new bet is added
-        if ((!hasFetchedAllBets || betAdded) && week != undefined) {
+        if ((!hasFetchedAllBets || betAddedOrRemoved) && week != undefined) {
             console.log("fetch")
             const currentWeek = `week${week}`;
             fetchAllBetsForWeek(currentWeek).then(bets => setAllBetsForWeek(bets));
-            setBetAdded(false);
+            setBetAddedOrRemoved(false);
             setHasFetchedAllBets(true);  // Set this to true after fetching all bets
         }
-    }, [week, betAdded]);
+    }, [week, betAddedOrRemoved]);
 
     return (
         <Fade in={true} timeout={500}>
