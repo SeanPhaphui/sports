@@ -26,7 +26,6 @@ const SelectGameCard: React.FC<SelectGameCardProps> = ({ game, openDialog, allBe
             }))
         )
         .filter((bet) => bet.game.gameId === game.gameId);
-
     return (
         <div className="SelectGameCard">
             <Card onClick={openDialog}>
@@ -35,8 +34,8 @@ const SelectGameCard: React.FC<SelectGameCardProps> = ({ game, openDialog, allBe
                         {betsForCurrentGame.length > 0 && (
                             <div>
                                 <div className="BetsForGame">
-                                    {betsForCurrentGame.map((bet) => (
-                                        <div className="player" key={bet.uid}>
+                                    {betsForCurrentGame.map((bet, index) => (
+                                        <div className="player" key={index}>
                                             {bet.type === "spread" ? (
                                                 <div>
                                                     {`${bet.displayName} - Spread: ${bet.team} ${bet.value}`}

@@ -36,7 +36,6 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({
         .map((bet) => bet.type);
 
     const extractSpreadDetails = (spread: string) => {
-        console.log(spread);
         const spreadPattern = /([A-Z]+)\s*([-+]?)\s*([\d.]+)/;
         const spreadMatch = spread.match(spreadPattern);
         if (spreadMatch) {
@@ -78,6 +77,7 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({
     };
 
     useEffect(() => {
+        const spreadDetails = extractSpreadDetails(game.odds.spread);
         if (betSelection === "Over/Under") {
             setBetType(undefined);
             const newDefaultValue = game.odds.overUnder === "N/A" ? "" : game.odds.overUnder;
@@ -89,29 +89,30 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({
             }
             setTeam(`${game.awayTeam.location}\\${game.homeTeam.location}`);
         } else {
-            const teamAbbreviation = extractSpreadDetails(game.odds.spread)?.teamAbbreviation;
-            const spreadSignValue = extractSpreadDetails(game.odds.spread)?.spreadSign || "+"; // Defaults to positive if no sign captured
-            const spreadValue = extractSpreadDetails(game.odds.spread)?.spreadValue;
+            if (spreadDetails) {
+                const { teamAbbreviation, spreadSign, spreadValue } = spreadDetails;
+                // Now use these variables instead of calling extractSpreadDetails multiple times
 
-            setSpreadSign(spreadSignValue);
-            if (spreadValue) {
-                setDefaultTextValue(spreadValue);
-            } else {
-                setDefaultTextValue("");
-            }
-            setBetValue(spreadValue);
+                setSpreadSign(spreadSign);
+                if (spreadValue) {
+                    setDefaultTextValue(spreadValue);
+                } else {
+                    setDefaultTextValue("");
+                }
+                setBetValue(spreadValue);
 
-            // Check for teamAbbreviation match and set the team location
-            if (teamAbbreviation === game.homeTeam.abbreviation) {
-                setTeam(game.homeTeam.location);
-            } else if (teamAbbreviation === game.awayTeam.abbreviation) {
-                setTeam(game.awayTeam.location);
-            } else {
-                setTeam(undefined); // reset the team state if no match
+                // Check for teamAbbreviation match and set the team location
+                if (teamAbbreviation === game.homeTeam.abbreviation) {
+                    setTeam(game.homeTeam.location);
+                } else if (teamAbbreviation === game.awayTeam.abbreviation) {
+                    setTeam(game.awayTeam.location);
+                } else {
+                    setTeam(undefined); // reset the team state if no match
+                }
             }
             setBetType("spread");
         }
-    }, [betSelection]);
+    }, []);
 
     useEffect(() => {
         if (team && betType && betValue) {
@@ -154,15 +155,19 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({
     };
 
     useEffect(() => {
-        if (
-            disabledTeams.includes(game.homeTeam.location) &&
-            disabledTeams.includes(game.awayTeam.location)
-        ) {
+        const shouldSwitchToOverUnder = disabledTeams.includes(game.homeTeam.location) &&
+                                         disabledTeams.includes(game.awayTeam.location);
+        
+        const shouldSwitchToSpread = disabledOverUnders.includes("over") &&
+                                     disabledOverUnders.includes("under");
+    
+        if (shouldSwitchToOverUnder && betSelection !== "Over/Under") {
             setBetSelection("Over/Under");
-        } else if (disabledOverUnders.includes("over") && disabledOverUnders.includes("under")) {
+        } else if (shouldSwitchToSpread && betSelection !== "Spread") {
             setBetSelection("Spread");
         }
-    }, [disabledTeams, disabledOverUnders]);
+    }, [disabledTeams, disabledOverUnders, game.homeTeam.location, game.awayTeam.location, betSelection]);
+    
 
     return (
         <div className="SelectGameCardDialog">
