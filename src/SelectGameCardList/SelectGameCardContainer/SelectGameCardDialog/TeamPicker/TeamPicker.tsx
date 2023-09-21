@@ -7,9 +7,10 @@ interface TeamPickerProps {
     awayTeam: string;
     team: string | undefined;
     onTeamChange: (team: string) => void;
+    disabledOptions: string[];
 }
 
-const TeamPicker: React.FC<TeamPickerProps> = ({ homeTeam, awayTeam, team, onTeamChange }) => {
+const TeamPicker: React.FC<TeamPickerProps> = ({ homeTeam, awayTeam, team, onTeamChange, disabledOptions }) => {
     const [alignment, setAlignment] = useState<string | undefined>(team);
     
     const handleChange = (
@@ -19,6 +20,20 @@ const TeamPicker: React.FC<TeamPickerProps> = ({ homeTeam, awayTeam, team, onTea
         setAlignment(newAlignment);
         onTeamChange(newAlignment);
     };
+
+    useEffect(() => {
+        if (disabledOptions.includes(team || '')) {
+            // Pick the other team if the initial 'team' value is disabled
+            const newTeam = team === homeTeam ? awayTeam : homeTeam;
+            setAlignment(newTeam);
+            onTeamChange(newTeam);
+        } else {
+            // Otherwise, set alignment to the initial 'team' value
+            setAlignment(team);
+        }
+    }, [team, homeTeam, awayTeam, disabledOptions, onTeamChange]);
+    
+    
 
     useEffect(() => {
         setAlignment(team)
@@ -33,10 +48,10 @@ const TeamPicker: React.FC<TeamPickerProps> = ({ homeTeam, awayTeam, team, onTea
                 exclusive
                 onChange={handleChange}
             >
-                <ToggleButton className="left-toggle-button" value={awayTeam}>
+                <ToggleButton disabled={disabledOptions.includes(awayTeam)} className="left-toggle-button" value={awayTeam}>
                     {awayTeam}
                 </ToggleButton>
-                <ToggleButton className="right-toggle-button" value={homeTeam}>
+                <ToggleButton disabled={disabledOptions.includes(homeTeam)} className="right-toggle-button" value={homeTeam}>
                     {homeTeam}
                 </ToggleButton>
             </ToggleButtonGroup>

@@ -99,7 +99,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         const currentWeek = `week${week}`;
         fetchAllBetsForWeek(currentWeek).then(bets => setAllBetsForWeek(bets));
     
-    }, [week]);
+    }, [week, handleAddBet]);
 
     return (
         <Fade in={true} timeout={500}>
@@ -120,6 +120,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                         filterText={filterText}
                         handleAddBet={handleAddBet}
                         allBetsForWeek={allBetsForWeek}
+                        currentUserId={user?.uid || ""}
                     />
                 </div>
             </div>
