@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/sports/static/css/main.7d0004d9.css",
-    "main.js": "/sports/static/js/main.9efcf4e0.js",
+    "main.css": "/sports/static/css/main.24814d49.css",
+    "main.js": "/sports/static/js/main.e23bce2d.js",
     "static/js/787.f87d2b1c.chunk.js": "/sports/static/js/787.f87d2b1c.chunk.js",
     "static/media/IBMPlexSans-SemiBold.ttf": "/sports/static/media/IBMPlexSans-SemiBold.fffccb38819b2f4eb6ab.ttf",
     "static/media/IBMPlexSans-Medium.ttf": "/sports/static/media/IBMPlexSans-Medium.4c69d30a49b3ad04d7df.ttf",
@@ -64,12 +64,12 @@
     "static/media/roboto-greek-ext-400-normal.woff": "/sports/static/media/roboto-greek-ext-400-normal.f708607d2a7290fb8bfa.woff",
     "static/media/roboto-greek-ext-700-normal.woff": "/sports/static/media/roboto-greek-ext-700-normal.249853776d22a271b2b5.woff",
     "index.html": "/sports/index.html",
-    "main.7d0004d9.css.map": "/sports/static/css/main.7d0004d9.css.map",
-    "main.9efcf4e0.js.map": "/sports/static/js/main.9efcf4e0.js.map",
+    "main.24814d49.css.map": "/sports/static/css/main.24814d49.css.map",
+    "main.e23bce2d.js.map": "/sports/static/js/main.e23bce2d.js.map",
     "787.f87d2b1c.chunk.js.map": "/sports/static/js/787.f87d2b1c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.7d0004d9.css",
-    "static/js/main.9efcf4e0.js"
+    "static/css/main.24814d49.css",
+    "static/js/main.e23bce2d.js"
   ]
 }
