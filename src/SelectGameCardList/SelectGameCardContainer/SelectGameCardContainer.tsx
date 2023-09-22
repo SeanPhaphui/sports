@@ -27,14 +27,6 @@ const SelectGameCardContainer: React.FC<SelectGameCardContainerProps> = ({
     const [shouldShake, setShouldShake] = React.useState(false);
 
     const handleClickOpen = () => {
-        if (betLock) {
-            setShouldShake(true);
-            alertProps.handleAlertOpen(true);
-            alertProps.handleAlertMessage("Betting is locked due to lock-in period!");
-            setTimeout(() => setShouldShake(false), 900); // Duration of shake animation
-            return;
-        }
-
         // Count the total bets for this game
         const totalBetsForThisGame = allBetsForWeek
             .flatMap((userBets) => userBets.bets)
