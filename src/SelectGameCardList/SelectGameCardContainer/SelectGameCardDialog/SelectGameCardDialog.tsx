@@ -112,7 +112,7 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({
             }
             setBetType("spread");
         }
-    }, []);
+    }, [betSelection]);
 
     useEffect(() => {
         if (team && betType && betValue) {

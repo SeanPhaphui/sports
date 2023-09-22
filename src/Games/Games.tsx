@@ -1,14 +1,10 @@
-import { Fade } from "@mui/material";
+import { Alert, Fade, Snackbar } from "@mui/material";
 import { User } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import Header from "../Header/Header";
 import PlayerPicks from "../PlayerPicks/PlayerPicks";
 import SelectGameCardList from "../SelectGameCardList/SelectGameCardList";
-import {
-    Bet,
-    Game,
-    getGamesByWeek
-} from "../Utils/Utils";
+import { Bet, Game, getGamesByWeek } from "../Utils/Utils";
 import Weeks from "../Weeks/Weeks";
 import { fetchAllBetsForWeek, fetchUserBets, saveUserBets } from "../firebaseConfig";
 import "./Games.css";
@@ -94,20 +90,51 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         }
     }, [bets, hasFetchedBets]);
 
-    const [allBetsForWeek, setAllBetsForWeek] = useState<{ uid: string; bets: Bet[]; displayName: string }[]>([]);
+    const [allBetsForWeek, setAllBetsForWeek] = useState<
+        { uid: string; bets: Bet[]; displayName: string }[]
+    >([]);
 
     const [hasFetchedAllBets, setHasFetchedAllBets] = useState(false);
 
     useEffect(() => {
         // This will now fetch all bets initially and whenever a new bet is added
         if ((!hasFetchedAllBets || betAddedOrRemoved) && week != undefined) {
-            console.log("fetch")
+            console.log("fetch");
             const currentWeek = `week${week}`;
-            fetchAllBetsForWeek(currentWeek).then(bets => setAllBetsForWeek(bets));
+            fetchAllBetsForWeek(currentWeek).then((bets) => setAllBetsForWeek(bets));
             setBetAddedOrRemoved(false);
-            setHasFetchedAllBets(true);  // Set this to true after fetching all bets
+            setHasFetchedAllBets(true); // Set this to true after fetching all bets
         }
     }, [week, betAddedOrRemoved]);
+
+    const isBetLocked = (): boolean => {
+        const now = new Date();
+        const dayOfWeek = now.getDay(); // 0 (Sunday) to 6 (Saturday)
+        const hour = now.getHours();
+
+        if (dayOfWeek === 5 && hour >= 12) {
+            return true; // Lock-in starts from 12 PM on Friday
+        }
+
+        if (dayOfWeek === 6) {
+            return true; // Lock-in for the entire Saturday
+        }
+
+        if (dayOfWeek === 0) {
+            return true; // Lock-in for the entire Sunday
+        }
+
+        return false; // Outside of the lock-in period
+    };
+
+    const betLock = isBetLocked();
+
+    const [alertOpen, setAlertOpen] = React.useState(false);
+    const [alertMessage, setAlertMessage] = React.useState("");
+
+    const handleAlertClose = () => {
+        setAlertOpen(false);
+    };
 
     return (
         <Fade in={true} timeout={500}>
@@ -122,15 +149,34 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                     <Weeks handleWeekChange={handleWeekChange} />
                 </div>
                 <div className="body">
-                    <PlayerPicks playerBets={bets} handleRemoveBet={handleRemoveBet} />
+                    <PlayerPicks
+                        playerBets={bets}
+                        handleRemoveBet={handleRemoveBet}
+                        betLock={betLock}
+                    />
                     <SelectGameCardList
                         game={games}
                         filterText={filterText}
                         handleAddBet={handleAddBet}
                         allBetsForWeek={allBetsForWeek}
                         currentUserId={user?.uid || ""}
+                        betLock={betLock}
+                        alertProps={{
+                            handleAlertOpen: setAlertOpen,
+                            handleAlertMessage: setAlertMessage,
+                        }}
                     />
                 </div>
+                <Snackbar
+                    open={alertOpen}
+                    autoHideDuration={3000}
+                    onClose={handleAlertClose}
+                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                >
+                    <Alert onClose={handleAlertClose} severity="warning">
+                        {alertMessage}
+                    </Alert>
+                </Snackbar>
             </div>
         </Fade>
     );

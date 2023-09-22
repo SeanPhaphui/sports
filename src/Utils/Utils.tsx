@@ -57,6 +57,11 @@ export interface GameCalendarObject {
     week: string;
 }
 
+export interface AlertProps {
+    handleAlertOpen: (open: boolean) => void;
+    handleAlertMessage: (message: string) => void;
+}
+
 const fetchData = async (url: string) => {
     const response = await fetch(url);
     return response.json();

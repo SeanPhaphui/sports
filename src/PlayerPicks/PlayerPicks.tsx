@@ -20,9 +20,10 @@ import "./PlayerPicks.css";
 export interface PlayerPicksProps {
     playerBets: Bet[];
     handleRemoveBet: (item: Bet) => void;
+    betLock: boolean;
 }
 
-const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }) => {
+const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet, betLock }) => {
     const getTeamInfo = (playerBet: Bet) => {
         return playerBet.team === playerBet.game.homeTeam.location
             ? playerBet.game.homeTeam
@@ -77,14 +78,16 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet }
         return (
             <ListItem
                 secondaryAction={
-                    <IconButton
-                        edge="end"
-                        aria-label="delete"
-                        title="Delete"
-                        onClick={() => handleRemoveBet(bet)}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
+                    betLock ? null : ( // Check if bets are locked
+                        <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            title="Delete"
+                            onClick={() => handleRemoveBet(bet)}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                    )
                 }
             >
                 {bet.type === "spread" ? (
