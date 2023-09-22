@@ -2,6 +2,7 @@ import React from 'react';
 import DateTimeDisplay from './DateTimeDisplay/DateTimeDisplay';
 import { useCountdown } from '../Utils/useCountdown';
 import './CountdownTimer.css';
+import { getNextFridayNoon, isWithinLockInPeriod } from '../Utils/BetUtils';
 
 const ExpiredNotice: React.FC = () => {
   return (
@@ -21,40 +22,24 @@ interface ShowCounterProps {
 const ShowCounter: React.FC<ShowCounterProps> = ({ days, hours, minutes, seconds }) => {
   return (
     <div className="show-counter">
-        <DateTimeDisplay value={days} type={'Days'} isDanger={days <= 3} />
+        <DateTimeDisplay value={days} type={'Days'} isDanger={days < 1} />
         <div>:</div>
-        <DateTimeDisplay value={hours} type={'Hours'} isDanger={false} />
+        <DateTimeDisplay value={hours} type={'Hours'} isDanger={days < 1} />
         <div>:</div>
-        <DateTimeDisplay value={minutes} type={'Mins'} isDanger={false} />
+        <DateTimeDisplay value={minutes} type={'Mins'} isDanger={days < 1} />
         <div>:</div>
-        <DateTimeDisplay value={seconds} type={'Seconds'} isDanger={false} />
+        <DateTimeDisplay value={seconds} type={'Seconds'} isDanger={days < 1} />
     </div>
   );
 };
 
 const CountdownTimer: React.FC = () => {
-  function getNextFridayNoon(): number {
-    const now = new Date();
-    now.setHours(12, 0, 0, 0);  // Set time to 12:00:00.000
-    const daysUntilNextFriday = (5 + 7 - now.getDay()) % 7 || 7; // Calculate how many days until next Friday
-    now.setDate(now.getDate() + daysUntilNextFriday); // Adjust to next Friday
-    return now.getTime();
-  }
-
-  function isWithinExpirationPeriod(): boolean {
-    const now = new Date();
-    const dayOfWeek = now.getDay(); 
-    const hour = now.getHours();
-
-    // Return true if it's Friday after 12pm or it's Saturday or it's Sunday before 12pm
-    return (dayOfWeek === 5 && hour >= 12) || dayOfWeek === 6 || (dayOfWeek === 0 && hour < 12);
-  }
-
   const upcomingFridayNoon = getNextFridayNoon();
 
   const [days, hours, minutes, seconds] = useCountdown(upcomingFridayNoon);
 
-  if (isWithinExpirationPeriod()) {
+  const now = new Date();
+  if (isWithinLockInPeriod(now)) {
     return <ExpiredNotice />;
   } else {
     return (

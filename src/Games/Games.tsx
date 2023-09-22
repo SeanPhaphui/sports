@@ -8,7 +8,7 @@ import { Bet, Game, getGamesByWeek } from "../Utils/Utils";
 import Weeks from "../Weeks/Weeks";
 import { fetchAllBetsForWeek, fetchUserBets, saveUserBets } from "../firebaseConfig";
 import "./Games.css";
-import { isBetLocked } from "../Utils/BetUtils";
+import { isWithinLockInPeriod } from "../Utils/BetUtils";
 
 interface GamesProps {
     user: User | null;
@@ -108,7 +108,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         }
     }, [week, betAddedOrRemoved]);
 
-    const betLock = isBetLocked();
+    const betLock = isWithinLockInPeriod(new Date());
 
     const [alertOpen, setAlertOpen] = React.useState(false);
     const [alertMessage, setAlertMessage] = React.useState("");
