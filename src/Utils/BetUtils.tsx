@@ -1,5 +1,25 @@
 import { Bet } from "./Utils"; // Replace this with the actual path to your Bet type
 
+export const isBetLocked = (): boolean => {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 (Sunday) to 6 (Saturday)
+    const hour = now.getHours();
+
+    if (dayOfWeek === 5 && hour >= 12) {
+        return true; // Lock-in starts from 12 PM on Friday
+    }
+
+    if (dayOfWeek === 6) {
+        return true; // Lock-in for the entire Saturday
+    }
+
+    if (dayOfWeek === 0) {
+        return true; // Lock-in for the entire Sunday
+    }
+
+    return false; // Outside of the lock-in period
+};
+
 const getTeamScores = (playerBet: Bet): { teamScore: number; opponentScore: number } => {
     let teamScore: number, opponentScore: number;
 

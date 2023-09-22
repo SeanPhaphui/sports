@@ -1,5 +1,6 @@
 import { KeyboardArrowDown } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import LockIcon from '@mui/icons-material/Lock';
 import {
     Avatar,
     Box,
@@ -78,7 +79,15 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet, 
         return (
             <ListItem
                 secondaryAction={
-                    betLock ? null : ( // Check if bets are locked
+                    betLock ? ( // Check if bets are locked
+                    <IconButton
+                        edge="end"
+                        aria-label="lock"
+                        title="Lock"
+                    >
+                        <LockIcon />
+                    </IconButton>
+                ) : ( // Check if bets are locked
                         <IconButton
                             edge="end"
                             aria-label="delete"

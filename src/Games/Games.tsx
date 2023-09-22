@@ -8,6 +8,7 @@ import { Bet, Game, getGamesByWeek } from "../Utils/Utils";
 import Weeks from "../Weeks/Weeks";
 import { fetchAllBetsForWeek, fetchUserBets, saveUserBets } from "../firebaseConfig";
 import "./Games.css";
+import { isBetLocked } from "../Utils/BetUtils";
 
 interface GamesProps {
     user: User | null;
@@ -106,26 +107,6 @@ const Games: React.FC<GamesProps> = ({ user }) => {
             setHasFetchedAllBets(true); // Set this to true after fetching all bets
         }
     }, [week, betAddedOrRemoved]);
-
-    const isBetLocked = (): boolean => {
-        const now = new Date();
-        const dayOfWeek = now.getDay(); // 0 (Sunday) to 6 (Saturday)
-        const hour = now.getHours();
-
-        if (dayOfWeek === 5 && hour >= 12) {
-            return true; // Lock-in starts from 12 PM on Friday
-        }
-
-        if (dayOfWeek === 6) {
-            return true; // Lock-in for the entire Saturday
-        }
-
-        if (dayOfWeek === 0) {
-            return true; // Lock-in for the entire Sunday
-        }
-
-        return false; // Outside of the lock-in period
-    };
 
     const betLock = isBetLocked();
 

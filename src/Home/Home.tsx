@@ -8,6 +8,7 @@ import PlayerPicksHome from "../PlayerPicksHome/PlayerPicksHome";
 import { Bet, fetchCurrentWeek } from "../Utils/Utils";
 import { fetchAllBetsForWeek, fetchUserBets } from "../firebaseConfig";
 import "./Home.css";
+import CountdownTimer from "../CountdownTimer/CountdownTimer";
 
 interface HomeProps {
     user: User | null;
@@ -62,11 +63,11 @@ const Home: React.FC<HomeProps> = ({ user }) => {
 
     const combinedBets = [
         ...(bets.length > 0 ? [{ uid: currentUserId, bets: bets, displayName: "Your" }] : []),
-        ...allUsersBets.filter(obj => obj.uid !== currentUserId)
+        ...allUsersBets.filter((obj) => obj.uid !== currentUserId),
     ];
-    
-    
 
+
+    
     return (
         <Fade in={true} timeout={500}>
             <div className="Home">
@@ -74,6 +75,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                     <HomeHeader user={user} />
                 </div>
                 <div className="body">
+                        <CountdownTimer/>
                     {allUsersBets.map((object, index) => (
                         <PlayerPicksHome
                             key={index}
@@ -81,22 +83,22 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                             displayName={object.displayName}
                         />
                     ))}
-                <TransitionGroup>
-                    {combinedBets.map((betObject, index) => (
-                        <Grow in={true} key={index} timeout={500}>
-                            <Card className="pick-list">
-                                <h4>
-                                    {betObject.displayName === "Your" 
-                                        ? `${betObject.displayName} Week's Picks` 
-                                        : `${betObject.displayName}'s Picks`}
-                                </h4>
-                                {betObject.bets.map((bet) => (
-                                    <PlayerBetCard key={bet.id} bet={bet} />
-                                ))}
-                            </Card>
-                        </Grow>
-                    ))}
-                </TransitionGroup>
+                    <TransitionGroup>
+                        {combinedBets.map((betObject, index) => (
+                            <Grow in={true} key={index} timeout={500}>
+                                <Card className="pick-list">
+                                    <h4>
+                                        {betObject.displayName === "Your"
+                                            ? `${betObject.displayName} Week's Picks`
+                                            : `${betObject.displayName}'s Picks`}
+                                    </h4>
+                                    {betObject.bets.map((bet) => (
+                                        <PlayerBetCard key={bet.id} bet={bet} />
+                                    ))}
+                                </Card>
+                            </Grow>
+                        ))}
+                    </TransitionGroup>
                 </div>
             </div>
         </Fade>
