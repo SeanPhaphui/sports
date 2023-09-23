@@ -317,6 +317,29 @@ export const updateBets = async (bets: Bet[]): Promise<Bet[]> => {
     return updatedBets;
 };
 
+export const updateBetsUsingWeekData = async (bets: Bet[], week: number): Promise<Bet[]> => {
+    // Fetch all games for the given week.
+    const gamesForTheWeek = await getGamesByWeek(week, false); // Assuming you want all games, change accordingly
+
+    // Use the fetched games to update bets.
+    const updatedBets = bets.map(bet => {
+        const correspondingGame = gamesForTheWeek.find(game => game.gameId === bet.game.gameId);
+
+        if (correspondingGame) {
+            return {
+                ...bet,
+                game: correspondingGame
+            };
+        } else {
+            console.error(`Failed to update bet with ID ${bet.id}`);
+            return bet;  // Return the original bet if no corresponding game is found.
+        }
+    });
+
+    return updatedBets;
+};
+
+
 export const extractTeamsFromPlayerBet = (
     playerBet: Bet
 ): { homeTeam: TeamInfo; awayTeam: TeamInfo } => {

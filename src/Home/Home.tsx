@@ -5,7 +5,7 @@ import { TransitionGroup } from "react-transition-group";
 import HomeHeader from "../HomeHeader/HomeHeader";
 import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
 import PlayerPicksHome from "../PlayerPicksHome/PlayerPicksHome";
-import { Bet, fetchCurrentWeek, updateBets } from "../Utils/Utils";
+import { Bet, fetchCurrentWeek, updateBets, updateBetsUsingWeekData } from "../Utils/Utils";
 import { fetchAllBetsForWeek, fetchUserBets } from "../firebaseConfig";
 import "./Home.css";
 import CountdownTimer from "../CountdownTimer/CountdownTimer";
@@ -40,7 +40,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                     .flat();
 
                 try {
-                    const updatedBetsArray: Bet[] = await updateBets(allBetsArray);
+                    const updatedBetsArray: Bet[] = await updateBetsUsingWeekData(allBetsArray, weekNumber);
 
                     // Update the allUsersBets state with the updated bets
                     const updatedAllUsersBets: UserBets[] = usersBetsForWeek.map(
