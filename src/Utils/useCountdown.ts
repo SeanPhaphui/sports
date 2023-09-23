@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 
 const useCountdown = (targetDate: string | number): [number, number, number, number] => {
   const countDownDate = new Date(targetDate).getTime();
-  console.log("countDownDate:", countDownDate);
-  console.log("Provided targetDate:", targetDate);
 
   const [countDown, setCountDown] = useState<number>(
     countDownDate - new Date().getTime()

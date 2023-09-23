@@ -5,7 +5,7 @@ import { TransitionGroup } from "react-transition-group";
 import HomeHeader from "../HomeHeader/HomeHeader";
 import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
 import PlayerPicksHome from "../PlayerPicksHome/PlayerPicksHome";
-import { Bet, fetchCurrentWeek } from "../Utils/Utils";
+import { Bet, fetchCurrentWeek, updateBets } from "../Utils/Utils";
 import { fetchAllBetsForWeek, fetchUserBets } from "../firebaseConfig";
 import "./Home.css";
 import CountdownTimer from "../CountdownTimer/CountdownTimer";
@@ -14,12 +14,28 @@ interface HomeProps {
     user: User | null;
 }
 
+interface UserBets {
+    uid: string;
+    bets: Bet[];
+    displayName: string;
+    // ... other user properties if any
+}
+
 const Home: React.FC<HomeProps> = ({ user }) => {
-    const [bets, setBets] = useState<Bet[]>([]);
-    const [allUsersBets, setAllUsersBets] = useState<
-        { uid: string; bets: Bet[]; displayName: string }[]
+    const [userBetsFromDatabase, setUserBetsFromDatabase] = useState<Bet[]>([]);
+    const [userBetsFromDatabaseAfterAPIFetch, setUserBetsFromDatabaseAfterAPIFetch] = useState<
+        Bet[]
     >([]);
 
+    const [allUsersBetsFromDatabase, setAllUsersBetsFromDatabase] = useState<
+    UserBets[]
+    >([]);
+
+    const [allUsersBetsFromDatabaseAfterAPIFetch, setAllUsersBetsFromDatabaseAfterAPIFetch] = useState<
+    UserBets[]
+    >([]);
+
+    // Fetches the Currrent Users Bets from Database
     useEffect(() => {
         // Assuming you have the user's UID
         const uid = user?.uid;
@@ -38,36 +54,94 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                         },
                     })
                 );
-                setBets(formattedBets);
+                setUserBetsFromDatabase(formattedBets);
             }
         };
 
         loadUserBets();
     }, [user]);
 
+    // Fetches Game Data For The Users Bets
+    useEffect(() => {
+        if (userBetsFromDatabase.length > 0) {
+            const updateUserBets = async () => {
+                const updatedUserBets = await updateBets(userBetsFromDatabase);
+                console.log("updatedUserBets: ", updatedUserBets);
+                setUserBetsFromDatabaseAfterAPIFetch(updatedUserBets)
+            };
+            updateUserBets();
+        }
+    }, [userBetsFromDatabase]);
+
+
+
+
+
+
+    // Fetches All User Bets From Database For the specific Week
     useEffect(() => {
         const loadAllBets = async () => {
             const weekNumber = await fetchCurrentWeek();
             if (weekNumber !== null) {
                 const currentWeek = `week${weekNumber}`;
                 const usersBetsForWeek = await fetchAllBetsForWeek(currentWeek);
-                setAllUsersBets(usersBetsForWeek);
+                setAllUsersBetsFromDatabase(usersBetsForWeek);
             }
         };
 
         loadAllBets();
     }, [user]);
 
+    useEffect(() => {
+        const updateAllBets = async () => {
+            if (allUsersBetsFromDatabase.length > 0) {
+                // Extract all bets into a single array
+                const allBetsArray: Bet[] = allUsersBetsFromDatabase.map((user: UserBets) => user.bets).flat();
+    
+                try {
+                    const updatedBetsArray: Bet[] = await updateBets(allBetsArray);
+    
+                    // Update the allUsersBets state with the updated bets
+                    const updatedAllUsersBets: UserBets[] = allUsersBetsFromDatabase.map((user: UserBets) => {
+                        return {
+                            ...user,
+                            bets: user.bets.map((bet: Bet) => {
+                                const updatedBet: Bet | undefined = updatedBetsArray.find((ub: Bet) => ub.id === bet.id);
+                                
+                                // Log the original and updated bet
+                                console.log('Original Bet:', bet);
+                                console.log('Updated Bet:', updatedBet);
+                                
+                                return updatedBet ? updatedBet : bet;
+                            }),
+                        };
+                    });
+    
+                    setAllUsersBetsFromDatabaseAfterAPIFetch(updatedAllUsersBets);
+                    console.log("All user bets final: ", updatedAllUsersBets);
+                } catch (error: any) {
+                    console.error("Error updating all bets:", error);
+                }
+            }
+        };
+    
+        updateAllBets();
+    }, [allUsersBetsFromDatabase]);
+    
+    
+
     // Grab the current user's UID
     const currentUserId = user?.uid;
 
     const combinedBets = [
-        ...(bets.length > 0 ? [{ uid: currentUserId, bets: bets, displayName: "Your" }] : []),
-        ...allUsersBets.filter((obj) => obj.uid !== currentUserId),
+        ...(userBetsFromDatabaseAfterAPIFetch.length > 0
+            ? [{ uid: currentUserId, bets: userBetsFromDatabaseAfterAPIFetch, displayName: "Your" }]
+            : []),
+        ...allUsersBetsFromDatabaseAfterAPIFetch.filter((obj) => obj.uid !== currentUserId),
     ];
 
+    console.log("Combinned: ", combinedBets);
 
-    
     return (
         <Fade in={true} timeout={500}>
             <div className="Home">
@@ -75,8 +149,8 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                     <HomeHeader user={user} />
                 </div>
                 <div className="body">
-                        <CountdownTimer/>
-                    {allUsersBets.map((object, index) => (
+                    <CountdownTimer />
+                    {allUsersBetsFromDatabaseAfterAPIFetch.map((object, index) => (
                         <PlayerPicksHome
                             key={index}
                             playerBets={object.bets}

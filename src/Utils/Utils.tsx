@@ -196,7 +196,8 @@ export const getGameByGameID = async (
     id: string,
     team: string,
     type: "spread" | "over" | "under",
-    value: string
+    value: string,
+    originalBetId?: string
 ): Promise<Bet> => {
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event=${id}`;
@@ -220,7 +221,7 @@ export const getGameByGameID = async (
 
             if (homeTeam && awayTeam) {
                 const bet: Bet = {
-                    id: uuidv4(),
+                    id: originalBetId || uuidv4(),
                     team: team,
                     type: type,
                     value: value,
@@ -260,7 +261,7 @@ export const getGameByGameID = async (
     }
     console.log("From Utils - EMPTY BET RETURNED");
     return {
-        id: uuidv4(),
+        id: originalBetId || uuidv4(),
         team: "",
         type: "spread",
         value: "",
@@ -297,14 +298,15 @@ export const getGameByGameID = async (
 
 export const updateBets = async (bets: Bet[]): Promise<Bet[]> => {
     const updatedBets = [];
-
+    console.log(bets)
     for (let bet of bets) {
         try {
             const updatedBet = await getGameByGameID(
                 bet.game.gameId,
                 bet.team,
                 bet.type,
-                bet.value
+                bet.value,
+                bet.id
             );
             updatedBets.push(updatedBet);
         } catch (error) {
@@ -313,6 +315,7 @@ export const updateBets = async (bets: Bet[]): Promise<Bet[]> => {
         }
     }
 
+    console.log(updatedBets)
     return updatedBets;
 };
 
