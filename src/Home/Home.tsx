@@ -27,7 +27,6 @@ const Home: React.FC<HomeProps> = ({ user }) => {
 
     // Single useEffect to fetch and update all user bets
     useEffect(() => {
-        if (!user) return;  // Exit early if user is null
         const loadAndAllBets = async () => {
             const weekNumber = await fetchCurrentWeek();
             if (weekNumber !== null) {
@@ -65,7 +64,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
         };
 
         loadAndAllBets();
-    }, [user]);
+    }, []);
 
     // Grab the current user's UID
     const currentUserId = user?.uid;
