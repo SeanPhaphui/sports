@@ -298,7 +298,6 @@ export const getGameByGameID = async (
 
 export const updateBets = async (bets: Bet[]): Promise<Bet[]> => {
     const updatedBets = [];
-    console.log(bets)
     for (let bet of bets) {
         try {
             const updatedBet = await getGameByGameID(
@@ -315,7 +314,6 @@ export const updateBets = async (bets: Bet[]): Promise<Bet[]> => {
         }
     }
 
-    console.log(updatedBets)
     return updatedBets;
 };
 

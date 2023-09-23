@@ -22,125 +22,64 @@ interface UserBets {
 }
 
 const Home: React.FC<HomeProps> = ({ user }) => {
-    const [userBetsFromDatabase, setUserBetsFromDatabase] = useState<Bet[]>([]);
-    const [userBetsFromDatabaseAfterAPIFetch, setUserBetsFromDatabaseAfterAPIFetch] = useState<
-        Bet[]
-    >([]);
+    const [allUsersBetsFromDatabaseAfterAPIFetch, setAllUsersBetsFromDatabaseAfterAPIFetch] =
+        useState<UserBets[]>([]);
 
-    const [allUsersBetsFromDatabase, setAllUsersBetsFromDatabase] = useState<
-    UserBets[]
-    >([]);
-
-    const [allUsersBetsFromDatabaseAfterAPIFetch, setAllUsersBetsFromDatabaseAfterAPIFetch] = useState<
-    UserBets[]
-    >([]);
-
-    // Fetches the Currrent Users Bets from Database
+    // Single useEffect to fetch and update all user bets
     useEffect(() => {
-        // Assuming you have the user's UID
-        const uid = user?.uid;
-
-        const loadUserBets = async () => {
-            const weekNumber = await fetchCurrentWeek();
-            if (uid && weekNumber !== null) {
-                const currentWeek = `week${weekNumber}`;
-                const userBets = await fetchUserBets(uid, currentWeek);
-                const formattedBets = userBets.map(
-                    (bet: { game: { date: string | number | Date } }) => ({
-                        ...bet,
-                        game: {
-                            ...bet.game,
-                            date: new Date(bet.game.date), // Convert string back to Date object
-                        },
-                    })
-                );
-                setUserBetsFromDatabase(formattedBets);
-            }
-        };
-
-        loadUserBets();
-    }, [user]);
-
-    // Fetches Game Data For The Users Bets
-    useEffect(() => {
-        if (userBetsFromDatabase.length > 0) {
-            const updateUserBets = async () => {
-                const updatedUserBets = await updateBets(userBetsFromDatabase);
-                console.log("updatedUserBets: ", updatedUserBets);
-                setUserBetsFromDatabaseAfterAPIFetch(updatedUserBets)
-            };
-            updateUserBets();
-        }
-    }, [userBetsFromDatabase]);
-
-
-
-
-
-
-    // Fetches All User Bets From Database For the specific Week
-    useEffect(() => {
-        const loadAllBets = async () => {
+        if (!user) return;  // Exit early if user is null
+        const loadAndAllBets = async () => {
             const weekNumber = await fetchCurrentWeek();
             if (weekNumber !== null) {
                 const currentWeek = `week${weekNumber}`;
                 const usersBetsForWeek = await fetchAllBetsForWeek(currentWeek);
-                setAllUsersBetsFromDatabase(usersBetsForWeek);
-            }
-        };
 
-        loadAllBets();
-    }, [user]);
-
-    useEffect(() => {
-        const updateAllBets = async () => {
-            if (allUsersBetsFromDatabase.length > 0) {
                 // Extract all bets into a single array
-                const allBetsArray: Bet[] = allUsersBetsFromDatabase.map((user: UserBets) => user.bets).flat();
-    
+                const allBetsArray: Bet[] = usersBetsForWeek
+                    .map((user: UserBets) => user.bets)
+                    .flat();
+
                 try {
                     const updatedBetsArray: Bet[] = await updateBets(allBetsArray);
-    
+
                     // Update the allUsersBets state with the updated bets
-                    const updatedAllUsersBets: UserBets[] = allUsersBetsFromDatabase.map((user: UserBets) => {
-                        return {
-                            ...user,
-                            bets: user.bets.map((bet: Bet) => {
-                                const updatedBet: Bet | undefined = updatedBetsArray.find((ub: Bet) => ub.id === bet.id);
-                                
-                                // Log the original and updated bet
-                                console.log('Original Bet:', bet);
-                                console.log('Updated Bet:', updatedBet);
-                                
-                                return updatedBet ? updatedBet : bet;
-                            }),
-                        };
-                    });
-    
+                    const updatedAllUsersBets: UserBets[] = usersBetsForWeek.map(
+                        (user: UserBets) => {
+                            return {
+                                ...user,
+                                bets: user.bets.map((bet: Bet) => {
+                                    const updatedBet: Bet | undefined = updatedBetsArray.find(
+                                        (ub: Bet) => ub.id === bet.id
+                                    );
+                                    return updatedBet ? updatedBet : bet;
+                                }),
+                            };
+                        }
+                    );
+
                     setAllUsersBetsFromDatabaseAfterAPIFetch(updatedAllUsersBets);
-                    console.log("All user bets final: ", updatedAllUsersBets);
                 } catch (error: any) {
                     console.error("Error updating all bets:", error);
                 }
             }
         };
-    
-        updateAllBets();
-    }, [allUsersBetsFromDatabase]);
-    
-    
+
+        loadAndAllBets();
+    }, [user]);
 
     // Grab the current user's UID
     const currentUserId = user?.uid;
 
+    // Now when rendering, extract the current user's bets from allUsersBetsFromDatabaseAfterAPIFetch
+    const currentUserBets = allUsersBetsFromDatabaseAfterAPIFetch.find(
+        (bet) => bet.uid === currentUserId
+    );
+
+    // Modify combinedBets to use currentUserBets
     const combinedBets = [
-        ...(userBetsFromDatabaseAfterAPIFetch.length > 0
-            ? [{ uid: currentUserId, bets: userBetsFromDatabaseAfterAPIFetch, displayName: "Your" }]
-            : []),
+        ...(currentUserBets ? [{ ...currentUserBets, displayName: "Your" }] : []),
         ...allUsersBetsFromDatabaseAfterAPIFetch.filter((obj) => obj.uid !== currentUserId),
     ];
-
-    console.log("Combinned: ", combinedBets);
 
     return (
         <Fade in={true} timeout={500}>
