@@ -8,7 +8,7 @@ import { Bet, Game, getGamesByWeek } from "../Utils/Utils";
 import Weeks from "../Weeks/Weeks";
 import { fetchAllBetsForWeek, fetchUserBets, saveUserBets } from "../firebaseConfig";
 import "./Games.css";
-import { isWithinLockInPeriod } from "../Utils/BetUtils";
+import { isBettingWindowClosed } from "../Utils/BetUtils";
 
 interface GamesProps {
     user: User | null;
@@ -34,17 +34,12 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         }
     }, [week, activeButton]);
 
-    const [betAddedOrRemoved, setBetAddedOrRemoved] = useState(false);
+    const [betAdded, setBetAdded] = useState(false);
 
     const handleAddBet = (bet: Bet) => {
         setBets((prevArray) => [...prevArray, bet]);
         console.log(bet);
-        setBetAddedOrRemoved(true);
-    };
-
-    const handleRemoveBet = (bet: Bet) => {
-        setBets((prev) => prev.filter((prevBet) => prevBet.id !== bet.id));
-        setBetAddedOrRemoved(true);
+        setBetAdded(true);
     };
 
     const handleWeekChange = (week: string) => {
@@ -95,20 +90,16 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         { uid: string; bets: Bet[]; displayName: string }[]
     >([]);
 
-    const [hasFetchedAllBets, setHasFetchedAllBets] = useState(false);
-
+    // Fetches All Users' Bets When Week Changes or A Bet is Added
     useEffect(() => {
-        // This will now fetch all bets initially and whenever a new bet is added
-        if ((!hasFetchedAllBets || betAddedOrRemoved) && week != undefined) {
-            console.log("fetch");
+        if (week != undefined) {
             const currentWeek = `week${week}`;
             fetchAllBetsForWeek(currentWeek).then((bets) => setAllBetsForWeek(bets));
-            setBetAddedOrRemoved(false);
-            setHasFetchedAllBets(true); // Set this to true after fetching all bets
+            setBetAdded(false);
         }
-    }, [week, betAddedOrRemoved]);
+    }, [week, betAdded]);
 
-    const betLock = isWithinLockInPeriod(new Date());
+    const bettingCurrentlyClosed = isBettingWindowClosed(new Date());
 
     const [alertOpen, setAlertOpen] = React.useState(false);
     const [alertMessage, setAlertMessage] = React.useState("");
@@ -132,8 +123,6 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                 <div className="body">
                     <PlayerPicks
                         playerBets={bets}
-                        handleRemoveBet={handleRemoveBet}
-                        betLock={betLock}
                     />
                     <SelectGameCardList
                         game={games}
@@ -141,7 +130,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                         handleAddBet={handleAddBet}
                         allBetsForWeek={allBetsForWeek}
                         currentUserId={user?.uid || ""}
-                        betLock={betLock}
+                        bettingCurrentlyClosed={bettingCurrentlyClosed}
                         alertProps={{
                             handleAlertOpen: setAlertOpen,
                             handleAlertMessage: setAlertMessage,

@@ -8,7 +8,7 @@ export const getNextFridayNoon = (): number => {
     return now.getTime();
   };
 
-const isFridayNoonOrLater = (date: Date): boolean => {
+  const isFridayNoonOrLater = (date: Date): boolean => {
     return date.getDay() === 5 && date.getHours() >= 12;
 };
 
@@ -16,13 +16,18 @@ const isSaturday = (date: Date): boolean => {
     return date.getDay() === 6;
 };
 
-const isSundayBeforeNoon = (date: Date): boolean => {
-    return date.getDay() === 0 && date.getHours() < 12;
+const isSunday = (date: Date): boolean => {
+    return date.getDay() === 0;
 };
 
-export const isWithinLockInPeriod = (date: Date): boolean => {
-    return isFridayNoonOrLater(date) ||isSaturday(date) || isSundayBeforeNoon(date);
+const isMondayBefore8am = (date: Date): boolean => {
+    return date.getDay() === 1 && date.getHours() < 8;
 };
+
+export const isBettingWindowClosed = (date: Date): boolean => {
+    return isFridayNoonOrLater(date) || isSaturday(date) || isSunday(date) || isMondayBefore8am(date);
+};
+
 
 const getTeamScores = (playerBet: Bet): { teamScore: number; opponentScore: number } => {
     let teamScore: number, opponentScore: number;

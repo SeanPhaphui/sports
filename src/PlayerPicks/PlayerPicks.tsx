@@ -1,30 +1,27 @@
 import { KeyboardArrowDown } from "@mui/icons-material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import LockIcon from '@mui/icons-material/Lock';
 import {
     Avatar,
     Box,
     Collapse,
     Fade,
     Grow,
-    IconButton,
     List,
     ListItem,
     ListItemAvatar,
-    ListItemText,
+    ListItemText
 } from "@mui/material";
 import React, { useState } from "react";
 import { TransitionGroup } from "react-transition-group";
+import { calculateBetStatusColor } from "../Utils/BetUtils";
 import { Bet, TeamInfo } from "../Utils/Utils";
 import "./PlayerPicks.css";
 
 export interface PlayerPicksProps {
     playerBets: Bet[];
-    handleRemoveBet: (item: Bet) => void;
-    betLock: boolean;
+    displayName?: string;
 }
 
-const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet, betLock }) => {
+const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, displayName }) => {
     const getTeamInfo = (playerBet: Bet) => {
         return playerBet.team === playerBet.game.homeTeam.location
             ? playerBet.game.homeTeam
@@ -77,28 +74,7 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet, 
         const opponentTintedColor = getTintedColor(opponentTeamInfo);
 
         return (
-            <ListItem
-                secondaryAction={
-                    betLock ? ( // Check if bets are locked
-                    <IconButton
-                        edge="end"
-                        aria-label="lock"
-                        title="Lock"
-                    >
-                        <LockIcon />
-                    </IconButton>
-                ) : ( // Check if bets are locked
-                        <IconButton
-                            edge="end"
-                            aria-label="delete"
-                            title="Delete"
-                            onClick={() => handleRemoveBet(bet)}
-                        >
-                            <DeleteIcon />
-                        </IconButton>
-                    )
-                }
-            >
+            <ListItem>
                 {bet.type === "spread" ? (
                     <div className="list">
                         <ListItemAvatar>
@@ -106,6 +82,11 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet, 
                                 sx={{
                                     backgroundColor: teamTintedColor,
                                     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
+                                    border: `3px solid ${
+                                        bet.game.status === "final"
+                                            ? calculateBetStatusColor(bet)
+                                            : "transparent" // Make it transparent if the status is not "final"
+                                    }`,
                                 }}
                                 src={teamInfo.logo}
                             />
@@ -122,6 +103,11 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet, 
                                 sx={{
                                     background: `linear-gradient(to right, ${teamTintedColor}, ${opponentTintedColor})`, // Gradient from team to opponent color
                                     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
+                                    border: `3px solid ${
+                                        bet.game.status === "final"
+                                            ? calculateBetStatusColor(bet)
+                                            : "#1d1e1f" // Match it with the background color if the status is not "final"
+                                    }`,
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
@@ -198,7 +184,9 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet, 
                         <Grow in={true} timeout={1000}>
                             <div>
                                 <div className="bets-top">
-                                    <div className="left">Your Picks</div>
+                                    <div className="left">
+                                        {displayName ? `${displayName}'s picks` : "Your Picks"}
+                                    </div>
                                     <KeyboardArrowDown
                                         fontSize="medium"
                                         className="right"
@@ -247,6 +235,14 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet, 
                                                                         borderRadius: "100%",
                                                                         boxShadow:
                                                                             "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
+                                                                        border: `3px solid ${
+                                                                            playerBet.game
+                                                                                .status === "final"
+                                                                                ? calculateBetStatusColor(
+                                                                                      playerBet
+                                                                                  )
+                                                                                : "transparent" // Make it transparent if the status is not "final"
+                                                                        }`,
                                                                     }}
                                                                     src={teamInfo.logo} // Use the logo from teamInfo
                                                                 />
@@ -265,6 +261,14 @@ const PlayerPicks: React.FC<PlayerPicksProps> = ({ playerBets, handleRemoveBet, 
                                                                         borderRadius: "100%",
                                                                         boxShadow:
                                                                             "0px 4px 10px rgba(0, 0, 0, 0.3)", // Shadow for elevated effect
+                                                                        border: `3px solid ${
+                                                                            playerBet.game
+                                                                                .status === "final"
+                                                                                ? calculateBetStatusColor(
+                                                                                      playerBet
+                                                                                  )
+                                                                                : "#1d1e1f" // Match it with the background color if the status is not "final"
+                                                                        }`,
                                                                         display: "flex", // Use flex to layout children (the two logos) side by side
                                                                         justifyContent: "center", // Center the logos horizontally
                                                                         alignItems: "center", // Center the logos vertically

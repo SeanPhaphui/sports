@@ -2,13 +2,13 @@ import { Card, Fade, Grow } from "@mui/material";
 import { User } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { TransitionGroup } from "react-transition-group";
+import CountdownTimer from "../CountdownTimer/CountdownTimer";
 import HomeHeader from "../HomeHeader/HomeHeader";
 import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
-import PlayerPicksHome from "../PlayerPicksHome/PlayerPicksHome";
-import { Bet, fetchCurrentWeek, updateBets, updateBetsUsingWeekData } from "../Utils/Utils";
-import { fetchAllBetsForWeek, fetchUserBets } from "../firebaseConfig";
+import PlayerPicks from "../PlayerPicks/PlayerPicks";
+import { Bet, fetchCurrentWeek, updateBetsUsingWeekData } from "../Utils/Utils";
+import { fetchAllBetsForWeek, saveOutcomes } from "../firebaseConfig";
 import "./Home.css";
-import CountdownTimer from "../CountdownTimer/CountdownTimer";
 
 interface HomeProps {
     user: User | null;
@@ -40,6 +40,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
 
                 try {
                     const updatedBetsArray: Bet[] = await updateBetsUsingWeekData(allBetsArray, weekNumber);
+                    saveOutcomes(weekNumber, updatedBetsArray);
 
                     // Update the allUsersBets state with the updated bets
                     const updatedAllUsersBets: UserBets[] = usersBetsForWeek.map(
@@ -89,7 +90,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                 <div className="body">
                     <CountdownTimer />
                     {allUsersBetsFromDatabaseAfterAPIFetch.map((object, index) => (
-                        <PlayerPicksHome
+                        <PlayerPicks
                             key={index}
                             playerBets={object.bets}
                             displayName={object.displayName}

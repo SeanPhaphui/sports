@@ -55,6 +55,22 @@ export const saveUserBets = async (uid: string, week: string, bets: Bet[]) => {
     await set(betsRef, formattedBets);
 };
 
+// Save outcomes of games for a week
+export const saveOutcomes = async (weekNumber: number, outcomes: Bet[]) => {
+    console.log("FIREBASE - Saving Outcomes: ", outcomes);
+
+    const formattedOutcomes = outcomes.map((outcome) => ({
+        ...outcome,
+        game: {
+            ...outcome.game,
+            date: outcome.game.date.toISOString(), // Convert to string before saving
+        },
+    }));
+
+    const outcomesRef = ref(db, `outcomes/week${weekNumber}`);
+    await set(outcomesRef, formattedOutcomes);
+};
+
 export const fetchAllBetsForWeek = async (
     week: string
 ): Promise<{ uid: string; bets: Bet[]; displayName: string }[]> => {

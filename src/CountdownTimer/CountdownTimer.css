@@ -5,8 +5,14 @@
     font-weight: 700;
 }
 
-.show-counter {
+.show-counter-title {
     margin-top: 20px;
+    color: white;
+    font-weight: 700;
+}
+
+.show-counter {
+    margin-top: 10px;
     display: flex;
     align-items: center;
     justify-content: center;

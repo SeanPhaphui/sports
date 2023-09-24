@@ -10,7 +10,7 @@ interface SelectGameCardContainerProps {
     handleAddBet: (bet: Bet) => void;
     allBetsForWeek: { uid: string; bets: Bet[]; displayName: string }[];
     currentUserId: string;
-    betLock: boolean;
+    bettingCurrentlyClosed: boolean;
     alertProps: AlertProps;
 }
 
@@ -20,7 +20,7 @@ const SelectGameCardContainer: React.FC<SelectGameCardContainerProps> = ({
     handleAddBet,
     allBetsForWeek,
     currentUserId,
-    betLock,
+    bettingCurrentlyClosed,
     alertProps
 }) => {
     const [open, setOpen] = React.useState(false);
@@ -46,7 +46,12 @@ const SelectGameCardContainer: React.FC<SelectGameCardContainerProps> = ({
             alertProps.handleAlertOpen(true);
             alertProps.handleAlertMessage("You have reached the 5-bet limit for the week!");
             setTimeout(() => setShouldShake(false), 900);
-        } else {
+        } else if (bettingCurrentlyClosed) {
+            setShouldShake(true);
+            alertProps.handleAlertOpen(true);
+            alertProps.handleAlertMessage("Bets are closed. You can start placing bets again on Monday at 8am.");
+            setTimeout(() => setShouldShake(false), 900);
+        }else {
             setOpen(true);
         }
     };

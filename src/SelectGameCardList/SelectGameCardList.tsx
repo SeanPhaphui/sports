@@ -11,7 +11,7 @@ interface SelectGameCardListProps {
     handleAddBet: (bet: Bet) => void;
     allBetsForWeek: { uid: string; bets: Bet[]; displayName: string }[];
     currentUserId: string;
-    betLock: boolean;
+    bettingCurrentlyClosed: boolean;
     alertProps: AlertProps;
 }
 
@@ -21,7 +21,7 @@ const SelectGameCardList: React.FC<SelectGameCardListProps> = ({
     handleAddBet,
     allBetsForWeek,
     currentUserId,
-    betLock,
+    bettingCurrentlyClosed,
     alertProps
 }) => {
     const sortedGameSelections = [...game].sort((a, b) => {
@@ -93,7 +93,7 @@ const SelectGameCardList: React.FC<SelectGameCardListProps> = ({
                                 handleAddBet={handleAddBet}
                                 allBetsForWeek={allBetsForWeek}
                                 currentUserId={currentUserId}
-                                betLock={betLock}
+                                bettingCurrentlyClosed={bettingCurrentlyClosed}
                                 alertProps={alertProps}
                             />
                         ))}
