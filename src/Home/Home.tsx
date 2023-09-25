@@ -39,7 +39,10 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                     .flat();
 
                 try {
-                    const updatedBetsArray: Bet[] = await updateBetsUsingWeekData(allBetsArray, weekNumber);
+                    const updatedBetsArray: Bet[] = await updateBetsUsingWeekData(
+                        allBetsArray,
+                        weekNumber
+                    );
                     saveOutcomes(weekNumber, updatedBetsArray);
 
                     // Update the allUsersBets state with the updated bets
@@ -84,9 +87,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
     return (
         <Fade in={true} timeout={500}>
             <div className="Home">
-                <div className="top-bar">
-                    <HomeHeader user={user} />
-                </div>
+                <HomeHeader user={user} />
                 <div className="body">
                     <CountdownTimer />
                     {allUsersBetsFromDatabaseAfterAPIFetch.map((object, index) => (

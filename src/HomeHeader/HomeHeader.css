@@ -1,26 +1,34 @@
 .HomeHeader {
+    position: sticky;
+    top: 0;
+    z-index: 3; /* To ensure it's above the content below */
+}
+
+.HomeHeader .top-bar {
+    backdrop-filter: blur(20px) !important;
+    box-shadow: none !important;
+    /* border-style: solid;
+    border-color: #f5f5f5;
+    border-width: 0;
+    border-bottom-width: thin; */
+    height: 53px;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.HomeHeader .top-bar .top {
     color: white;
-    background-color: #252627;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
-    z-index: 2;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 53px;
-    padding-left: 10px;
-    padding-right: 10px;
 }
 
-.HomeHeader .buttons {
+.HomeHeader .top-bar .top .buttons {
     padding-top: 11px;
     padding-bottom: 11px;
     display: flex;
 }
 
-.HomeHeader .buttons .divider{
+.HomeHeader .top-bar .top .buttons .divider {
     width: 5px;
 }
-
-
-
-

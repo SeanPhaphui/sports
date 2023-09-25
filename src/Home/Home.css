@@ -3,12 +3,6 @@
     padding-bottom: 71px;
 }
 
-.Home .top-bar {
-    position: sticky;
-    top: 0;
-    z-index: 3; /* To ensure it's above the content below */
-}
-
 .Home .body {
     width: 95%;
     margin: 0 auto; /* Centers the div horizontally */
