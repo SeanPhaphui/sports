@@ -84,8 +84,13 @@ export const getOutcomeColor = (outcome: "win" | "lose" | "push"): string => {
 };
 
 export const calculateBetStatusColor = (bet: Bet): string => {
-    const spread = parseFloat(bet.value);
     const { teamScore, opponentScore } = getTeamScores(bet);
+    if (bet.value === "EVEN") {
+        if (teamScore === opponentScore) return getOutcomeColor("push");
+        if (teamScore > opponentScore) return getOutcomeColor("win");
+        return getOutcomeColor("lose");
+    }
+    const spread = parseFloat(bet.value);
 
     if (bet.type === "spread") {
         const gapFromSpread = getGapFromSpread(teamScore, opponentScore, spread);

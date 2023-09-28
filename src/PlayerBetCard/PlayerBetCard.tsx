@@ -79,6 +79,16 @@ const PlayerBetCard: React.FC<PlayerBetCardProps> = (props) => {
     };
 
     const calculateBetStatus = (playerBet: Bet): { message: string; color: string } => {
+        if (playerBet.value === "EVEN") {
+            const { teamScore, opponentScore } = getTeamScores(playerBet);
+            if (teamScore > opponentScore) {
+                return { message: "Currently winning", color: getOutcomeColor("win") };
+            } else if (teamScore < opponentScore) {
+                return { message: "Currently losing", color: getOutcomeColor("lose") };
+            } else {
+                return { message: "Currently a tie", color: getOutcomeColor("push") };
+            }
+        }
         const spread = parseFloat(playerBet.value);
         const { teamScore, opponentScore } = getTeamScores(playerBet);
 

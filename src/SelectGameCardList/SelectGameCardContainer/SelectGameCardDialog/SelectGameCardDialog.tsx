@@ -36,6 +36,14 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({
         .map((bet) => bet.type);
 
     const extractSpreadDetails = (spread: string) => {
+        if (spread.trim() === "EVEN") {
+            return {
+                teamAbbreviation: "",
+                spreadSign: "",
+                spreadValue: "EVEN",
+            };
+        }
+
         const spreadPattern = /([A-Z]+)\s*([-+]?)\s*([\d.]+)/;
         const spreadMatch = spread.match(spreadPattern);
         if (spreadMatch) {
@@ -45,8 +53,10 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({
                 spreadValue: spreadMatch[3],
             };
         }
+
         return null;
     };
+
     const initialTeam =
         extractSpreadDetails(game.odds.spread)?.teamAbbreviation === game.homeTeam.abbreviation
             ? game.homeTeam.location
@@ -92,14 +102,20 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({
             if (spreadDetails) {
                 const { teamAbbreviation, spreadSign, spreadValue } = spreadDetails;
                 // Now use these variables instead of calling extractSpreadDetails multiple times
-
-                setSpreadSign(spreadSign);
-                if (spreadValue) {
-                    setDefaultTextValue(spreadValue);
+                // If spread is EVEN, adjust logic accordingly
+                if (spreadValue === "EVEN") {
+                    setSpreadSign("");
+                    setDefaultTextValue("EVEN");
+                    setBetValue("EVEN");
                 } else {
-                    setDefaultTextValue("");
+                    setSpreadSign(spreadSign);
+                    if (spreadValue) {
+                        setDefaultTextValue(spreadValue);
+                    } else {
+                        setDefaultTextValue("");
+                    }
+                    setBetValue(spreadValue);
                 }
-                setBetValue(spreadValue);
 
                 // Check for teamAbbreviation match and set the team location
                 if (teamAbbreviation === game.homeTeam.abbreviation) {
@@ -133,41 +149,53 @@ const SelectGameCardDialog: React.FC<SelectGameCardDialogProps> = ({
     const setTeamAndAdjustSpread = (selectedTeam: string) => {
         // Logic to invert the spread based on the selected team
         const initialTeamDetails = extractSpreadDetails(game.odds.spread);
-
+    
         if (initialTeamDetails) {
             const initialTeamAbbreviation = initialTeamDetails.teamAbbreviation;
             const initialTeamLocation =
                 initialTeamAbbreviation === game.homeTeam.abbreviation
                     ? game.homeTeam.location
                     : game.awayTeam.location;
-
-            if (selectedTeam !== initialTeamLocation) {
-                // Invert the spread sign if the selected team is opposite to the initial team
-                setSpreadSign(initialTeamDetails.spreadSign === "+" ? "-" : "+");
+    
+            // Check if the spread value isn't "EVEN"
+            if (initialTeamDetails.spreadValue !== "EVEN") {
+                if (selectedTeam !== initialTeamLocation) {
+                    // Invert the spread sign if the selected team is opposite to the initial team
+                    setSpreadSign(initialTeamDetails.spreadSign === "+" ? "-" : "+");
+                } else {
+                    // Set to the initial spread sign otherwise
+                    setSpreadSign(initialTeamDetails.spreadSign);
+                }
             } else {
-                // Set to the initial spread sign otherwise
-                setSpreadSign(initialTeamDetails.spreadSign);
+                setSpreadSign(""); // For "EVEN", no sign should be set
             }
         }
-
+    
         // Update the selected team
         setTeam(selectedTeam);
     };
+    
 
     useEffect(() => {
-        const shouldSwitchToOverUnder = disabledTeams.includes(game.homeTeam.location) &&
-                                         disabledTeams.includes(game.awayTeam.location);
-        
-        const shouldSwitchToSpread = disabledOverUnders.includes("over") &&
-                                     disabledOverUnders.includes("under");
-    
+        const shouldSwitchToOverUnder =
+            disabledTeams.includes(game.homeTeam.location) &&
+            disabledTeams.includes(game.awayTeam.location);
+
+        const shouldSwitchToSpread =
+            disabledOverUnders.includes("over") && disabledOverUnders.includes("under");
+
         if (shouldSwitchToOverUnder && betSelection !== "Over/Under") {
             setBetSelection("Over/Under");
         } else if (shouldSwitchToSpread && betSelection !== "Spread") {
             setBetSelection("Spread");
         }
-    }, [disabledTeams, disabledOverUnders, game.homeTeam.location, game.awayTeam.location, betSelection]);
-    
+    }, [
+        disabledTeams,
+        disabledOverUnders,
+        game.homeTeam.location,
+        game.awayTeam.location,
+        betSelection,
+    ]);
 
     return (
         <div className="SelectGameCardDialog">
