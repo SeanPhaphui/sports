@@ -3,12 +3,19 @@ import { Bet } from "./Utils"; // Replace this with the actual path to your Bet 
 export const getNextFridayNoon = (): number => {
     const now = new Date();
     now.setHours(12, 0, 0, 0);
+    
+    if (now.getDay() === 5 && new Date().getTime() < now.getTime()) {
+        // If today is Friday and the current time is before noon, use today's date.
+        return now.getTime();
+    }
+    
     const daysUntilNextFriday = (5 + 7 - now.getDay()) % 7 || 7;
     now.setDate(now.getDate() + daysUntilNextFriday);
     return now.getTime();
-  };
+};
 
-  const isFridayNoonOrLater = (date: Date): boolean => {
+
+const isFridayNoonOrLater = (date: Date): boolean => {
     return date.getDay() === 5 && date.getHours() >= 12;
 };
 
@@ -25,9 +32,10 @@ const isMondayBefore8am = (date: Date): boolean => {
 };
 
 export const isBettingWindowClosed = (date: Date): boolean => {
-    return isFridayNoonOrLater(date) || isSaturday(date) || isSunday(date) || isMondayBefore8am(date);
+    return (
+        isFridayNoonOrLater(date) || isSaturday(date) || isSunday(date) || isMondayBefore8am(date)
+    );
 };
-
 
 const getTeamScores = (playerBet: Bet): { teamScore: number; opponentScore: number } => {
     let teamScore: number, opponentScore: number;

@@ -34,7 +34,7 @@ const ShowCounter: React.FC<ShowCounterProps> = ({ days, hours, minutes, seconds
 
 const CountdownTimer: React.FC = () => {
     const upcomingFridayNoon = getNextFridayNoon();
-
+    
     const [days, hours, minutes, seconds] = useCountdown(upcomingFridayNoon);
 
     const now = new Date();
