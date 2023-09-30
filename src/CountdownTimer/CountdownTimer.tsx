@@ -34,15 +34,10 @@ const ShowCounter: React.FC<ShowCounterProps> = ({ days, hours, minutes, seconds
 
 const CountdownTimer: React.FC = () => {
     const upcomingFridayNoon = getNextFridayNoon();
-    
-    const [days, hours, minutes, seconds] = useCountdown(upcomingFridayNoon);
 
-    const now = new Date();
-    if (isBettingWindowClosed(now)) {
-        return <></>;
-    } else {
-        return <ShowCounter days={days} hours={hours} minutes={minutes} seconds={seconds} />;
-    }
+    const [days, hours, minutes, seconds] = useCountdown(upcomingFridayNoon);
+    
+    return <ShowCounter days={days} hours={hours} minutes={minutes} seconds={seconds} />;
 };
 
 export default CountdownTimer;

@@ -1,19 +1,18 @@
-import { Bet } from "./Utils"; // Replace this with the actual path to your Bet type
+import { Bet, UserBets } from "./Utils"; // Replace this with the actual path to your Bet type
 
 export const getNextFridayNoon = (): number => {
     const now = new Date();
     now.setHours(12, 0, 0, 0);
-    
+
     if (now.getDay() === 5 && new Date().getTime() < now.getTime()) {
         // If today is Friday and the current time is before noon, use today's date.
         return now.getTime();
     }
-    
+
     const daysUntilNextFriday = (5 + 7 - now.getDay()) % 7 || 7;
     now.setDate(now.getDate() + daysUntilNextFriday);
     return now.getTime();
 };
-
 
 const isFridayNoonOrLater = (date: Date): boolean => {
     return date.getDay() === 5 && date.getHours() >= 12;
@@ -92,6 +91,10 @@ export const getOutcomeColor = (outcome: "win" | "lose" | "push"): string => {
 };
 
 export const calculateBetStatusColor = (bet: Bet): string => {
+    // Check if the game is not final
+    if (bet.game.status !== "final") {
+        return "#000000"; // Or any other neutral color or indicator
+    }
     const { teamScore, opponentScore } = getTeamScores(bet);
     if (bet.value === "EVEN") {
         if (teamScore === opponentScore) return getOutcomeColor("push");
@@ -118,3 +121,56 @@ export const calculateBetStatusColor = (bet: Bet): string => {
         return outcomeColor;
     }
 };
+
+// Function to calculate the number of wins for a specific user
+const calculateUserWins = (userBets: UserBets): number => {
+    return userBets.bets.reduce((totalWins, bet) => {
+        const outcomeColor = calculateBetStatusColor(bet);
+        console.log("outcomeColor: ", outcomeColor);
+        if (outcomeColor === getOutcomeColor("win")) {
+            return totalWins + 1;
+        }
+        return totalWins;
+    }, 0);
+};
+
+// Function to determine if at least one game has finished
+export const hasAnyGameFinished = (allBets: UserBets[]): boolean => {
+    for (const userBets of allBets) {
+        for (const bet of userBets.bets) {
+            if (bet.game.status === "final") {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+// Function to get leader text
+export const getLeaderText = (allBets: UserBets[]): string => {
+    if (!hasAnyGameFinished(allBets)) {
+        return ""; // No game has finished yet
+    }
+
+    const scores = allBets.map((user) => {
+        console.log(user.displayName);
+        return {
+            displayName: user.displayName,
+            wins: calculateUserWins(user),
+        };
+    });
+    console.log("scores: ", scores);
+
+    const maxWins = Math.max(...scores.map((s) => s.wins));
+    const leaders = scores.filter((s) => s.wins === maxWins);
+
+    if (leaders.length === 1) {
+        return `${leaders[0].displayName.trim()} is currently in the lead!`;
+    } else {
+        const leaderNames = leaders
+            .map(l => l.displayName.trim().replace(/\s+/g, ' ')) // trim and replace internal excessive whitespace
+            .join(", ");
+        return `${leaderNames} are currently tied for the lead!`;
+    }
+};
+

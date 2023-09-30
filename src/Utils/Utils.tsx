@@ -2,10 +2,12 @@ import dayjs from "dayjs";
 import { User } from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
 
-// Define types for userBets and bet
-export type UserBets = {
-    [uid: string]: Bet[]; // Bet[] is an array of your bet objects
-};
+export interface UserBets {
+    uid: string;
+    bets: Bet[];
+    displayName: string;
+    // ... other user properties if any
+}
 
 type SpreadBet = {
     id: string;

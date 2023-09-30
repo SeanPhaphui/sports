@@ -6,19 +6,13 @@ import CountdownTimer from "../CountdownTimer/CountdownTimer";
 import HomeHeader from "../HomeHeader/HomeHeader";
 import PlayerBetCard from "../PlayerBetCard/PlayerBetCard";
 import PlayerPicks from "../PlayerPicks/PlayerPicks";
-import { Bet, fetchCurrentWeek, updateBetsUsingWeekData } from "../Utils/Utils";
+import { Bet, UserBets, fetchCurrentWeek, updateBetsUsingWeekData } from "../Utils/Utils";
 import { fetchAllBetsForWeek, saveOutcomes } from "../firebaseConfig";
 import "./Home.css";
+import { getLeaderText, hasAnyGameFinished, isBettingWindowClosed } from "../Utils/BetUtils";
 
 interface HomeProps {
     user: User | null;
-}
-
-interface UserBets {
-    uid: string;
-    bets: Bet[];
-    displayName: string;
-    // ... other user properties if any
 }
 
 const Home: React.FC<HomeProps> = ({ user }) => {
@@ -84,12 +78,15 @@ const Home: React.FC<HomeProps> = ({ user }) => {
         ...allUsersBetsFromDatabaseAfterAPIFetch.filter((obj) => obj.uid !== currentUserId),
     ];
 
+    const leaderText = getLeaderText(allUsersBetsFromDatabaseAfterAPIFetch);
+    const now = new Date();
     return (
         <Fade in={true} timeout={500}>
             <div className="Home">
                 <HomeHeader user={user} />
                 <div className="body">
-                    <CountdownTimer />
+                    {hasAnyGameFinished(allUsersBetsFromDatabaseAfterAPIFetch) && <div className="leader">{leaderText}</div>}
+                    {!isBettingWindowClosed(now) && <CountdownTimer />}
                     {allUsersBetsFromDatabaseAfterAPIFetch.map((object, index) => (
                         <PlayerPicks
                             key={index}
