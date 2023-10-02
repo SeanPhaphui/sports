@@ -146,31 +146,55 @@ export const hasAnyGameFinished = (allBets: UserBets[]): boolean => {
     return false;
 };
 
+export const areAllGamesFinished = (allBets: UserBets[]): boolean => {
+    for (const userBets of allBets) {
+        for (const bet of userBets.bets) {
+            if (bet.game.status !== "final") {
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
+
 // Function to get leader text
-export const getLeaderText = (allBets: UserBets[]): string => {
+export const getLeaderText = (allBets: UserBets[], allGamesFinished: boolean): string => {
     if (!hasAnyGameFinished(allBets)) {
         return ""; // No game has finished yet
     }
 
     const scores = allBets.map((user) => {
-        console.log(user.displayName);
         return {
             displayName: user.displayName,
             wins: calculateUserWins(user),
         };
     });
-    console.log("scores: ", scores);
 
     const maxWins = Math.max(...scores.map((s) => s.wins));
     const leaders = scores.filter((s) => s.wins === maxWins);
 
-    if (leaders.length === 1) {
-        return `${leaders[0].displayName.trim()} is currently in the lead!`;
+    if (allGamesFinished) {
+        // If all games are finished, we can make the text more conclusive
+        if (leaders.length === 1) {
+            return `${leaders[0].displayName.trim()} is the winner!`;
+        } else {
+            const leaderNames = leaders
+                .map(l => l.displayName.trim().replace(/\s+/g, ' ')) // trim and replace internal excessive whitespace
+                .join(", ");
+            return `${leaderNames} are tied for the win!`;
+        }
     } else {
-        const leaderNames = leaders
-            .map(l => l.displayName.trim().replace(/\s+/g, ' ')) // trim and replace internal excessive whitespace
-            .join(", ");
-        return `${leaderNames} are currently tied for the lead!`;
+        // The original logic for showing current leader(s) during the games
+        if (leaders.length === 1) {
+            return `${leaders[0].displayName.trim()} is currently in the lead!`;
+        } else {
+            const leaderNames = leaders
+                .map(l => l.displayName.trim().replace(/\s+/g, ' ')) // trim and replace internal excessive whitespace
+                .join(", ");
+            return `${leaderNames} are currently tied for the lead!`;
+        }
     }
 };
+
 

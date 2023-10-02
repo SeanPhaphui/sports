@@ -9,7 +9,7 @@ import PlayerPicks from "../PlayerPicks/PlayerPicks";
 import { Bet, UserBets, fetchCurrentWeek, updateBetsUsingWeekData } from "../Utils/Utils";
 import { fetchAllBetsForWeek, saveOutcomes } from "../firebaseConfig";
 import "./Home.css";
-import { getLeaderText, hasAnyGameFinished, isBettingWindowClosed } from "../Utils/BetUtils";
+import { areAllGamesFinished, getLeaderText, hasAnyGameFinished, isBettingWindowClosed } from "../Utils/BetUtils";
 
 interface HomeProps {
     user: User | null;
@@ -78,7 +78,9 @@ const Home: React.FC<HomeProps> = ({ user }) => {
         ...allUsersBetsFromDatabaseAfterAPIFetch.filter((obj) => obj.uid !== currentUserId),
     ];
 
-    const leaderText = getLeaderText(allUsersBetsFromDatabaseAfterAPIFetch);
+    const allGamesFinished = areAllGamesFinished(allUsersBetsFromDatabaseAfterAPIFetch);
+
+    const leaderText = getLeaderText(allUsersBetsFromDatabaseAfterAPIFetch, allGamesFinished);
     const now = new Date();
     return (
         <Fade in={true} timeout={500}>
