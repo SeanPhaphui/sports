@@ -1,11 +1,10 @@
 import {
     List
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     GameCalendarObject,
-    fetchGameCalendar,
-    getGamesByWeek
+    fetchGameCalendar
 } from "../Utils/Utils";
 import "./Weeks.css";
 
@@ -17,32 +16,35 @@ const Weeks: React.FC<WeeksProps> = (props) => {
     const {handleWeekChange} = props;
 
     const [gameCalendar, setGameCalendar] = useState<GameCalendarObject[]>([]);
-
     const [loading, setLoading] = useState<boolean>(true);
-    
     const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
+
+    const weekContainerRef = useRef<HTMLDivElement>(null); // Step 1: Add a ref
+
     useEffect(() => {
-        setLoading(true); // Set loading when fetch starts
-        // Assuming fetchGameCalendar is the function to fetch the GameCalendarObjects
+        setLoading(true);
         fetchGameCalendar().then((data) => {
             setGameCalendar(data);
-
-            // Setting the week after gameCalendar has been set
-            // This is just an example. Modify the logic as per your requirements.
             if (data && data.length > 0) {
                 setActiveItemIndex(parseInt(data[0].week)-1);
-                handleWeekChange(data[0].week); // setting the first week for simplicity, modify as needed
+                handleWeekChange(data[0].week);
             }
-
-            setLoading(false); // Set loading to false once fetch is complete
+            setLoading(false);
         });
     }, []);
 
-
-
+    // Step 3: Scroll the active item into view when it changes
+    useEffect(() => {
+        if (weekContainerRef.current) {
+            const activeItem = weekContainerRef.current.querySelector('.item.active');
+            if (activeItem) {
+                activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+    }, [activeItemIndex]);
 
     return (
-        <div className="Weeks">
+        <div className="Weeks" ref={weekContainerRef}> {/* Step 2: Use the ref on the wrapping div */}
                 {loading ? (
                     <List className="horizontalList">
                         {Array.from({ length: 10 }).map((_, index) => (
@@ -60,7 +62,7 @@ const Weeks: React.FC<WeeksProps> = (props) => {
                                 className={`item ${index === activeItemIndex ? "active" : ""}`}
                                 onClick={() => {
                                     setActiveItemIndex(index);
-                                    handleWeekChange((index + 1).toString()); // set the week based on the clicked index
+                                    handleWeekChange((index + 1).toString());
                                 }}
                             >
                                 <div>{gameCalObj.label}</div>

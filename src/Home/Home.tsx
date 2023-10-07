@@ -9,7 +9,12 @@ import PlayerPicks from "../PlayerPicks/PlayerPicks";
 import { Bet, UserBets, fetchCurrentWeek, updateBetsUsingWeekData } from "../Utils/Utils";
 import { fetchAllBetsForWeek, saveOutcomes } from "../firebaseConfig";
 import "./Home.css";
-import { areAllGamesFinished, getLeaderText, hasAnyGameFinished, isBettingWindowClosed } from "../Utils/BetUtils";
+import {
+    areAllGamesFinished,
+    getLeaderText,
+    hasAnyGameFinished,
+    isBettingWindowClosed,
+} from "../Utils/BetUtils";
 
 interface HomeProps {
     user: User | null;
@@ -37,7 +42,10 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                         allBetsArray,
                         weekNumber
                     );
-                    saveOutcomes(weekNumber, updatedBetsArray);
+                    // Only save outcomes if a user is logged in
+                    if (user) {
+                        saveOutcomes(weekNumber, updatedBetsArray);
+                    }
 
                     // Update the allUsersBets state with the updated bets
                     const updatedAllUsersBets: UserBets[] = usersBetsForWeek.map(
@@ -62,7 +70,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
         };
 
         loadAndAllBets();
-    }, []);
+    }, [user]);
 
     // Grab the current user's UID
     const currentUserId = user?.uid;
@@ -87,7 +95,9 @@ const Home: React.FC<HomeProps> = ({ user }) => {
             <div className="Home">
                 <HomeHeader user={user} />
                 <div className="body">
-                    {hasAnyGameFinished(allUsersBetsFromDatabaseAfterAPIFetch) && <div className="leader">{leaderText}</div>}
+                    {hasAnyGameFinished(allUsersBetsFromDatabaseAfterAPIFetch) && (
+                        <div className="leader">{leaderText}</div>
+                    )}
                     {!isBettingWindowClosed(now) && <CountdownTimer />}
                     {allUsersBetsFromDatabaseAfterAPIFetch.map((object, index) => (
                         <PlayerPicks
