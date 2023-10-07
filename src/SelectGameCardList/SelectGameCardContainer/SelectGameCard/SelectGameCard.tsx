@@ -1,11 +1,11 @@
 import LinkIcon from "@mui/icons-material/Link";
 import LiveTvIcon from "@mui/icons-material/LiveTv";
 import ScheduleIcon from "@mui/icons-material/Schedule";
-import { Avatar, Box, Card, Divider, Typography } from "@mui/material";
+import { Box, Card, Divider, Typography } from "@mui/material";
 import React from "react";
 import Info from "../../../PlayerBetCard/Info/Info";
 import UpcomingInfo from "../../../PlayerBetCard/UpcomingInfo/UpcomingInfo";
-import { Bet, Game, extractTeamsFromGame, getLetter } from "../../../Utils/Utils";
+import { Bet, Game, extractTeamsFromGame } from "../../../Utils/Utils";
 import "./SelectGameCard.css";
 
 interface SelectGameCardProps {
@@ -89,6 +89,31 @@ const SelectGameCard: React.FC<SelectGameCardProps> = ({ game, openDialog, allBe
                 )}
                 {game.status === "ongoing" && (
                     <div>
+                        {betsForCurrentGame.length > 0 && (
+                            <div>
+                                <div className="BetsForGame">
+                                    {betsForCurrentGame.map((bet, index) => (
+                                        <div className="player" key={index}>
+                                            {bet.type === "spread" ? (
+                                                <div>
+                                                    {`${bet.displayName} - Spread: ${bet.team} ${bet.value}`}
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    {bet.displayName +
+                                                        " - " +
+                                                        bet.type.charAt(0).toUpperCase() +
+                                                        bet.type.slice(1) +
+                                                        ": " +
+                                                        bet.value}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                                <Divider className="info-divider" />
+                            </div>
+                        )}
                         <div className="live-status">
                             <a href={game.link} target="_blank" rel="noopener noreferrer">
                                 <LiveTvIcon />
