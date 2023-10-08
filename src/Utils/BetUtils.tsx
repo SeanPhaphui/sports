@@ -134,6 +134,20 @@ const calculateUserWins = (userBets: UserBets): number => {
     }, 0);
 };
 
+const calculateUserScore = (userBets: UserBets): number => {
+    return userBets.bets.reduce((score, bet) => {
+        const outcomeColor = calculateBetStatusColor(bet);
+        if (outcomeColor === getOutcomeColor("win")) {
+            return score + 1;
+        } else if (outcomeColor === getOutcomeColor("push")) {
+            return score;
+        } else if (outcomeColor === getOutcomeColor("lose")) {
+            return score - 1;
+        }
+        return score;
+    }, 0);
+};
+
 // Function to determine if at least one game has finished
 export const hasAnyGameFinished = (allBets: UserBets[]): boolean => {
     for (const userBets of allBets) {
@@ -167,12 +181,12 @@ export const getLeaderText = (allBets: UserBets[], allGamesFinished: boolean): s
     const scores = allBets.map((user) => {
         return {
             displayName: user.displayName,
-            wins: calculateUserWins(user),
+            score: calculateUserScore(user),
         };
     });
 
-    const maxWins = Math.max(...scores.map((s) => s.wins));
-    const leaders = scores.filter((s) => s.wins === maxWins);
+    const maxScore = Math.max(...scores.map((s) => s.score));
+    const leaders = scores.filter((s) => s.score === maxScore);
 
     if (allGamesFinished) {
         // If all games are finished, we can make the text more conclusive
