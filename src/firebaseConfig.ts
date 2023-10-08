@@ -8,7 +8,7 @@ import {
     ref as storageRef,
     uploadBytesResumable,
 } from "firebase/storage";
-import { Bet } from "./Utils/Utils";
+import { Bet, CurrentWeekAndSeason } from "./Utils/Utils";
 
 const firebaseConfig = {
     apiKey: "AIzaSyB4N2vUOlqu9LB5yn4hDkCJS3XNn-jUbtM",
@@ -32,15 +32,15 @@ const db = getDatabase(app);
 // const storage = getStorage(app);
 
 // Fetch user bets
-export const fetchUserBets = async (uid: string, week: string) => {
-    const betsRef = child(ref(db), `users/${uid}/bets/${week}`);
+export const fetchUserBets = async (uid: string, week: string, year: string) => {
+    const betsRef = child(ref(db), `users/${uid}/bets/${year}/${week}`);
     const snapshot = await get(betsRef);
     if (snapshot.exists()) return snapshot.val();
     return [];
 };
 
 // Save user bets
-export const saveUserBets = async (uid: string, week: string, bets: Bet[]) => {
+export const saveUserBets = async (uid: string, week: string, year: string, bets: Bet[]) => {
     console.log("FIREBASE - Saving User Bets: ", bets);
 
     const formattedBets = bets.map((bet) => ({
@@ -51,12 +51,12 @@ export const saveUserBets = async (uid: string, week: string, bets: Bet[]) => {
         },
     }));
 
-    const betsRef = ref(db, `users/${uid}/bets/${week}`);
+    const betsRef = ref(db, `users/${uid}/bets/${year}/${week}`);
     await set(betsRef, formattedBets);
 };
 
 // Save outcomes of games for a week
-export const saveOutcomes = async (weekNumber: number, outcomes: Bet[]) => {
+export const saveOutcomes = async (currentWeekAndSeason: CurrentWeekAndSeason, outcomes: Bet[]) => {
     console.log("FIREBASE - Saving Outcomes: ", outcomes);
 
     const formattedOutcomes = outcomes.map((outcome) => ({
@@ -67,12 +67,13 @@ export const saveOutcomes = async (weekNumber: number, outcomes: Bet[]) => {
         },
     }));
 
-    const outcomesRef = ref(db, `outcomes/week${weekNumber}`);
+    const outcomesRef = ref(db, `outcomes/${currentWeekAndSeason.seasonYear}/week${currentWeekAndSeason.week}`);
     await set(outcomesRef, formattedOutcomes);
 };
 
 export const fetchAllBetsForWeek = async (
-    week: string
+    week: string,
+    year: string // Added year parameter
 ): Promise<{ uid: string; bets: Bet[]; displayName: string }[]> => {
     const allUsersBets: { uid: string; bets: Bet[]; displayName: string }[] = [];
     const usersRef = ref(db, "users");
@@ -83,8 +84,9 @@ export const fetchAllBetsForWeek = async (
             const usersData = usersSnapshot.val();
 
             for (let uid in usersData) {
-                if (usersData[uid].bets && usersData[uid].bets[week]) {
-                    const userBets: Bet[] = usersData[uid].bets[week].map((bet: any) => {
+                // Adjusted the path to include the year
+                if (usersData[uid].bets && usersData[uid].bets[year] && usersData[uid].bets[year][week]) {
+                    const userBets: Bet[] = usersData[uid].bets[year][week].map((bet: any) => {
                         return {
                             ...bet,
                             game: {
@@ -97,7 +99,7 @@ export const fetchAllBetsForWeek = async (
                     allUsersBets.push({
                         uid,
                         bets: userBets,
-                        displayName: usersData[uid].displayName || usersData[uid].email || "N/A", // Default to "N/A" if no displayName found
+                        displayName: usersData[uid].displayName || usersData[uid].email || "N/A",
                     });
                 }
             }

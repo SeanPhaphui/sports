@@ -27,10 +27,10 @@ const Home: React.FC<HomeProps> = ({ user }) => {
     // Single useEffect to fetch and update all user bets
     useEffect(() => {
         const loadAndAllBets = async () => {
-            const weekNumber = await fetchCurrentWeek();
-            if (weekNumber !== null) {
-                const currentWeek = `week${weekNumber}`;
-                const usersBetsForWeek = await fetchAllBetsForWeek(currentWeek);
+            const currentWeekAndSeason  = await fetchCurrentWeek();
+            if (currentWeekAndSeason !== null) {
+                const currentWeek = `week${currentWeekAndSeason.week}`;
+                const usersBetsForWeek = await fetchAllBetsForWeek(currentWeek, currentWeekAndSeason.seasonYear.toString());
 
                 // Extract all bets into a single array
                 const allBetsArray: Bet[] = usersBetsForWeek
@@ -40,11 +40,11 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                 try {
                     const updatedBetsArray: Bet[] = await updateBetsUsingWeekData(
                         allBetsArray,
-                        weekNumber
+                        currentWeekAndSeason.week
                     );
                     // Only save outcomes if a user is logged in
                     if (user) {
-                        saveOutcomes(weekNumber, updatedBetsArray);
+                        saveOutcomes(currentWeekAndSeason, updatedBetsArray);
                     }
 
                     // Update the allUsersBets state with the updated bets

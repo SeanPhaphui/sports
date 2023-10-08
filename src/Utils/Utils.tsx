@@ -2,6 +2,11 @@ import dayjs from "dayjs";
 import { User } from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
 
+export type CurrentWeekAndSeason = {
+    week: number;
+    seasonYear: number;
+};
+
 export interface UserBets {
     uid: string;
     bets: Bet[];
@@ -57,6 +62,7 @@ export interface GameCalendarObject {
     label: string;
     detail: string;
     week: string;
+    seasonYear: string;
 }
 
 export interface AlertProps {
@@ -69,15 +75,18 @@ const fetchData = async (url: string) => {
     return response.json();
 };
 
-export const fetchCurrentWeek = async (): Promise<number | null> => {
+export const fetchCurrentWeek = async (): Promise<{ week: number; seasonYear: number } | null> => {
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard`;
 
     const responseData = await fetchData(footballUrl);
 
     // Validate and process the data
-    if (responseData?.week && responseData.week.number) {
-        return responseData.week.number;
+    if (responseData?.week && responseData.week.number && responseData?.season && responseData.season.year) {
+        return {
+            week: responseData.week.number,
+            seasonYear: responseData.season.year
+        };
     }
 
     return null;
@@ -102,6 +111,7 @@ export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
                     label: entry.label.toUpperCase(),
                     detail: entry.detail.toUpperCase(),
                     week: responseData.week.number,
+                    seasonYear: responseData.season.year,
                 };
                 calendarEntries.push(gameCalendarEntry);
             }

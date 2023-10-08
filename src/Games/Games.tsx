@@ -23,6 +23,8 @@ const Games: React.FC<GamesProps> = ({ user }) => {
 
     const [week, setWeek] = useState<string>();
 
+    const [seasonYear, setSeasonYear] = useState<string>();
+
     const [activeButton, setActiveButton] = useState<string>("Top 25");
 
     // New state variable to track if bets have been fetched
@@ -42,7 +44,8 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         setBetAdded(true);
     };
 
-    const handleWeekChange = (week: string) => {
+    const handleSeasonWeekChange = (season: string, week: string) => {
+        setSeasonYear(season);
         setWeek(week);
         setFilterText("");
     };
@@ -52,9 +55,9 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         const uid = user?.uid;
 
         const loadUserBets = async () => {
-            if (uid && week) {
+            if (uid && week && seasonYear) {
                 const currentWeek = `week${week}`;
-                const userBets = await fetchUserBets(uid, currentWeek);
+                const userBets = await fetchUserBets(uid, currentWeek, seasonYear);
                 const formattedBets = userBets.map(
                     (bet: { game: { date: string | number | Date } }) => ({
                         ...bet,
@@ -81,8 +84,8 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         const currentWeek = `week${week}`;
 
         // Only execute this block if hasFetchedBets is true
-        if (uid && hasFetchedBets) {
-            saveUserBets(uid, currentWeek, bets);
+        if (uid && hasFetchedBets && seasonYear) {
+            saveUserBets(uid, currentWeek, seasonYear, bets);
         }
     }, [bets, hasFetchedBets]);
 
@@ -92,9 +95,9 @@ const Games: React.FC<GamesProps> = ({ user }) => {
 
     // Fetches All Users' Bets When Week Changes or A Bet is Added
     useEffect(() => {
-        if (week != undefined) {
+        if (week != undefined && seasonYear) {
             const currentWeek = `week${week}`;
-            fetchAllBetsForWeek(currentWeek).then((bets) => setAllBetsForWeek(bets));
+            fetchAllBetsForWeek(currentWeek, seasonYear).then((bets) => setAllBetsForWeek(bets));
             setBetAdded(false);
         }
     }, [week, betAdded]);
@@ -118,7 +121,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                         filterText={filterText}
                         setFilterText={setFilterText}
                     />
-                    <Weeks handleWeekChange={handleWeekChange} />
+                    <Weeks handleSeasonWeekChange={handleSeasonWeekChange} />
                 </div>
                 <div className="body">
                     <PlayerPicks

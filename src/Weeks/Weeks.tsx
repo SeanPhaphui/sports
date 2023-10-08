@@ -9,11 +9,11 @@ import {
 import "./Weeks.css";
 
 export interface WeeksProps {
-    handleWeekChange: (week: string) => void;
+    handleSeasonWeekChange: (seasonYear: string, week: string) => void;
 }
 
 const Weeks: React.FC<WeeksProps> = (props) => {
-    const {handleWeekChange} = props;
+    const {handleSeasonWeekChange} = props;
 
     const [gameCalendar, setGameCalendar] = useState<GameCalendarObject[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -27,7 +27,7 @@ const Weeks: React.FC<WeeksProps> = (props) => {
             setGameCalendar(data);
             if (data && data.length > 0) {
                 setActiveItemIndex(parseInt(data[0].week)-1);
-                handleWeekChange(data[0].week);
+                handleSeasonWeekChange(data[0].seasonYear, data[0].week);
             }
             setLoading(false);
         });
@@ -62,7 +62,7 @@ const Weeks: React.FC<WeeksProps> = (props) => {
                                 className={`item ${index === activeItemIndex ? "active" : ""}`}
                                 onClick={() => {
                                     setActiveItemIndex(index);
-                                    handleWeekChange((index + 1).toString());
+                                    handleSeasonWeekChange(gameCalObj.seasonYear, (index + 1).toString());
                                 }}
                             >
                                 <div>{gameCalObj.label}</div>
