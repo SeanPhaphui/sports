@@ -1,0 +1,41 @@
+.HistoryHeader {
+    position: sticky;
+    top: 0;
+    z-index: 3; /* To ensure it's above the content below */
+}
+
+.HistoryHeader .top-bar {
+    backdrop-filter: blur(20px) !important;
+    box-shadow: none !important;
+    height: 53px;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.HistoryHeader .top-bar .top {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.HistoryHeader .top-bar .top .buttons .MuiInputBase-root.MuiOutlinedInput-root {
+    color: white;
+    border-radius: 30px;
+}
+
+.HistoryHeader .top-bar .top .buttons .MuiInputBase-root.MuiOutlinedInput-root.Mui-focused fieldset {
+    border-color: transparent !important;
+}
+
+.HistoryHeader .top-bar .top .buttons .MuiInputBase-root.MuiOutlinedInput-root .MuiSvgIcon-root {
+    color: white;
+}
+
+.HistoryHeader .top-bar .top .buttons {
+    display: flex;
+}
+
+.HistoryHeader .top-bar .top .buttons .divider {
+    width: 5px;
+}
+

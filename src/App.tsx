@@ -45,7 +45,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<Home user={user} />} />
                         <Route path="/games" element={<Games user={user} />} />
-                        {/* <Route path="/history" element={<History />} /> */}
+                        <Route path="/history" element={<History />} />
                     </Routes>
                 </header>
                 <div className="bottom-nav">
@@ -67,11 +67,11 @@ function App() {
                             value="/games"
                             icon={<ScoreboardIcon />}
                         />
-                        {/* <BottomNavigationAction
+                        <BottomNavigationAction
                             label="History"
                             value="/history"
                             icon={<HistoryIcon />}
-                        /> */}
+                        />
                     </BottomNavigation>
                 </div>
             </div>
