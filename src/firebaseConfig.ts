@@ -167,7 +167,21 @@ export const fetchOutcomes = async ({ year, week }: { year: string; week: string
             if (userBetSnapshot.exists()) {
                 const userBets: Bet[] = userBetSnapshot.val().map((bet: any) => {
                     const outcome = outcomesData.find(outcome => outcome.id === bet.id);
-                    return outcome ? outcome : bet;
+                    
+                    if (outcome) {
+                        return outcome;
+                    } else {
+                        if (bet.game && typeof bet.game.date === 'string') {
+                            return {
+                                ...bet,
+                                game: {
+                                    ...bet.game,
+                                    date: new Date(bet.game.date),
+                                },
+                            };
+                        }
+                        return bet;
+                    }
                 });
 
                 userBetsArray.push({
