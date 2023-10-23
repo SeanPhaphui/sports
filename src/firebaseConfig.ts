@@ -200,6 +200,78 @@ export const fetchOutcomes = async ({ year, week }: { year: string; week: string
     }
 };
 
+interface Week {
+    [key: string]: Bet[];
+}
+
+interface RawOutcomesData {
+    [year: string]: Week;
+}
+
+export const fetchAllOutcomes = async (): Promise<RawOutcomesData> => {
+    try {
+        // Fetch all outcomes
+        const outcomesRef = ref(db, 'outcomes');
+        const outcomesSnapshot = await get(outcomesRef);
+
+        if (!outcomesSnapshot.exists()) {
+            throw new Error("Outcomes data does not exist");
+        }
+
+        const rawOutcomesData: RawOutcomesData = outcomesSnapshot.val();
+        return rawOutcomesData;
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+    }
+};
+
+interface BetWeek {
+    [key: string]: Bet[]; // Define the structure for individual game bets if known
+}
+
+interface YearlyBets {
+    [week: string]: Bet[];
+}
+
+interface BetData {
+    [year: string]: YearlyBets;
+}
+
+interface RawUserData {
+    displayName: string;
+    email: string;
+    bets?: BetData; // The bets attribute is optional because not all users may have placed bets
+}
+
+interface Users {
+    [userId: string]: RawUserData;
+}
+
+
+export const fetchAllUsers = async (): Promise<Users> => {
+    try {
+        // Fetch all user data
+        const usersRef = ref(db, 'users');
+        const usersSnapshot = await get(usersRef);
+
+        if (!usersSnapshot.exists()) {
+            throw new Error("User data does not exist");
+        }
+
+        const rawUserData: Users = usersSnapshot.val();
+        return rawUserData;
+
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        throw error;
+    }
+};
+
+
+
+
 
 
 

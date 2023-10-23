@@ -1,4 +1,4 @@
-import { Bet, UserBets } from "./Utils"; // Replace this with the actual path to your Bet type
+import { Bet, UserBets, UserBetsV2 } from "./Utils"; // Replace this with the actual path to your Bet type
 
 export const getNextFridayNoon = (): number => {
     const now = new Date();
@@ -123,14 +123,28 @@ export const calculateBetStatusColor = (bet: Bet): string => {
 };
 
 // Function to calculate the number of wins for a specific user
-const calculateUserWins = (userBets: UserBets): number => {
-    return userBets.bets.reduce((totalWins, bet) => {
+export const calculateUserWins = (weeklyBets: Bet[]): number => {
+    return weeklyBets.reduce((totalWins, bet) => {
         const outcomeColor = calculateBetStatusColor(bet);
         console.log("outcomeColor: ", outcomeColor);
         if (outcomeColor === getOutcomeColor("win")) {
             return totalWins + 1;
         }
         return totalWins;
+    }, 0);
+};
+
+const calculateUserScoreV2 = (userBets: Bet[]): number => {
+    return userBets.reduce((score, bet) => {
+        const outcomeColor = calculateBetStatusColor(bet);
+        if (outcomeColor === getOutcomeColor("win")) {
+            return score + 1;
+        } else if (outcomeColor === getOutcomeColor("push")) {
+            return score;
+        } else if (outcomeColor === getOutcomeColor("lose")) {
+            return score - 1;
+        }
+        return score;
     }, 0);
 };
 
@@ -146,6 +160,45 @@ const calculateUserScore = (userBets: UserBets): number => {
         }
         return score;
     }, 0);
+};
+
+// Adjusted function to get the winners of a particular week
+const getWeeklyWinners = (allBets: UserBetsV2[], year: string, week: string): string[] => {
+    const scores = allBets.map((user) => {
+        const betsForWeek = user.bets[year]?.[week] || [];
+        return {
+            displayName: user.displayName,
+            score: calculateUserScoreV2(betsForWeek),
+        };
+    });
+
+    const maxScore = Math.max(...scores.map((s) => s.score));
+    const winners = scores.filter((s) => s.score === maxScore).map((s) => s.displayName);
+
+    return winners;
+};
+
+// Adjusted function to compute win/loss record for each user
+export const computeSeasonRecord = (allUserBets: UserBetsV2[]): Record<string, {wins: number, losses: number}> => {
+    const record: Record<string, {wins: number, losses: number}> = {};
+
+    for (const userBets of allUserBets) {
+        for (const year in userBets.bets) {
+            for (const week in userBets.bets[year]) {
+                const weeklyWinners = getWeeklyWinners(allUserBets, year, week);
+                if (!record[userBets.displayName]) {
+                    record[userBets.displayName] = {wins: 0, losses: 0};
+                }
+                if (weeklyWinners.includes(userBets.displayName)) {
+                    record[userBets.displayName].wins += 1;
+                } else {
+                    record[userBets.displayName].losses += 1;
+                }
+            }
+        }
+    }
+
+    return record;
 };
 
 // Function to determine if at least one game has finished
