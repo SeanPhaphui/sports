@@ -1,10 +1,10 @@
 import { Fade, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import { User } from "firebase/auth";
-import "./Stats.css";
-import { fetchAllOutcomes, fetchAllUsers } from "../firebaseConfig";
-import { Bet, UserBets, UserBetsV2 } from "../Utils/Utils";
+import React, { useEffect, useState } from "react";
 import { calculateUserWins, computeSeasonRecord } from "../Utils/BetUtils";
+import { Bet, UserBetsV2 } from "../Utils/Utils";
+import { fetchAllOutcomes, fetchAllUsers } from "../firebaseConfig";
+import "./Stats.css";
 
 interface StatsProps {
   user: User | null;
@@ -120,6 +120,9 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
   return (
     <Fade in={true} timeout={500}>
       <div className="Stats">
+        <div>EXTREMELY EARLY BETA: WORK IN PROGRESS</div>
+        <div>Suggestions Welcomed</div>
+        <div>----------------</div>
         <div>
           <label>Select User: </label>
           <Select value={selectedUserId} onChange={handleUserChange}>
