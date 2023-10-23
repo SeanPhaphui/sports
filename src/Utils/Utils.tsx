@@ -7,6 +7,16 @@ export type CurrentWeekAndSeason = {
     seasonYear: number;
 };
 
+export interface UserBetsV2 {
+    uid: string;
+    bets: {
+        [year: string]: {
+          [week: string]: Bet[];
+        };
+      };
+    displayName: string;
+}
+
 export interface UserBets {
     uid: string;
     bets: Bet[];

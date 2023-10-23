@@ -1,0 +1,16 @@
+.Stats {
+    color: white;
+}
+
+.Stats .MuiInputBase-root.MuiOutlinedInput-root {
+    color: white;
+    border-radius: 30px;
+}
+
+.Stats .MuiInputBase-root.MuiOutlinedInput-root.Mui-focused fieldset {
+    border-color: transparent !important;
+}
+
+.Stats .MuiInputBase-root.MuiOutlinedInput-root .MuiSvgIcon-root {
+    color: white;
+}

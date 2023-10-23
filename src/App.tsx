@@ -11,7 +11,9 @@ import { BottomNavigation, BottomNavigationAction } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import ScoreboardIcon from "@mui/icons-material/Scoreboard";
 import HistoryIcon from "@mui/icons-material/History";
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import History from "./History/History";
+import Stats from "./Stats/Stats";
 
 function App() {
     const [user, setUser] = useState<User | null>(null);
@@ -46,6 +48,7 @@ function App() {
                         <Route path="/" element={<Home user={user} />} />
                         <Route path="/games" element={<Games user={user} />} />
                         <Route path="/history" element={<History />} />
+                        <Route path="/stats" element={<Stats user={user} />} />
                     </Routes>
                 </header>
                 <div className="bottom-nav">
@@ -71,6 +74,11 @@ function App() {
                             label="History"
                             value="/history"
                             icon={<HistoryIcon />}
+                        />
+                        <BottomNavigationAction
+                            label="Stats"
+                            value="/stats"
+                            icon={<LeaderboardIcon />}
                         />
                     </BottomNavigation>
                 </div>
