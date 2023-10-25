@@ -12,11 +12,12 @@ interface StatsProps {
 
 const Stats: React.FC<StatsProps> = ({ user }) => {
   const [userBets, setUserBets] = useState<UserBetsV2[]>([]);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>('');
   const [winRate, setWinRate] = useState<string>("");
   const [totalWins, setTotalWins] = useState<number>(0);
   const [totalLoss, setTotalLoss] = useState<number>(0);
   const [totalGames, setTotalGames] = useState<number>(0);
+  const [allSeasonRecords, setAllSeasonRecords] = useState<{[name: string]: {wins: number, losses: number}}>({});
   const [seasonRecord, setSeasonRecord] = useState<{ wins: number; losses: number } | null>(null);
   useEffect(() => {
     const aggregateUserBets = async (): Promise<UserBetsV2[]> => {
@@ -75,6 +76,7 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
     };
     aggregateUserBets()
       .then((data) => {
+        console.log("SETTING USER BETS")
         setUserBets(data);
         // Set the first user as the default selected user.
         if (data.length > 0) {
@@ -85,6 +87,14 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
         console.error("Failed to aggregate user bets:", error);
       });
   }, []);
+
+  useEffect(() => {
+    if(userBets.length > 0){
+      console.log("COIMPUTER SEASON RECORD")
+      const computedAllSeasonRecords = computeSeasonRecord(userBets);
+      setAllSeasonRecords(computedAllSeasonRecords);
+    }
+  }, [userBets]);
 
   useEffect(() => {
     if (selectedUserId && userBets.length > 0) {
@@ -108,12 +118,10 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
         const calculatedWinRate = Math.round((totalWins / totalGames) * 100) + "%";
         setWinRate(calculatedWinRate);
       }
-      const allSeasonRecords = computeSeasonRecord(userBets);
       const userSeasonRecord = allSeasonRecords[selectedUser?.displayName || ""];
       setSeasonRecord(userSeasonRecord);
-      console.log(allSeasonRecords);
     }
-  }, [userBets, selectedUserId]);
+  }, [userBets, selectedUserId,allSeasonRecords]);
 
   const handleUserChange = (event: SelectChangeEvent<string | null>) => {
     setSelectedUserId(event.target.value);

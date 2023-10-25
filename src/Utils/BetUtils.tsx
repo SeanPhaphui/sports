@@ -126,7 +126,6 @@ export const calculateBetStatusColor = (bet: Bet): string => {
 export const calculateUserWins = (weeklyBets: Bet[]): number => {
     return weeklyBets.reduce((totalWins, bet) => {
         const outcomeColor = calculateBetStatusColor(bet);
-        console.log("outcomeColor: ", outcomeColor);
         if (outcomeColor === getOutcomeColor("win")) {
             return totalWins + 1;
         }
@@ -182,6 +181,7 @@ const getWeeklyWinners = (allBets: UserBetsV2[], year: string, week: string): st
 export const computeSeasonRecord = (
     allUserBets: UserBetsV2[]
 ): Record<string, { wins: number; losses: number }> => {
+    console.log("COMPUTE SEASON RECORD")
     const record: Record<string, { wins: number; losses: number }> = {};
 
     for (const userBets of allUserBets) {
@@ -193,7 +193,7 @@ export const computeSeasonRecord = (
                 );
                 if (!allGamesFinal) {
                     console.log(
-                        `Not all games for week ${week} of ${year} are finalized. Skipping...`
+                        `Not all games for ${week} of ${year} are finalized. Skipping...`
                     );
                     continue; // Skip to the next week
                 }
