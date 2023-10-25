@@ -24,7 +24,7 @@ const Navigation: React.FC<NavigationProps> = ({ value, onValueChange }) => {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    paddingTop: "30px",
+                    paddingTop: "15px",
                     paddingBottom: "15px",
                     zIndex: (theme) => theme.zIndex.drawer + 1,
                 }}
