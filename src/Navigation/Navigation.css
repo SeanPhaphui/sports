@@ -1,0 +1,46 @@
+  .Navigation .MuiBottomNavigation-root{
+    background: linear-gradient(transparent, rgba(0,0,0,1));
+  }
+  
+  /* Ensuring consistent font size */
+  .Navigation .MuiBottomNavigation-root .MuiBottomNavigationAction-label {
+    font-size: 0.775rem !important; /* this value is the default, adjust as needed */
+  }
+  
+  /* Disabling the text size change for selected label */
+  .Navigation .MuiBottomNavigation-root .Mui-selected .MuiBottomNavigationAction-label {
+    font-size: 0.775rem !important; /* this value is the default, adjust as needed */
+  }
+  
+  @keyframes scaleEffect {
+    0% {
+      transform: scale(1); /* Start at original size */
+    }
+    50% {
+      transform: scale(0.9); /* Scale down to 90% at halfway point */
+    }
+    100% {
+      transform: scale(1); /* Return to original size */
+    }
+  }
+  
+  .Navigation .MuiBottomNavigation-root .MuiSvgIcon-root{
+    color: #6c6d6f;
+  }
+  
+  .Navigation .MuiBottomNavigation-root .Mui-selected {
+    animation: scaleEffect 0.2s ease-in-out forwards;
+  
+  }
+  
+  .Navigation .MuiBottomNavigation-root .Mui-selected .MuiSvgIcon-root{
+    color: white;
+  }
+  
+  .Navigation .MuiBottomNavigation-root .MuiBottomNavigationAction-label{
+    color: #6c6d6f;
+  }
+  
+  .Navigation .MuiBottomNavigation-root .Mui-selected .MuiBottomNavigationAction-label{
+    color: white;
+  }

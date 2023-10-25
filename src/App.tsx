@@ -1,19 +1,15 @@
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import "./App.css";
-import "./font.css";
-import Home from "./Home/Home";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import Games from "./Games/Games";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
-import { useState, useEffect } from "react";
-import { BottomNavigation, BottomNavigationAction } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
-import ScoreboardIcon from "@mui/icons-material/Scoreboard";
-import HistoryIcon from "@mui/icons-material/History";
-import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import { useEffect, useState } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import "./App.css";
+import Games from "./Games/Games";
 import History from "./History/History";
+import Home from "./Home/Home";
+import Navigation from "./Navigation/Navigation";
 import Stats from "./Stats/Stats";
+import "./font.css";
 
 function App() {
     const [user, setUser] = useState<User | null>(null);
@@ -35,7 +31,7 @@ function App() {
 
     const navigate = useNavigate();
 
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    const onValueChange = (newValue: string) => {
         setValue(newValue);
         navigate(newValue); // Navigate to the selected route
     };
@@ -51,37 +47,7 @@ function App() {
                         <Route path="/stats" element={<Stats user={user} />} />
                     </Routes>
                 </header>
-                <div className="bottom-nav">
-                    <BottomNavigation
-                        sx={{
-                            position: "fixed",
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            paddingBottom: "15px",
-                            zIndex: (theme) => theme.zIndex.drawer + 1,
-                        }}
-                        value={value}
-                        onChange={handleChange}
-                    >
-                        <BottomNavigationAction label="Home" value="/" icon={<HomeIcon />} />
-                        <BottomNavigationAction
-                            label="Games"
-                            value="/games"
-                            icon={<ScoreboardIcon />}
-                        />
-                        <BottomNavigationAction
-                            label="History"
-                            value="/history"
-                            icon={<HistoryIcon />}
-                        />
-                        <BottomNavigationAction
-                            label="Stats"
-                            value="/stats"
-                            icon={<LeaderboardIcon />}
-                        />
-                    </BottomNavigation>
-                </div>
+                <Navigation value={value} onValueChange={onValueChange} />
             </div>
         </LocalizationProvider>
     );
