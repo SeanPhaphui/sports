@@ -179,15 +179,27 @@ const getWeeklyWinners = (allBets: UserBetsV2[], year: string, week: string): st
 };
 
 // Adjusted function to compute win/loss record for each user
-export const computeSeasonRecord = (allUserBets: UserBetsV2[]): Record<string, {wins: number, losses: number}> => {
-    const record: Record<string, {wins: number, losses: number}> = {};
+export const computeSeasonRecord = (
+    allUserBets: UserBetsV2[]
+): Record<string, { wins: number; losses: number }> => {
+    const record: Record<string, { wins: number; losses: number }> = {};
 
     for (const userBets of allUserBets) {
         for (const year in userBets.bets) {
             for (const week in userBets.bets[year]) {
+                // Check if all games for this week have a status of "Final"
+                const allGamesFinal = userBets.bets[year][week].every(
+                    (bet) => bet.game.status === "final"
+                );
+                if (!allGamesFinal) {
+                    console.log(
+                        `Not all games for week ${week} of ${year} are finalized. Skipping...`
+                    );
+                    continue; // Skip to the next week
+                }
                 const weeklyWinners = getWeeklyWinners(allUserBets, year, week);
                 if (!record[userBets.displayName]) {
-                    record[userBets.displayName] = {wins: 0, losses: 0};
+                    record[userBets.displayName] = { wins: 0, losses: 0 };
                 }
                 if (weeklyWinners.includes(userBets.displayName)) {
                     record[userBets.displayName].wins += 1;
@@ -224,7 +236,6 @@ export const areAllGamesFinished = (allBets: UserBets[]): boolean => {
     return true;
 };
 
-
 // Function to get leader text
 export const getLeaderText = (allBets: UserBets[], allGamesFinished: boolean): string => {
     if (!hasAnyGameFinished(allBets)) {
@@ -247,7 +258,7 @@ export const getLeaderText = (allBets: UserBets[], allGamesFinished: boolean): s
             return `${leaders[0].displayName.trim()} is the winner!`;
         } else {
             const leaderNames = leaders
-                .map(l => l.displayName.trim().replace(/\s+/g, ' ')) // trim and replace internal excessive whitespace
+                .map((l) => l.displayName.trim().replace(/\s+/g, " ")) // trim and replace internal excessive whitespace
                 .join(", ");
             return `${leaderNames} are tied for the win!`;
         }
@@ -257,11 +268,9 @@ export const getLeaderText = (allBets: UserBets[], allGamesFinished: boolean): s
             return `${leaders[0].displayName.trim()} is currently in the lead!`;
         } else {
             const leaderNames = leaders
-                .map(l => l.displayName.trim().replace(/\s+/g, ' ')) // trim and replace internal excessive whitespace
+                .map((l) => l.displayName.trim().replace(/\s+/g, " ")) // trim and replace internal excessive whitespace
                 .join(", ");
             return `${leaderNames} are currently tied for the lead!`;
         }
     }
 };
-
-

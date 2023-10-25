@@ -15,6 +15,7 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [winRate, setWinRate] = useState<string>("");
   const [totalWins, setTotalWins] = useState<number>(0);
+  const [totalLoss, setTotalLoss] = useState<number>(0);
   const [totalGames, setTotalGames] = useState<number>(0);
   const [seasonRecord, setSeasonRecord] = useState<{ wins: number; losses: number } | null>(null);
   useEffect(() => {
@@ -94,7 +95,7 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
 
         for (const year in selectedUser.bets) {
           for (const week in selectedUser.bets[year]) {
-            const betsForTheWeek = selectedUser.bets[year][week];
+            const betsForTheWeek = selectedUser.bets[year][week].filter(bet => bet.game.status === "final"); // filter out games that have status of "Final"
             totalGames += betsForTheWeek.length;
             // Assuming calculateUserWins can calculate wins for an array of bets
             totalWins += calculateUserWins(betsForTheWeek);
@@ -103,6 +104,7 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
 
         setTotalWins(totalWins);
         setTotalGames(totalGames);
+        setTotalLoss(totalGames - totalWins);
         const calculatedWinRate = Math.round((totalWins / totalGames) * 100) + "%";
         setWinRate(calculatedWinRate);
       }
@@ -135,9 +137,10 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
               ))}
           </Select>
         </div>
-        <div>Win Rate: {winRate}</div>
         <div>Total Wins: {totalWins}</div>
+        <div>Total Loss: {totalLoss}</div>
         <div>Total Games: {totalGames}</div>
+        <div>Win Rate: {winRate}</div>
         <div>
           Season Record: {seasonRecord?.wins} Wins / {seasonRecord?.losses} Losses
         </div>
