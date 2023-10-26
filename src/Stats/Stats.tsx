@@ -7,6 +7,7 @@ import { fetchAllOutcomes, fetchAllUsers } from "../firebaseConfig";
 import "./Stats.css";
 import WinLossRatio from "../WinLossRatio/WinLossRatio";
 import Leaderboard from "./Leaderboard/Leaderboard";
+import Graph from "./Graph/Graph";
 
 interface StatsProps {
     user: User | null;
@@ -153,6 +154,7 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
         <Fade in={true} timeout={500}>
             <div className="Stats">
                 <Leaderboard allSeasonRecords={allSeasonRecords} />
+                <Graph userBets={userBets} />
                 <div>
                     <label>Select User: </label>
                     <Select value={selectedUserId} onChange={handleUserChange}>
@@ -166,6 +168,9 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
                     </Select>
                 </div>
                 <div>
+                    ALSO INCOMPLETE
+                </div>
+                <div>
                     Season Record: {seasonRecord?.wins} Wins / {seasonRecord?.losses} Losses
                 </div>
                 <div>Win Rate: {winRate}</div>
@@ -176,6 +181,7 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
                 <div>Total Wins: {totalWins}</div>
                 <div>Total Loss: {totalLoss}</div>
                 <div>Total Games: {totalGames}</div>
+                <div style={{ padding: "40px" }}></div>
             </div>
         </Fade>
     );

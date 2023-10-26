@@ -1,0 +1,9 @@
+.Graph {
+    background-color: #1d1e1f;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+    margin-top: 20px;
+    overflow-x: auto; /* to allow horizontal scrolling */
+    white-space: nowrap; /* prevents wrapping on whitespaces */
+}
