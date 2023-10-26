@@ -1,4 +1,4 @@
-import { Fade, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { Divider, Fade, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { User } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { calculateUserWins, computeSeasonRecord } from "../Utils/BetUtils";
@@ -6,6 +6,7 @@ import { Bet, UserBetsV2 } from "../Utils/Utils";
 import { fetchAllOutcomes, fetchAllUsers } from "../firebaseConfig";
 import "./Stats.css";
 import WinLossRatio from "../WinLossRatio/WinLossRatio";
+import Leaderboard from "./Leaderboard/Leaderboard";
 
 interface StatsProps {
     user: User | null;
@@ -107,7 +108,6 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
 
     useEffect(() => {
         if (userBets.length > 0) {
-            console.log("COIMPUTER SEASON RECORD");
             const computedAllSeasonRecords = computeSeasonRecord(userBets);
             setAllSeasonRecords(computedAllSeasonRecords);
         }
@@ -152,9 +152,7 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
     return (
         <Fade in={true} timeout={500}>
             <div className="Stats">
-                <div>EXTREMELY EARLY BETA: WORK IN PROGRESS</div>
-                <div>Suggestions Welcomed</div>
-                <div>----------------</div>
+                <Leaderboard allSeasonRecords={allSeasonRecords} />
                 <div>
                     <label>Select User: </label>
                     <Select value={selectedUserId} onChange={handleUserChange}>

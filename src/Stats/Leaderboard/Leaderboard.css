@@ -1,0 +1,41 @@
+.Leaderboard {
+    display: flex;
+    flex-direction: column;
+    background-color: #1d1e1f;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+    margin-top: 20px;
+}
+
+.Leaderboard .header{
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.Leaderboard .column-headers{
+    display: flex;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.Leaderboard .column-values{
+    display: flex;
+}
+
+.Leaderboard .column-headers .entry,
+.Leaderboard .column-values .entry{
+    flex-grow: 1;
+    font-weight: 200;
+}
+.Leaderboard .column-headers .entry-name,
+.Leaderboard .column-values .entry-name{
+    text-align: left;
+    font-weight: 200;
+    width: 130px;
+}
+
+.Leaderboard .divider{
+    border-color: rgba(255, 255, 255, 0.12);
+    margin: 5px 0;
+}
