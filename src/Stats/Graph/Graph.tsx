@@ -61,12 +61,22 @@ const Graph: React.FC<GraphProps> = ({ userBets }) => {
             data.push(weekData);
         });
 
-        // Set up SVG dimensions
-        const svg = d3.select(svgRef.current);
-        const margin = { top: 20, right: 20, bottom: 50, left: 0 }; // increased left from 40 to 60
-        const width = 400 - margin.left - margin.right;
-        const height = 300 - margin.top - margin.bottom;
+        // Update SVG and D3 Dimensions
+        const svgWidth = 500;
+        const svgHeight = 125;
+        const margin = { top: 20, right: 150, bottom: 20, left: 20 }; // adjusted margins
+        const width = svgWidth - margin.left - margin.right;
+        const height = svgHeight - margin.top - margin.bottom;
+
         const keys = userBets.map((user) => user.displayName);
+
+        // Set up the SVG dimensions and create a group to contain all elements
+        const svg = d3
+            .select(svgRef.current)
+            .attr("width", svgWidth)
+            .attr("height", svgHeight)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // Create scales
         const x0 = d3.scaleBand().domain(sortedWeeksSet).rangeRound([0, width]).paddingInner(0.1);
@@ -107,23 +117,9 @@ const Graph: React.FC<GraphProps> = ({ userBets }) => {
             .attr("fill", "white");
 
         // Y Axis
-        svg.append("g").call(d3.axisLeft(y).ticks(5)).selectAll("text").attr("fill", "white");
-
-        // X Axis label
-        svg.append("text")
-            .attr("transform", `translate(${width / 2},${height + 40})`)
-            .style("text-anchor", "middle")
-            .text("Weeks")
-            .attr("fill", "white");
-
-        // Y Axis label
-        svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -margin.left + 10) // adjusted y position to make sure it's within the SVG
-            .attr("x", -height / 2)
-            .attr("dy", "1em")
-            .style("text-anchor", "middle")
-            .text("Number of Wins")
+        svg.append("g")
+            .call(d3.axisLeft(y).ticks(5))
+            .selectAll("text")
             .attr("fill", "white");
 
         // Color Legend
@@ -154,8 +150,7 @@ const Graph: React.FC<GraphProps> = ({ userBets }) => {
 
     return (
         <div className="Graph">
-            NOT FINISHED
-            <svg ref={svgRef} width="600" height="300"></svg>
+            <svg ref={svgRef}></svg>
         </div>
     );
 };

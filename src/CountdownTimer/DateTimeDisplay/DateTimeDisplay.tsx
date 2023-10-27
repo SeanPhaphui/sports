@@ -7,7 +7,6 @@ interface DateTimeDisplayProps {
 }
 
 const DateTimeDisplay: React.FC<DateTimeDisplayProps> = ({ value, type, isDanger }) => {
-  console.log("value received:", value);
   return (
     <div className={isDanger ? 'countdown danger' : 'countdown'}>
       <p>{value}</p>
