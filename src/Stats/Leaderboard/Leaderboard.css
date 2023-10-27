@@ -10,7 +10,7 @@
 
 .Leaderboard .header{
     font-weight: 700;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
 }
 
 .Leaderboard .column-headers{
@@ -32,10 +32,16 @@
 .Leaderboard .column-values .entry-name{
     text-align: left;
     font-weight: 200;
-    width: 130px;
+    width: 140px;
 }
 
 .Leaderboard .divider{
     border-color: rgba(255, 255, 255, 0.12);
     margin: 5px 0;
+}
+
+.color-box {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
 }

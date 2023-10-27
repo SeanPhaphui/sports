@@ -1,14 +1,20 @@
 import { Divider } from "@mui/material";
 import React from "react";
 import "./Leaderboard.css";
+import { UserBetsV2 } from "../../Utils/Utils";
+import Graph from "../Graph/Graph";
+import InCardGraph from "../InCardGraph/InCardGraph";
+import * as d3 from 'd3';
+
 
 interface LeaderboardProps {
     allSeasonRecords: {
         [name: string]: { wins: number; losses: number };
     };
+    userBets: UserBetsV2[];
 }
 
-const Leaderboard: React.FC<LeaderboardProps> = ({ allSeasonRecords }) => {
+const Leaderboard: React.FC<LeaderboardProps> = ({ allSeasonRecords, userBets }) => {
     const getSortedLeaderboard = (records: {
         [name: string]: { wins: number; losses: number };
     }) => {
@@ -19,14 +25,19 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allSeasonRecords }) => {
 
     const leaderboard = getSortedLeaderboard(allSeasonRecords);
 
+    const color = d3.scaleOrdinal().domain(userBets.map(u => u.displayName)).range(d3.schemeSet2);
+
     return (
         <div className="Leaderboard">
             <div className="header">Season Leaderboard</div>
+            <InCardGraph userBets={userBets} />
+
             <div className="column-headers">
                 <div className="entry">Rank</div>
                 <div className="entry-name">Player</div>
                 <div className="entry">Wins</div>
                 <div className="entry">Loss</div>
+                <div className="entry">Legend</div> {/* Added new column header */}
             </div>
             <div>
                 {leaderboard.map((entry, index) => (
@@ -37,6 +48,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allSeasonRecords }) => {
                             <div className="entry-name">{entry.name}</div>
                             <div className="entry">{entry.wins}</div>
                             <div className="entry">{entry.losses}</div>
+                            <div className="entry" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                                <div className="color-box" style={{ backgroundColor: color(entry.name) as string }}></div> {/* Color box for legend */}
+                            </div>
                         </div>
                     </div>
                 ))}

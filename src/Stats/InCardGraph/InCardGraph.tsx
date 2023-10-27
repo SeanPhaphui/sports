@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import "./Graph.css";
+import "./InCardGraph.css";
 import { UserBetsV2, Bet } from "../../Utils/Utils";
 import { calculateUserWins } from "../../Utils/BetUtils";
 
-interface GraphProps {
+interface InCardGraphProps {
     userBets: UserBetsV2[];
 }
 
-const Graph: React.FC<GraphProps> = ({ userBets }) => {
+const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
     const svgRef = useRef(null);
 
     useEffect(() => {
@@ -62,9 +62,9 @@ const Graph: React.FC<GraphProps> = ({ userBets }) => {
         });
 
         // Update SVG and D3 Dimensions
-        const svgWidth = 500;
+        const svgWidth = 350;
         const svgHeight = 125;
-        const margin = { top: 20, right: 150, bottom: 20, left: 20 }; // adjusted margins
+        const margin = { top: 20, right: 20, bottom: 20, left: 20 }; // adjusted margins
         const width = svgWidth - margin.left - margin.right;
         const height = svgHeight - margin.top - margin.bottom;
 
@@ -116,47 +116,20 @@ const Graph: React.FC<GraphProps> = ({ userBets }) => {
             .selectAll("text")
             .attr("fill", "white")
             .text((d, i, nodes) => {
-                let weekStr = d as string;  // Cast the unknown type to string
+                let weekStr = d as string; // Cast the unknown type to string
                 return `Week ${weekStr.replace("week", "")}`;
             });
 
         // Y Axis
-        svg.append("g")
-            .call(d3.axisLeft(y).ticks(5))
-            .selectAll("text")
-            .attr("fill", "white");
+        svg.append("g").call(d3.axisLeft(y).ticks(5)).selectAll("text").attr("fill", "white");
 
-        // Color Legend
-        const legend = svg
-            .selectAll(".legend")
-            .data(keys)
-            .enter()
-            .append("g")
-            .attr("class", "legend")
-            .attr("transform", (d, i) => `translate(0,${i * 20})`);
-
-        legend
-            .append("rect")
-            .attr("x", width + 10)
-            .attr("width", 18)
-            .attr("height", 18)
-            .style("fill", (d) => color(d) as string); // Use the color scale with the current data value
-
-        legend
-            .append("text")
-            .attr("x", width + 35)
-            .attr("y", 9)
-            .attr("dy", ".35em")
-            .style("text-anchor", "start")
-            .text((d) => d)
-            .attr("fill", "white");
     }, [userBets]);
 
     return (
-        <div className="Graph">
+        <div className="InCardGraph">
             <svg ref={svgRef}></svg>
         </div>
     );
 };
 
-export default Graph;
+export default InCardGraph;

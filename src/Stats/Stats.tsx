@@ -153,8 +153,8 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
     return (
         <Fade in={true} timeout={500}>
             <div className="Stats">
-                <Leaderboard allSeasonRecords={allSeasonRecords} />
-                <Graph userBets={userBets} />
+                <Leaderboard allSeasonRecords={allSeasonRecords} userBets={userBets}/>
+                {/* <Graph userBets={userBets} /> */}
                 <div>
                     <label>Select User: </label>
                     <Select value={selectedUserId} onChange={handleUserChange}>

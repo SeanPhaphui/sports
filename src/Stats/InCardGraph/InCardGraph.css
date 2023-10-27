@@ -1,0 +1,6 @@
+.InCardGraph {
+    overflow-x: auto; /* to allow horizontal scrolling */
+    white-space: nowrap; /* prevents wrapping on whitespaces */
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
