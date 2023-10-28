@@ -8,6 +8,8 @@ import "./Stats.css";
 import WinLossRatio from "../WinLossRatio/WinLossRatio";
 import Leaderboard from "./Leaderboard/Leaderboard";
 import Graph from "./Graph/Graph";
+import CumulativeWinsOverSeason from "./Graphs/CumulativeWinsOverSeason";
+import GraphCard from "./GraphCard/GraphCard";
 
 interface StatsProps {
     user: User | null;
@@ -155,6 +157,7 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
             <div className="Stats">
                 <Leaderboard allSeasonRecords={allSeasonRecords} userBets={userBets}/>
                 {/* <Graph userBets={userBets} /> */}
+                <GraphCard title="Cumulative Bet Wins" userBets={userBets} />
                 <div>
                     <label>Select User: </label>
                     <Select value={selectedUserId} onChange={handleUserChange}>

@@ -1,0 +1,14 @@
+.GraphCard {
+    display: flex;
+    flex-direction: column;
+    background-color: #1d1e1f;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px, rgba(0, 0, 0, 0.04) 0px 10px 10px;
+    margin-top: 20px;
+}
+
+.GraphCard .header{
+    font-weight: 700;
+    /* margin-bottom: 10px; */
+}
