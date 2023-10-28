@@ -1,9 +1,10 @@
 import { Divider } from "@mui/material";
 import * as d3 from 'd3';
-import React from "react";
+import React, { useMemo } from "react";
 import { UserBetsV2 } from "../../Utils/Utils";
 import WeeklyWinComparison from "../Graphs/WeeklyWinComparison/WeeklyWinComparison";
 import "./Leaderboard.css";
+import { getSortedFinalWeeks } from "../../Utils/GraphUtils.";
 
 
 interface LeaderboardProps {
@@ -26,10 +27,12 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allSeasonRecords, userBets })
 
     const color = d3.scaleOrdinal().domain(userBets.map(u => u.displayName)).range(d3.schemeSet2);
 
+    const weeksArray = useMemo(() => getSortedFinalWeeks(userBets), [userBets]);
+
     return (
         <div className="Leaderboard">
             <div className="header">Season Leaderboard</div>
-            <WeeklyWinComparison userBets={userBets} />
+            <WeeklyWinComparison userBets={userBets} weeksArray={weeksArray} />
 
             <div className="column-headers">
                 <div className="entry">Rank</div>

@@ -6,45 +6,15 @@ import { calculateUserWins } from "../../../Utils/BetUtils";
 
 interface WeeklyWinComparisonProps {
     userBets: UserBetsV2[];
+    weeksArray: string[];
 }
 
-const WeeklyWinComparison: React.FC<WeeklyWinComparisonProps> = ({ userBets }) => {
+const WeeklyWinComparison: React.FC<WeeklyWinComparisonProps> = ({ userBets, weeksArray }) => {
     const svgRef = useRef(null);
 
     useEffect(() => {
-        // Transform userBets data into a format suitable for D3
-        const weeks = new Set<string>();
-        userBets.forEach((user) => {
-            for (let year in user.bets) {
-                for (let week in user.bets[year]) {
-                    // Check if all games for this week have a status of "Final"
-                    const allGamesFinal = user.bets[year][week].every(
-                        (bet) => bet.game.status === "final"
-                    );
-                    if (allGamesFinal) {
-                        weeks.add(week);
-                    }
-                }
-            }
-        });
-
-        // Convert the Set to an array
-        const weeksArray = Array.from(weeks);
-
-        // Sort the array
-        weeksArray.sort((a, b) => {
-            // Extract the numbers from the string and compare them
-            const numA = parseInt(a.replace("week", ""));
-            const numB = parseInt(b.replace("week", ""));
-            return numA - numB;
-        });
-
-        // If you want to convert it back to a Set (though for your purpose, an array should suffice)
-        const sortedWeeksSet = new Set(weeksArray);
-        console.log(sortedWeeksSet);
-
         const data: any[] = [];
-        sortedWeeksSet.forEach((week) => {
+        weeksArray.forEach((week) => {
             const weekData: any = { week };
             userBets.forEach((user) => {
                 let totalWins = 0;
@@ -64,7 +34,7 @@ const WeeklyWinComparison: React.FC<WeeklyWinComparisonProps> = ({ userBets }) =
         // Determine dynamic width
         const baseWidth = 350; // Base width for 5 weeks
         const widthIncrement = 50; // Width added for each week beyond 5
-        const dynamicWidth = baseWidth + Math.max(0, sortedWeeksSet.size - 5) * widthIncrement;
+        const dynamicWidth = baseWidth + Math.max(0, weeksArray.length - 5) * widthIncrement;
 
         // Update SVG and D3 Dimensions
         const svgWidth = dynamicWidth;
@@ -79,7 +49,7 @@ const WeeklyWinComparison: React.FC<WeeklyWinComparisonProps> = ({ userBets }) =
         const svg = d3.select(svgRef.current).attr("width", svgWidth).attr("height", svgHeight);
 
         // Create scales
-        const x0 = d3.scaleBand().domain(sortedWeeksSet).rangeRound([0, width]).paddingInner(0.1);
+        const x0 = d3.scaleBand().domain(weeksArray).rangeRound([0, width]).paddingInner(0.1);
         const x1 = d3.scaleBand().domain(keys).rangeRound([0, x0.bandwidth()]).padding(0.05);
         const y = d3
             .scaleLinear()
