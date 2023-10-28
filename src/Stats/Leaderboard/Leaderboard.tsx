@@ -1,10 +1,9 @@
 import { Divider } from "@mui/material";
-import React from "react";
-import "./Leaderboard.css";
-import { UserBetsV2 } from "../../Utils/Utils";
-import Graph from "../Graph/Graph";
-import InCardGraph from "../InCardGraph/InCardGraph";
 import * as d3 from 'd3';
+import React from "react";
+import { UserBetsV2 } from "../../Utils/Utils";
+import WeeklyWinComparison from "../Graphs/WeeklyWinComparison/WeeklyWinComparison";
+import "./Leaderboard.css";
 
 
 interface LeaderboardProps {
@@ -30,7 +29,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allSeasonRecords, userBets })
     return (
         <div className="Leaderboard">
             <div className="header">Season Leaderboard</div>
-            <InCardGraph userBets={userBets} />
+            <WeeklyWinComparison userBets={userBets} />
 
             <div className="column-headers">
                 <div className="entry">Rank</div>

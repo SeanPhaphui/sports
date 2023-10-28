@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import "./CumulativeWinsOverSeason.css";
-import { UserBetsV2, Bet } from "../../Utils/Utils";
-import { calculateUserWins } from "../../Utils/BetUtils";
+import "./WeeklyWinComparison.css";
+import { UserBetsV2, Bet } from "../../../Utils/Utils";
+import { calculateUserWins } from "../../../Utils/BetUtils";
 
-interface CumulativeWinsOverSeasonProps {
+interface WeeklyWinComparisonProps {
     userBets: UserBetsV2[];
 }
 
-const CumulativeWinsOverSeason: React.FC<CumulativeWinsOverSeasonProps> = ({ userBets }) => {
+const WeeklyWinComparison: React.FC<WeeklyWinComparisonProps> = ({ userBets }) => {
     const svgRef = useRef(null);
 
     useEffect(() => {
@@ -43,13 +43,10 @@ const CumulativeWinsOverSeason: React.FC<CumulativeWinsOverSeasonProps> = ({ use
         const sortedWeeksSet = new Set(weeksArray);
         console.log(sortedWeeksSet);
 
-        // Calculate cumulative wins for each user
-        const cumulativeWins: { [displayName: string]: number[] } = {};
-
-        userBets.forEach((user) => {
-            let totalWinsSoFar = 0;
-            cumulativeWins[user.displayName] = [];
-            sortedWeeksSet.forEach((week) => {
+        const data: any[] = [];
+        sortedWeeksSet.forEach((week) => {
+            const weekData: any = { week };
+            userBets.forEach((user) => {
                 let totalWins = 0;
                 for (let year in user.bets) {
                     if (user.bets[year][week]) {
@@ -58,9 +55,10 @@ const CumulativeWinsOverSeason: React.FC<CumulativeWinsOverSeasonProps> = ({ use
                         );
                     }
                 }
-                totalWinsSoFar += totalWins;
-                cumulativeWins[user.displayName].push(totalWinsSoFar);
+                weekData[user.displayName] = totalWins;
             });
+            console.log(weekData);
+            data.push(weekData);
         });
 
         // Determine dynamic width
@@ -82,6 +80,7 @@ const CumulativeWinsOverSeason: React.FC<CumulativeWinsOverSeasonProps> = ({ use
 
         // Create scales
         const x0 = d3.scaleBand().domain(sortedWeeksSet).rangeRound([0, width]).paddingInner(0.1);
+        const x1 = d3.scaleBand().domain(keys).rangeRound([0, x0.bandwidth()]).padding(0.05);
         const y = d3
             .scaleLinear()
             .domain([0, 5]) // Since there are 5 total bets
@@ -96,30 +95,26 @@ const CumulativeWinsOverSeason: React.FC<CumulativeWinsOverSeasonProps> = ({ use
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        // Adjust the y scale's domain based on the maximum cumulative wins
-        const maxCumulativeWins = Math.max(
-            ...Object.values(cumulativeWins).flatMap((wins) => wins)
-        );
-        y.domain([0, maxCumulativeWins]);
+        // Append rectangles to a specific group
+        const barsGroup = mainGroup.append("g");
 
-        const line = d3
-            .line<number>()
-            .x((d, i) => x0(weeksArray[i])! + x0.bandwidth() / 2)
-            .y((d) => y(d));
-
-        Object.entries(cumulativeWins).forEach(([displayName, wins]) => {
-            mainGroup
-                .append("path")
-                .datum(wins)
-                .attr("fill", "none")
-                .attr("stroke", color(displayName) as string)
-                .attr("stroke-width", 1.5)
-                .attr("d", line);
-        });
+        barsGroup
+            .selectAll("g.bar")
+            .data(data)
+            .join("g")
+            .attr("class", "bar") // Add a class to the group for specificity
+            .attr("transform", (d) => `translate(${x0(d.week)},0)`)
+            .selectAll("rect")
+            .data((d) => keys.map((key) => ({ key, value: d[key] })))
+            .join("rect")
+            .attr("x", (d) => x1(d.key) || 0)
+            .attr("y", (d) => y(d.value))
+            .attr("width", x1.bandwidth())
+            .attr("height", (d) => height - y(d.value))
+            .attr("fill", (d) => color(d.key) as string);
 
         // X Axis
-        mainGroup
-            .append("g")
+        mainGroup.append("g")
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(x0))
             .selectAll("text")
@@ -134,10 +129,10 @@ const CumulativeWinsOverSeason: React.FC<CumulativeWinsOverSeasonProps> = ({ use
     }, [userBets]);
 
     return (
-        <div className="CumulativeWinsOverSeason">
+        <div className="WeeklyWinComparison">
             <svg ref={svgRef}></svg>
         </div>
     );
 };
 
-export default CumulativeWinsOverSeason;
+export default WeeklyWinComparison;

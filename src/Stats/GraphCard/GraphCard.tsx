@@ -1,6 +1,6 @@
 import React from "react";
 import { UserBetsV2 } from "../../Utils/Utils";
-import CumulativeWinsOverSeason from "../Graphs/CumulativeWinsOverSeason";
+import CumulativeBetWinsOverSeason from "../Graphs/CumulativeBetWinsOverSeason/CumulativeBetWinsOverSeason";
 import "./GraphCard.css";
 
 
@@ -15,7 +15,7 @@ const GraphCard: React.FC<GraphCardProps> = ({title, userBets }) => {
     return (
         <div className="GraphCard">
             <div className="header">{title}</div>
-            <CumulativeWinsOverSeason userBets={userBets} />
+            <CumulativeBetWinsOverSeason userBets={userBets} />
         </div>
     );
 };

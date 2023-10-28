@@ -1,4 +1,4 @@
-.CumulativeWinsOverSeason {
+.CumulativeBetWinsOverSeason {
     overflow-x: auto; /* to allow horizontal scrolling */
     white-space: nowrap; /* prevents wrapping on whitespaces */
 }

@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import "./InCardGraph.css";
-import { UserBetsV2, Bet } from "../../Utils/Utils";
-import { calculateUserWins } from "../../Utils/BetUtils";
+import "./CumulativeBetWinsOverSeason.css";
+import { UserBetsV2, Bet } from "../../../Utils/Utils";
+import { calculateUserWins } from "../../../Utils/BetUtils";
 
-interface InCardGraphProps {
+interface CumulativeBetWinsOverSeasonProps {
     userBets: UserBetsV2[];
 }
 
-const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
+const CumulativeBetWinsOverSeason: React.FC<CumulativeBetWinsOverSeasonProps> = ({ userBets }) => {
     const svgRef = useRef(null);
 
     useEffect(() => {
@@ -43,10 +43,13 @@ const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
         const sortedWeeksSet = new Set(weeksArray);
         console.log(sortedWeeksSet);
 
-        const data: any[] = [];
-        sortedWeeksSet.forEach((week) => {
-            const weekData: any = { week };
-            userBets.forEach((user) => {
+        // Calculate cumulative wins for each user
+        const cumulativeWins: { [displayName: string]: number[] } = {};
+
+        userBets.forEach((user) => {
+            let totalWinsSoFar = 0;
+            cumulativeWins[user.displayName] = [];
+            sortedWeeksSet.forEach((week) => {
                 let totalWins = 0;
                 for (let year in user.bets) {
                     if (user.bets[year][week]) {
@@ -55,10 +58,9 @@ const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
                         );
                     }
                 }
-                weekData[user.displayName] = totalWins;
+                totalWinsSoFar += totalWins;
+                cumulativeWins[user.displayName].push(totalWinsSoFar);
             });
-            console.log(weekData);
-            data.push(weekData);
         });
 
         // Determine dynamic width
@@ -80,7 +82,6 @@ const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
 
         // Create scales
         const x0 = d3.scaleBand().domain(sortedWeeksSet).rangeRound([0, width]).paddingInner(0.1);
-        const x1 = d3.scaleBand().domain(keys).rangeRound([0, x0.bandwidth()]).padding(0.05);
         const y = d3
             .scaleLinear()
             .domain([0, 5]) // Since there are 5 total bets
@@ -95,26 +96,30 @@ const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        // Append rectangles to a specific group
-        const barsGroup = mainGroup.append("g");
+        // Adjust the y scale's domain based on the maximum cumulative wins
+        const maxCumulativeWins = Math.max(
+            ...Object.values(cumulativeWins).flatMap((wins) => wins)
+        );
+        y.domain([0, maxCumulativeWins]);
 
-        barsGroup
-            .selectAll("g.bar")
-            .data(data)
-            .join("g")
-            .attr("class", "bar") // Add a class to the group for specificity
-            .attr("transform", (d) => `translate(${x0(d.week)},0)`)
-            .selectAll("rect")
-            .data((d) => keys.map((key) => ({ key, value: d[key] })))
-            .join("rect")
-            .attr("x", (d) => x1(d.key) || 0)
-            .attr("y", (d) => y(d.value))
-            .attr("width", x1.bandwidth())
-            .attr("height", (d) => height - y(d.value))
-            .attr("fill", (d) => color(d.key) as string);
+        const line = d3
+            .line<number>()
+            .x((d, i) => x0(weeksArray[i])! + x0.bandwidth() / 2)
+            .y((d) => y(d));
+
+        Object.entries(cumulativeWins).forEach(([displayName, wins]) => {
+            mainGroup
+                .append("path")
+                .datum(wins)
+                .attr("fill", "none")
+                .attr("stroke", color(displayName) as string)
+                .attr("stroke-width", 1.5)
+                .attr("d", line);
+        });
 
         // X Axis
-        mainGroup.append("g")
+        mainGroup
+            .append("g")
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(x0))
             .selectAll("text")
@@ -129,10 +134,10 @@ const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
     }, [userBets]);
 
     return (
-        <div className="InCardGraph">
+        <div className="CumulativeBetWinsOverSeason">
             <svg ref={svgRef}></svg>
         </div>
     );
 };
 
-export default InCardGraph;
+export default CumulativeBetWinsOverSeason;

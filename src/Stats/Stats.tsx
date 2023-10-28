@@ -1,15 +1,13 @@
-import { Divider, Fade, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { Fade, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { User } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { calculateUserWins, computeSeasonRecord } from "../Utils/BetUtils";
 import { Bet, UserBetsV2 } from "../Utils/Utils";
-import { fetchAllOutcomes, fetchAllUsers } from "../firebaseConfig";
-import "./Stats.css";
 import WinLossRatio from "../WinLossRatio/WinLossRatio";
-import Leaderboard from "./Leaderboard/Leaderboard";
-import Graph from "./Graph/Graph";
-import CumulativeWinsOverSeason from "./Graphs/CumulativeWinsOverSeason";
+import { fetchAllOutcomes, fetchAllUsers } from "../firebaseConfig";
 import GraphCard from "./GraphCard/GraphCard";
+import Leaderboard from "./Leaderboard/Leaderboard";
+import "./Stats.css";
 
 interface StatsProps {
     user: User | null;
