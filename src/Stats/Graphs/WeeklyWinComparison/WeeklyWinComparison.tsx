@@ -95,26 +95,56 @@ const WeeklyWinComparison: React.FC<WeeklyWinComparisonProps> = ({ userBets }) =
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
+        const duration = 750;
+
         // Append rectangles to a specific group
         const barsGroup = mainGroup.append("g");
 
         barsGroup
-            .selectAll("g.bar")
-            .data(data)
-            .join("g")
-            .attr("class", "bar") // Add a class to the group for specificity
-            .attr("transform", (d) => `translate(${x0(d.week)},0)`)
-            .selectAll("rect")
-            .data((d) => keys.map((key) => ({ key, value: d[key] })))
-            .join("rect")
-            .attr("x", (d) => x1(d.key) || 0)
-            .attr("y", (d) => y(d.value))
-            .attr("width", x1.bandwidth())
-            .attr("height", (d) => height - y(d.value))
-            .attr("fill", (d) => color(d.key) as string);
+        .selectAll("g.bar")
+        .data(data)
+        .join(
+            enter => enter.append("g") // Enter selection
+                .attr("class", "bar")
+                .attr("transform", (d) => `translate(${x0(d.week)},0)`)
+                .selectAll("rect")
+                .data((d) => keys.map((key) => ({ key, value: d[key] })))
+                .join("rect")
+                .attr("x", (d) => x1(d.key) || 0)
+                .attr("y", height) 
+                .attr("width", x1.bandwidth())
+                .attr("height", 0) 
+                .attr("fill", (d) => color(d.key) as string)
+                .transition()
+                .duration(duration)
+                .delay((d, i) => i * 50) // Delay to stagger bars
+                .ease(d3.easeCubic) // Easing function
+                .attr("y", (d) => y(d.value))
+                .attr("height", (d) => height - y(d.value)),
+            update => update // Update selection
+                .attr("transform", (d) => `translate(${x0(d.week)},0)`)
+                .selectAll("rect")
+                .data((d) => keys.map((key) => ({ key, value: d[key] })))
+                .join("rect")
+                .transition()
+                .duration(duration)
+                .attr("x", (d) => x1(d.key) || 0)
+                .attr("y", (d) => y(d.value))
+                .attr("width", x1.bandwidth())
+                .attr("height", (d) => height - y(d.value))
+                .attr("fill", (d) => color(d.key) as string),
+            exit => exit // Exit selection
+                .selectAll("rect")
+                .transition()
+                .duration(duration)
+                .attr("y", height)
+                .attr("height", 0)
+                .remove()
+        );
 
         // X Axis
-        mainGroup.append("g")
+        mainGroup
+            .append("g")
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(x0))
             .selectAll("text")
