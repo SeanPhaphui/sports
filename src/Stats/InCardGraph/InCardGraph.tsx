@@ -61,8 +61,13 @@ const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
             data.push(weekData);
         });
 
+        // Determine dynamic width
+        const baseWidth = 350; // Base width for 5 weeks
+        const widthIncrement = 50; // Width added for each week beyond 5
+        const dynamicWidth = baseWidth + Math.max(0, sortedWeeksSet.size - 5) * widthIncrement;
+
         // Update SVG and D3 Dimensions
-        const svgWidth = 350;
+        const svgWidth = dynamicWidth;
         const svgHeight = 125;
         const margin = { top: 20, right: 20, bottom: 20, left: 20 }; // adjusted margins
         const width = svgWidth - margin.left - margin.right;
@@ -71,12 +76,7 @@ const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
         const keys = userBets.map((user) => user.displayName);
 
         // Set up the SVG dimensions and create a group to contain all elements
-        const svg = d3
-            .select(svgRef.current)
-            .attr("width", svgWidth)
-            .attr("height", svgHeight)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        const svg = d3.select(svgRef.current).attr("width", svgWidth).attr("height", svgHeight);
 
         // Create scales
         const x0 = d3.scaleBand().domain(sortedWeeksSet).rangeRound([0, width]).paddingInner(0.1);
@@ -91,8 +91,12 @@ const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
         // Clear previous SVG content
         svg.selectAll("*").remove();
 
+        const mainGroup = svg
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
         // Append rectangles to a specific group
-        const barsGroup = svg.append("g");
+        const barsGroup = mainGroup.append("g");
 
         barsGroup
             .selectAll("g.bar")
@@ -110,7 +114,7 @@ const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
             .attr("fill", (d) => color(d.key) as string);
 
         // X Axis
-        svg.append("g")
+        mainGroup.append("g")
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(x0))
             .selectAll("text")
@@ -121,8 +125,7 @@ const InCardGraph: React.FC<InCardGraphProps> = ({ userBets }) => {
             });
 
         // Y Axis
-        svg.append("g").call(d3.axisLeft(y).ticks(5)).selectAll("text").attr("fill", "white");
-
+        mainGroup.append("g").call(d3.axisLeft(y).ticks(5)).selectAll("text").attr("fill", "white");
     }, [userBets]);
 
     return (
