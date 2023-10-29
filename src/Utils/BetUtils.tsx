@@ -184,19 +184,25 @@ export const computeSeasonRecord = (
     console.log("COMPUTE SEASON RECORD")
     const record: Record<string, { wins: number; losses: number }> = {};
 
+    const allUsersHaveFinalizedGamesForWeek = (year: string, week: string): boolean => {
+        // Filter out users who don't have data for the given year and week
+        const relevantUsers = allUserBets.filter(user => user.bets[year] && user.bets[year][week]);
+
+        // Check if all games for the given year and week for the remaining users are final
+        return relevantUsers.every(user => user.bets[year][week].every(bet => bet.game.status === "final"));
+    };
+
     for (const userBets of allUserBets) {
         for (const year in userBets.bets) {
             for (const week in userBets.bets[year]) {
-                // Check if all games for this week have a status of "Final"
-                const allGamesFinal = userBets.bets[year][week].every(
-                    (bet) => bet.game.status === "final"
-                );
-                if (!allGamesFinal) {
+                // Check if all games for all participating users for this week have a status of "Final"
+                if (!allUsersHaveFinalizedGamesForWeek(year, week)) {
                     console.log(
-                        `Not all games for ${week} of ${year} are finalized. Skipping...`
+                        `Not all games for ${week} of ${year} are finalized for all users. Skipping...`
                     );
                     continue; // Skip to the next week
                 }
+                
                 const weeklyWinners = getWeeklyWinners(allUserBets, year, week);
                 if (!record[userBets.displayName]) {
                     record[userBets.displayName] = { wins: 0, losses: 0 };
@@ -212,6 +218,8 @@ export const computeSeasonRecord = (
 
     return record;
 };
+
+
 
 type BetSuccessRate = {
     totalBets: number;
