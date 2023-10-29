@@ -3,6 +3,7 @@ import { UserBetsV2 } from "../../Utils/Utils";
 import CumulativeBetWinsOverSeason from "../Graphs/CumulativeBetWinsOverSeason/CumulativeBetWinsOverSeason";
 import "./GraphCard.css";
 import { getSortedFinalWeeks } from "../../Utils/GraphUtils.";
+import SuccessRateByBetType from "../Graphs/SuccessRateByBetType/SuccessRateByBetType";
 
 
 interface GraphCardProps {
@@ -19,6 +20,7 @@ const GraphCard: React.FC<GraphCardProps> = ({title, userBets }) => {
         <div className="GraphCard">
             <div className="header">{title}</div>
             <CumulativeBetWinsOverSeason userBets={userBets} weeksArray={weeksArray} />
+            {/* <SuccessRateByBetType userBets={userBets} /> */}
         </div>
     );
 };

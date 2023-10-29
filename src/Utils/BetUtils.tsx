@@ -213,6 +213,48 @@ export const computeSeasonRecord = (
     return record;
 };
 
+type BetSuccessRate = {
+    totalBets: number;
+    totalWins: number;
+};
+
+export const calculateSuccessRateByBetType = (allUserBets: UserBetsV2[]): Record<string, { spread: number; overUnder: number }> => {
+    const successRates: Record<string, { spread: number; overUnder: number }> = {};
+
+    for (const userBets of allUserBets) {
+        const betTypeData: Record<"spread" | "overUnder", BetSuccessRate> = {
+            spread: { totalBets: 0, totalWins: 0 },
+            overUnder: { totalBets: 0, totalWins: 0 },
+        };
+
+        for (const year in userBets.bets) {
+            for (const week in userBets.bets[year]) {
+                for (const bet of userBets.bets[year][week]) {
+                    if (bet.type === "spread") {
+                        betTypeData.spread.totalBets += 1;
+                        if (calculateBetStatusColor(bet) === getOutcomeColor("win")) {
+                            betTypeData.spread.totalWins += 1;
+                        }
+                    } else if (bet.type === "over" || bet.type === "under") {
+                        betTypeData.overUnder.totalBets += 1;
+                        if (calculateBetStatusColor(bet) === getOutcomeColor("win")) {
+                            betTypeData.overUnder.totalWins += 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        successRates[userBets.displayName] = {
+            spread: (betTypeData.spread.totalWins / betTypeData.spread.totalBets) * 100,   // Convert to percentage
+            overUnder: (betTypeData.overUnder.totalWins / betTypeData.overUnder.totalBets) * 100,   // Convert to percentage
+        };
+    }
+
+    return successRates;
+};
+
+
 // Function to determine if at least one game has finished
 export const hasAnyGameFinished = (allBets: UserBets[]): boolean => {
     for (const userBets of allBets) {
