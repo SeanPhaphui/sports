@@ -8,6 +8,7 @@ import { fetchAllOutcomes, fetchAllUsers } from "../firebaseConfig";
 import GraphCard from "./GraphCard/GraphCard";
 import Leaderboard from "./Leaderboard/Leaderboard";
 import "./Stats.css";
+import StatCard from "./StatCard/StatCard";
 
 interface StatsProps {
     user: User | null;
@@ -153,35 +154,20 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
     return (
         <Fade in={true} timeout={500}>
             <div className="Stats">
-                <Leaderboard allSeasonRecords={allSeasonRecords} userBets={userBets}/>
+                <Leaderboard allSeasonRecords={allSeasonRecords} userBets={userBets} />
                 {/* <Graph userBets={userBets} /> */}
                 <GraphCard title="Cumulative Bet Wins" userBets={userBets} />
-                <div>
-                    <label>Select User: </label>
-                    <Select value={selectedUserId} onChange={handleUserChange}>
-                        {userBets
-                            .filter((userBet) => userBet.uid !== "Gj42xPYjtTOLAixJS5y8828oxG22")
-                            .map((userBet) => (
-                                <MenuItem key={userBet.uid} value={userBet.uid}>
-                                    {userBet.displayName}
-                                </MenuItem>
-                            ))}
-                    </Select>
-                </div>
-                <div>
-                    ALSO INCOMPLETE
-                </div>
-                <div>
-                    Season Record: {seasonRecord?.wins} Wins / {seasonRecord?.losses} Losses
-                </div>
-                <div>Win Rate: {winRate}</div>
-                <div style={{ padding: "40px" }}>
-                    <WinLossRatio wins={totalWins} losses={totalLoss} />
-                </div>
-                <div>Win-Loss Ratio: {winLossRatio.toFixed(2)}</div>
-                <div>Total Wins: {totalWins}</div>
-                <div>Total Loss: {totalLoss}</div>
-                <div>Total Games: {totalGames}</div>
+                <StatCard
+                    selectedUserId={selectedUserId}
+                    handleUserChange={handleUserChange}
+                    userBets={userBets}
+                    seasonRecord={seasonRecord}
+                    winRate={winRate}
+                    totalWins={totalWins}
+                    totalLoss={totalLoss}
+                    winLossRatio={winLossRatio}
+                    totalGames={totalGames}
+                />
                 <div style={{ padding: "40px" }}></div>
             </div>
         </Fade>
