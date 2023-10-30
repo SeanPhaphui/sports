@@ -30,10 +30,10 @@ const StatCard: React.FC<StatCardProps> = ({
     winLossRatio,
     totalGames,
 }) => {
-
     return (
         <div className="StatCard">
             <div>
+                <div>Not Finished</div>
                 <label>Select User: </label>
                 <Select value={selectedUserId} onChange={handleUserChange}>
                     {userBets
@@ -45,7 +45,6 @@ const StatCard: React.FC<StatCardProps> = ({
                         ))}
                 </Select>
             </div>
-            <div>ALSO INCOMPLETE</div>
             <div>
                 Season Record: {seasonRecord?.wins} Wins / {seasonRecord?.losses} Losses
             </div>
