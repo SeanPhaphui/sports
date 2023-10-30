@@ -1,11 +1,10 @@
-import { Divider } from "@mui/material";
-import * as d3 from 'd3';
+import { Divider, Skeleton } from "@mui/material";
+import * as d3 from "d3";
 import React, { useMemo } from "react";
 import { UserBetsV2 } from "../../Utils/Utils";
 import WeeklyWinComparison from "../Graphs/WeeklyWinComparison/WeeklyWinComparison";
 import "./Leaderboard.css";
 import { getSortedFinalWeeks } from "../../Utils/GraphUtils.";
-
 
 interface LeaderboardProps {
     allSeasonRecords: {
@@ -24,8 +23,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allSeasonRecords, userBets })
     };
 
     const leaderboard = getSortedLeaderboard(allSeasonRecords);
+    if(leaderboard.length === 0){
+        console.log("ALLLLL", allSeasonRecords)
+    }
 
-    const color = d3.scaleOrdinal().domain(userBets.map(u => u.displayName)).range(d3.schemeSet2);
+    const color = d3
+        .scaleOrdinal()
+        .domain(userBets.map((u) => u.displayName))
+        .range(d3.schemeSet2);
 
     const weeksArray = useMemo(() => getSortedFinalWeeks(userBets), [userBets]);
 
@@ -42,20 +47,46 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ allSeasonRecords, userBets })
                 <div className="entry">Legend</div> {/* Added new column header */}
             </div>
             <div>
-                {leaderboard.map((entry, index) => (
-                    <div key={entry.name}>
-                        {index > 0 && <Divider className="divider" />}
-                        <div className="column-values">
-                            <div className="entry">{index + 1}</div>
-                            <div className="entry-name">{entry.name}</div>
-                            <div className="entry">{entry.wins}</div>
-                            <div className="entry">{entry.losses}</div>
-                            <div className="entry" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                                <div className="color-box" style={{ backgroundColor: color(entry.name) as string }}></div> {/* Color box for legend */}
+                {leaderboard.length === 0 ? (
+                    // Render skeletons
+                    <>
+                        <Skeleton sx={{ bgcolor: 'grey.900' }} variant="text" width="100%" height={25} />
+                        <Divider className="divider" />
+                        <Skeleton sx={{ bgcolor: 'grey.900' }} variant="text" width="100%" height={25} />
+                        <Divider className="divider" />
+                        <Skeleton sx={{ bgcolor: 'grey.900' }} variant="text" width="100%" height={25} />
+                        <Divider className="divider" />
+                        <Skeleton sx={{ bgcolor: 'grey.900' }} variant="text" width="100%" height={25} />
+                    </>
+                ) : (
+                    // Original rendering of leaderboard
+                    leaderboard.map((entry, index) => (
+                        <div key={entry.name}>
+                            {index > 0 && <Divider className="divider" />}
+                            <div className="column-values">
+                                <div className="entry">{index + 1}</div>
+                                <div className="entry-name">{entry.name}</div>
+                                <div className="entry">{entry.wins}</div>
+                                <div className="entry">{entry.losses}</div>
+                                <div
+                                    className="entry"
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: "100%",
+                                    }}
+                                >
+                                    <div
+                                        className="color-box"
+                                        style={{ backgroundColor: color(entry.name) as string }}
+                                    ></div>{" "}
+                                    {/* Color box for legend */}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
         </div>
     );
