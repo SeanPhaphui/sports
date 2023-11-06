@@ -11,9 +11,9 @@ export interface UserBetsV2 {
     uid: string;
     bets: {
         [year: string]: {
-          [week: string]: Bet[];
+            [week: string]: Bet[];
         };
-      };
+    };
     displayName: string;
 }
 
@@ -92,10 +92,15 @@ export const fetchCurrentWeek = async (): Promise<{ week: number; seasonYear: nu
     const responseData = await fetchData(footballUrl);
 
     // Validate and process the data
-    if (responseData?.week && responseData.week.number && responseData?.season && responseData.season.year) {
+    if (
+        responseData?.week &&
+        responseData.week.number &&
+        responseData?.season &&
+        responseData.season.year
+    ) {
         return {
             week: responseData.week.number,
-            seasonYear: responseData.season.year
+            seasonYear: responseData.season.year,
         };
     }
 
@@ -116,14 +121,22 @@ export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
         for (const singleCalendarKey in leaguesCalendar) {
             const singleCalendar = leaguesCalendar[singleCalendarKey];
 
-            for (const entry of singleCalendar.entries) {
-                const gameCalendarEntry: GameCalendarObject = {
-                    label: entry.label.toUpperCase(),
-                    detail: entry.detail.toUpperCase(),
-                    week: responseData.week.number,
-                    seasonYear: responseData.season.year,
-                };
-                calendarEntries.push(gameCalendarEntry);
+            // Check if singleCalendar.entries is an array before iterating
+            if (Array.isArray(singleCalendar.entries)) {
+                for (const entry of singleCalendar.entries) {
+                    const gameCalendarEntry: GameCalendarObject = {
+                        label: entry.label.toUpperCase(),
+                        detail: entry.detail.toUpperCase(),
+                        week: responseData.week.number,
+                        seasonYear: responseData.season.year,
+                    };
+                    calendarEntries.push(gameCalendarEntry);
+                }
+            } else {
+                // If it's a single object, you might want to handle it differently
+                // For example, you could push it directly to calendarEntries after validation
+                // Or simply ignore it if it's not supposed to be processed
+                console.warn(`Ignoring non-iterable entry at ${singleCalendarKey}`);
             }
         }
     }
@@ -344,23 +357,22 @@ export const updateBetsUsingWeekData = async (bets: Bet[], week: number): Promis
     const gamesForTheWeek = await getGamesByWeek(week, false); // Assuming you want all games, change accordingly
 
     // Use the fetched games to update bets.
-    const updatedBets = bets.map(bet => {
-        const correspondingGame = gamesForTheWeek.find(game => game.gameId === bet.game.gameId);
+    const updatedBets = bets.map((bet) => {
+        const correspondingGame = gamesForTheWeek.find((game) => game.gameId === bet.game.gameId);
 
         if (correspondingGame) {
             return {
                 ...bet,
-                game: correspondingGame
+                game: correspondingGame,
             };
         } else {
             console.error(`Failed to update bet with ID ${bet.id}`);
-            return bet;  // Return the original bet if no corresponding game is found.
+            return bet; // Return the original bet if no corresponding game is found.
         }
     });
 
     return updatedBets;
 };
-
 
 export const extractTeamsFromPlayerBet = (
     playerBet: Bet
@@ -421,7 +433,6 @@ export const getLetter = (user: User | null) => {
         return ""; // Default case if somehow displayName and email both don't exist or are empty
     }
 };
-
 
 // Old way of getting spread relative to bet
 // const calculateSpread = () => {
