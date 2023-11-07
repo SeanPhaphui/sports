@@ -18,7 +18,7 @@ interface ShowCounterProps {
 const ShowCounter: React.FC<ShowCounterProps> = ({ days, hours, minutes, seconds }) => {
     return (
         <div>
-            <div className="show-counter-title">Time to Place Bets</div>
+            <div className="show-counter-title">Time until Bet Lockout</div>
             <div className="show-counter">
                 <DateTimeDisplay value={days} type={"Days"} isDanger={days < 1} />
                 <div>:</div>

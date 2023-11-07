@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { calculateUserWins, computeSeasonRecord } from "../Utils/BetUtils";
 import { Bet, UserBetsV2 } from "../Utils/Utils";
 import WinLossRatio from "../WinLossRatio/WinLossRatio";
-import { fetchAllOutcomes, fetchAllUsers } from "../firebaseConfig";
+import { fetchAllOutcomes, fetchAllUsers, fetchAllUsersBets } from "../firebaseConfig";
 import GraphCard from "./GraphCard/GraphCard";
 import Leaderboard from "./Leaderboard/Leaderboard";
 import "./Stats.css";
@@ -42,6 +42,7 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
             try {
                 const rawOutcomesData = await fetchAllOutcomes();
                 const rawUserData = await fetchAllUsers();
+                const rawUsersBetsData = await fetchAllUsersBets();
 
                 // Convert raw outcomes data to a flat list for easier searching
                 const flatOutcomes: Bet[] = [];
@@ -53,9 +54,9 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
 
                 const userBetsArray: UserBetsV2[] = [];
 
-                for (const userId in rawUserData) {
+                for (const userId in rawUsersBetsData) {
                     if (userId === "Gj42xPYjtTOLAixJS5y8828oxG22") continue; // skip the test account
-                    const user = rawUserData[userId];
+                    const user = rawUsersBetsData[userId];
                     const userBets: { [year: string]: { [week: string]: Bet[] } } = {};
 
                     if (user.bets) {
@@ -83,7 +84,7 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
 
                     userBetsArray.push({
                         uid: userId,
-                        displayName: user.displayName,
+                        displayName: rawUserData[userId].displayName,
                         bets: userBets,
                     });
                 }

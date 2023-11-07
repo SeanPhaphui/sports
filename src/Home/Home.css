@@ -15,6 +15,17 @@
     font-weight: 700;
 }
 
+.Home .body .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 25vh; /* Or the height you want the loading area to be */
+}
+
+.Home .body .loading-text {
+    color: #ffffff;
+}
+
 .Home .body .pick-list{
     margin-top: 20px;
 }

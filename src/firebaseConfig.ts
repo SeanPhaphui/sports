@@ -33,7 +33,7 @@ const db = getDatabase(app);
 
 // Fetch user bets
 export const fetchUserBets = async (uid: string, week: string, year: string) => {
-    const betsRef = child(ref(db), `users/${uid}/bets/${year}/${week}`);
+    const betsRef = child(ref(db), `usersBets/${uid}/bets/${year}/${week}`);
     const snapshot = await get(betsRef);
     if (snapshot.exists()) return snapshot.val();
     return [];
@@ -51,7 +51,7 @@ export const saveUserBets = async (uid: string, week: string, year: string, bets
         },
     }));
 
-    const betsRef = ref(db, `users/${uid}/bets/${year}/${week}`);
+    const betsRef = ref(db, `usersBets/${uid}/bets/${year}/${week}`);
     await set(betsRef, formattedBets);
 };
 
@@ -73,28 +73,36 @@ export const saveOutcomes = async (currentWeekAndSeason: CurrentWeekAndSeason, o
 
 export const fetchAllBetsForWeek = async (
     week: string,
-    year: string // Added year parameter
+    year: string,
+    updateStatus?: (status: string) => void
 ): Promise<{ uid: string; bets: Bet[]; displayName: string }[]> => {
     const allUsersBets: { uid: string; bets: Bet[]; displayName: string }[] = [];
-    const usersRef = ref(db, "users");
+
     try {
+        if (updateStatus) updateStatus('Fetching user list...');
+        // Reference to the list of users
+        const usersRef = ref(db, "users");
         const usersSnapshot = await get(usersRef);
 
         if (usersSnapshot.exists()) {
             const usersData = usersSnapshot.val();
+            const uids = Object.keys(usersData);
 
-            for (let uid in usersData) {
-                // Adjusted the path to include the year
-                if (usersData[uid].bets && usersData[uid].bets[year] && usersData[uid].bets[year][week]) {
-                    const userBets: Bet[] = usersData[uid].bets[year][week].map((bet: any) => {
-                        return {
-                            ...bet,
-                            game: {
-                                ...bet.game,
-                                date: new Date(bet.game.date),
-                            },
-                        };
-                    });
+            for (let uid of uids) {
+                // Path to the specific week's bets for the current user
+                const userBetsRef = ref(db, `usersBets/${uid}/bets/${year}/${week}`);
+                if (updateStatus) updateStatus(`Fetching bets for user: ${uid}...`);
+
+                const userBetsSnapshot = await get(userBetsRef);
+
+                if (userBetsSnapshot.exists()) {
+                    const userBets = userBetsSnapshot.val().map((bet: any) => ({
+                        ...bet,
+                        game: {
+                            ...bet.game,
+                            date: new Date(bet.game.date),
+                        },
+                    }));
 
                     allUsersBets.push({
                         uid,
@@ -104,12 +112,21 @@ export const fetchAllBetsForWeek = async (
                 }
             }
         }
+
+        if (updateStatus) updateStatus('All bets fetched successfully.');
     } catch (error) {
         console.error("Error fetching data:", error);
+        // Type guard to check if error is an instance of Error
+        if (error instanceof Error) {
+            if (updateStatus) updateStatus(`Error fetching bets: ${error.message}`);
+        } else {
+            if (updateStatus) updateStatus('Error fetching bets: An unknown error occurred');
+        }
     }
 
     return allUsersBets;
 };
+
 
 export const fetchAvailableYearsAndWeeks = async (): Promise<{[year: string]: string[]}> => {
     try {
@@ -161,7 +178,7 @@ export const fetchOutcomes = async ({ year, week }: { year: string; week: string
         const userBetsArray: UserBets[] = [];
 
         for (let uid in usersData) {
-            const userBetRef = ref(db, `users/${uid}/bets/${year}/${week}`);
+            const userBetRef = ref(db, `usersBets/${uid}/bets/${year}/${week}`);
             const userBetSnapshot = await get(userBetRef);
 
             if (userBetSnapshot.exists()) {
@@ -265,6 +282,33 @@ export const fetchAllUsers = async (): Promise<Users> => {
 
     } catch (error) {
         console.error("Error fetching user data:", error);
+        throw error;
+    }
+};
+
+interface RawUserBets {
+    bets?: BetData; // The bets attribute is optional because not all users may have placed bets
+}
+
+interface UsersBets {
+    [userId: string]: RawUserBets;
+}
+
+export const fetchAllUsersBets = async (): Promise<UsersBets> => {
+    try {
+        // Fetch all user data
+        const usersRef = ref(db, 'usersBets');
+        const usersSnapshot = await get(usersRef);
+
+        if (!usersSnapshot.exists()) {
+            throw new Error("User bet data does not exist");
+        }
+
+        const rawUserData: Users = usersSnapshot.val();
+        return rawUserData;
+
+    } catch (error) {
+        console.error("Error fetching user bet data:", error);
         throw error;
     }
 };
