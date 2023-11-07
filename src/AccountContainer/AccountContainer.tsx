@@ -6,7 +6,7 @@ import Account from "./Account/Account";
 import './AccountContainer.css';
 
 interface AccountContainerProps {
-    user: User | null;
+    user: User;
 }
 
 const AccountContainer: React.FC<AccountContainerProps> = ({user}) => {

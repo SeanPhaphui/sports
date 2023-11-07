@@ -12,7 +12,7 @@ import { auth, db } from "../../firebaseConfig";
 import { getLetter } from "../../Utils/Utils";
 
 interface AccountProps {
-    user: User | null;
+    user: User;
     onSubmit: () => void;
     onLogout: () => void;
 }
@@ -25,39 +25,32 @@ const Account: React.FC<AccountProps> = ({ user, onLogout }) => {
     const [disableChangeDisplayName, setDisableChangeDisplayName] = React.useState<boolean>(true);
 
     React.useEffect(() => {
-        if (user) {
-            setCurrentDisplayName(user.displayName || user.email);
-        }
+        setCurrentDisplayName(user.displayName || user.email);
     }, []);
 
     const handleChangeDisplayName = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (user) {
-            try {
-                // Update displayName in Firebase Authentication
-                await updateProfile(user, {
-                    displayName: newDisplayName,
-                });
+        try {
+            // Update displayName in Firebase Authentication
+            await updateProfile(user, {
+                displayName: newDisplayName,
+            });
 
-                // Update displayName in Firebase Realtime Database
-                const userRef = ref(db, `users/${user.uid}/displayName`);
-                await set(userRef, newDisplayName);
+            // Update displayName in Firebase Realtime Database
+            const userRef = ref(db, `users/${user.uid}/displayName`);
+            await set(userRef, newDisplayName);
 
-                setCurrentDisplayName(newDisplayName);
-                setIsSuccess(true);
-                setFeedbackMessage("Display name updated successfully.");
-            } catch (error) {
-                setIsSuccess(false);
-                if (error instanceof Error) {
-                    setFeedbackMessage(error.message);
-                } else {
-                    setFeedbackMessage("An unknown error occurred.");
-                }
-            }
-        } else {
+            setCurrentDisplayName(newDisplayName);
+            setIsSuccess(true);
+            setFeedbackMessage("Display name updated successfully.");
+        } catch (error) {
             setIsSuccess(false);
-            setFeedbackMessage("User not authenticated.");
+            if (error instanceof Error) {
+                setFeedbackMessage(error.message);
+            } else {
+                setFeedbackMessage("An unknown error occurred.");
+            }
         }
     };
 
