@@ -6,17 +6,18 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { User, updateProfile } from "firebase/auth";
+import { User, updateProfile, signOut } from "firebase/auth";
 import * as React from "react";
-import { db } from "../../firebaseConfig";
+import { auth, db } from "../../firebaseConfig";
 import { getLetter } from "../../Utils/Utils";
 
 interface AccountProps {
     user: User | null;
     onSubmit: () => void;
+    onLogout: () => void;
 }
 
-const Account: React.FC<AccountProps> = ({ user }) => {
+const Account: React.FC<AccountProps> = ({ user, onLogout }) => {
     const [newDisplayName, setNewDisplayName] = React.useState("");
     const [feedbackMessage, setFeedbackMessage] = React.useState("");
     const [isSuccess, setIsSuccess] = React.useState<boolean | null>(null);
@@ -68,6 +69,21 @@ const Account: React.FC<AccountProps> = ({ user }) => {
         }
     }, [newDisplayName]);
 
+    const handleLogout = async () => {
+        try {
+            await signOut(auth); // Assuming `auth` is your Firebase auth instance, which needs to be imported
+            onLogout(); // This is a prop function that you should define to handle post-logout behavior
+        } catch (error) {
+            // Handle errors here, such as showing an error message to the user
+            setIsSuccess(false);
+            if (error instanceof Error) {
+                setFeedbackMessage(error.message);
+            } else {
+                setFeedbackMessage("Failed to logout.");
+            }
+        }
+    };
+
     return (
         <Container component="main" maxWidth="xs">
             <Box
@@ -78,11 +94,7 @@ const Account: React.FC<AccountProps> = ({ user }) => {
                     alignItems: "center",
                 }}
             >
-                <Avatar
-                    sx={{ m: 1, bgcolor: "#101113" }}
-                >
-                    {getLetter(user)}
-                </Avatar>
+                <Avatar sx={{ m: 1, bgcolor: "#101113" }}>{getLetter(user)}</Avatar>
                 <Typography component="h1" variant="h5" align="center">
                     Current Display Name
                 </Typography>
@@ -114,6 +126,14 @@ const Account: React.FC<AccountProps> = ({ user }) => {
                         Change Display Name
                     </Button>
                 </Box>
+                <Button
+                    onClick={handleLogout} // Added onClick event here
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 1, mb: 1, backgroundColor: "red" }}
+                >
+                    Logout
+                </Button>
                 {feedbackMessage !== "" && (
                     <Typography
                         component="body"

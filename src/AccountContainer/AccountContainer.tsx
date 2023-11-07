@@ -24,7 +24,7 @@ const AccountContainer: React.FC<AccountContainerProps> = ({user}) => {
         <div className="AccountContainer">
             <Avatar onClick={handleClickOpen} sx={{ bgcolor: "#101113"}}>{getLetter(user)}</Avatar>
             <Dialog onClose={handleClose} open={open}>
-                <Account user={user} onSubmit={handleClose}/>
+                <Account user={user} onSubmit={handleClose} onLogout={handleClose}/>
             </Dialog>
         </div>
     );
