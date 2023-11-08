@@ -22,13 +22,17 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
     console.log("[firebase-messaging-sw.js] Received background message ", payload);
 
+    // Since we're handling only data messages, you would use payload.data to structure your notification
+    const notificationData = payload.data;
+    
     // Customize notification here
-    const notificationTitle = payload.notification.title;
+    const notificationTitle = notificationData.title; // Make sure 'title' is part of your data payload
     const notificationOptions = {
-        body: payload.notification.body,
+        body: notificationData.body, // Make sure 'body' is part of your data payload
         icon: "/logo192.png",
         // If you want to add additional data to the notification options, you can do it here
     };
 
+    // Show the notification
     self.registration.showNotification(notificationTitle, notificationOptions);
 });
