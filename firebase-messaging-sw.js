@@ -1,4 +1,4 @@
-// These importScripts paths are for the modular v9+ SDK
+// These importScripts paths are for the modular v9+ SDK test
 importScripts('https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js');
 
