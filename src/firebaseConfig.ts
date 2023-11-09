@@ -9,6 +9,7 @@ import {
     uploadBytesResumable,
 } from "firebase/storage";
 import { Bet, CurrentWeekAndSeason, UserBets } from "./Utils/Utils";
+import { deleteToken, getMessaging } from "firebase/messaging";
 
 const firebaseConfig = {
     apiKey: "AIzaSyB4N2vUOlqu9LB5yn4hDkCJS3XNn-jUbtM",
@@ -27,6 +28,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 const db = getDatabase(app);
+
+// Initialize Firebase Cloud Messaging and get a reference to the service
+const messaging = getMessaging(app);
 
 // Initialize Cloud Storage and get a reference to the service
 // const storage = getStorage(app);
@@ -67,7 +71,10 @@ export const saveOutcomes = async (currentWeekAndSeason: CurrentWeekAndSeason, o
         },
     }));
 
-    const outcomesRef = ref(db, `outcomes/${currentWeekAndSeason.seasonYear}/week${currentWeekAndSeason.week}`);
+    const outcomesRef = ref(
+        db,
+        `outcomes/${currentWeekAndSeason.seasonYear}/week${currentWeekAndSeason.week}`
+    );
     await set(outcomesRef, formattedOutcomes);
 };
 
@@ -79,7 +86,7 @@ export const fetchAllBetsForWeek = async (
     const allUsersBets: { uid: string; bets: Bet[]; displayName: string }[] = [];
 
     try {
-        if (updateStatus) updateStatus('Fetching user list...');
+        if (updateStatus) updateStatus("Fetching user list...");
         // Reference to the list of users
         const usersRef = ref(db, "users");
         const usersSnapshot = await get(usersRef);
@@ -113,29 +120,28 @@ export const fetchAllBetsForWeek = async (
             }
         }
 
-        if (updateStatus) updateStatus('All bets fetched successfully.');
+        if (updateStatus) updateStatus("All bets fetched successfully.");
     } catch (error) {
         console.error("Error fetching data:", error);
         // Type guard to check if error is an instance of Error
         if (error instanceof Error) {
             if (updateStatus) updateStatus(`Error fetching bets: ${error.message}`);
         } else {
-            if (updateStatus) updateStatus('Error fetching bets: An unknown error occurred');
+            if (updateStatus) updateStatus("Error fetching bets: An unknown error occurred");
         }
     }
 
     return allUsersBets;
 };
 
-
-export const fetchAvailableYearsAndWeeks = async (): Promise<{[year: string]: string[]}> => {
+export const fetchAvailableYearsAndWeeks = async (): Promise<{ [year: string]: string[] }> => {
     try {
-        const outcomesRef = ref(db, 'outcomes');
+        const outcomesRef = ref(db, "outcomes");
         const snapshot = await get(outcomesRef);
-        
+
         if (snapshot.exists()) {
             const data = snapshot.val();
-            let yearsAndWeeks: {[year: string]: string[]} = {};
+            let yearsAndWeeks: { [year: string]: string[] } = {};
 
             for (let year in data) {
                 yearsAndWeeks[year] = Object.keys(data[year]);
@@ -145,13 +151,19 @@ export const fetchAvailableYearsAndWeeks = async (): Promise<{[year: string]: st
         } else {
             return {};
         }
-    } catch(error) {
+    } catch (error) {
         console.error("Error fetching available years and weeks:", error);
         throw error;
     }
 };
 
-export const fetchOutcomes = async ({ year, week }: { year: string; week: string }): Promise<UserBets[]> => {
+export const fetchOutcomes = async ({
+    year,
+    week,
+}: {
+    year: string;
+    week: string;
+}): Promise<UserBets[]> => {
     try {
         const outcomesRef = ref(db, `outcomes/${year}/${week}`);
         const outcomesSnapshot = await get(outcomesRef);
@@ -171,7 +183,7 @@ export const fetchOutcomes = async ({ year, week }: { year: string; week: string
             };
         });
 
-        const usersRef = ref(db, 'users');
+        const usersRef = ref(db, "users");
         const usersSnapshot = await get(usersRef);
         const usersData = usersSnapshot.val();
 
@@ -183,12 +195,12 @@ export const fetchOutcomes = async ({ year, week }: { year: string; week: string
 
             if (userBetSnapshot.exists()) {
                 const userBets: Bet[] = userBetSnapshot.val().map((bet: any) => {
-                    const outcome = outcomesData.find(outcome => outcome.id === bet.id);
-                    
+                    const outcome = outcomesData.find((outcome) => outcome.id === bet.id);
+
                     if (outcome) {
                         return outcome;
                     } else {
-                        if (bet.game && typeof bet.game.date === 'string') {
+                        if (bet.game && typeof bet.game.date === "string") {
                             return {
                                 ...bet,
                                 game: {
@@ -204,13 +216,12 @@ export const fetchOutcomes = async ({ year, week }: { year: string; week: string
                 userBetsArray.push({
                     uid: uid,
                     displayName: usersData[uid]?.displayName || "Unknown",
-                    bets: userBets
+                    bets: userBets,
                 });
             }
         }
 
         return userBetsArray;
-
     } catch (error) {
         console.error("Error fetching outcomes:", error);
         throw error;
@@ -228,7 +239,7 @@ interface RawOutcomesData {
 export const fetchAllOutcomes = async (): Promise<RawOutcomesData> => {
     try {
         // Fetch all outcomes
-        const outcomesRef = ref(db, 'outcomes');
+        const outcomesRef = ref(db, "outcomes");
         const outcomesSnapshot = await get(outcomesRef);
 
         if (!outcomesSnapshot.exists()) {
@@ -237,7 +248,6 @@ export const fetchAllOutcomes = async (): Promise<RawOutcomesData> => {
 
         const rawOutcomesData: RawOutcomesData = outcomesSnapshot.val();
         return rawOutcomesData;
-
     } catch (error) {
         console.error("Error fetching data:", error);
         throw error;
@@ -266,11 +276,10 @@ interface Users {
     [userId: string]: RawUserData;
 }
 
-
 export const fetchAllUsers = async (): Promise<Users> => {
     try {
         // Fetch all user data
-        const usersRef = ref(db, 'users');
+        const usersRef = ref(db, "users");
         const usersSnapshot = await get(usersRef);
 
         if (!usersSnapshot.exists()) {
@@ -279,7 +288,6 @@ export const fetchAllUsers = async (): Promise<Users> => {
 
         const rawUserData: Users = usersSnapshot.val();
         return rawUserData;
-
     } catch (error) {
         console.error("Error fetching user data:", error);
         throw error;
@@ -297,7 +305,7 @@ interface UsersBets {
 export const fetchAllUsersBets = async (): Promise<UsersBets> => {
     try {
         // Fetch all user data
-        const usersRef = ref(db, 'usersBets');
+        const usersRef = ref(db, "usersBets");
         const usersSnapshot = await get(usersRef);
 
         if (!usersSnapshot.exists()) {
@@ -306,20 +314,31 @@ export const fetchAllUsersBets = async (): Promise<UsersBets> => {
 
         const rawUserData: Users = usersSnapshot.val();
         return rawUserData;
-
     } catch (error) {
         console.error("Error fetching user bet data:", error);
         throw error;
     }
 };
 
+// Function to save the FCM token to the Realtime Database
+export const saveFcmTokenToDatabase = async (uid: string, token: string) => {
+    // Here, 'db' refers to the Firebase Realtime Database instance that you have already initialized.
+    const tokenRef = ref(db, `users/${uid}/fcmtoken`);
+    try {
+        await set(tokenRef, token);
+        console.log("FCM token saved to database successfully.");
+    } catch (error) {
+        console.error("Error saving FCM token to database:", error);
+        // Handle the error appropriately
+        throw error;
+    }
+};
 
-
-
-
-
-
-
+// This function is to unregister the service worker and delete the token
+export const unregisterServiceWorker = async () => {
+    await deleteToken(messaging);
+    console.log("Token deleted.");
+};
 
 // export const fetchAvatarURL = async (uid: string): Promise<string | null> => {
 //     try {
@@ -355,4 +374,4 @@ export const fetchAllUsersBets = async (): Promise<UsersBets> => {
 //     }
 // };
 
-export { app, auth, db };
+export { app, auth, db, messaging };
