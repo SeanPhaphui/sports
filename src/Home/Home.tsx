@@ -33,16 +33,16 @@ const Home: React.FC<HomeProps> = ({ user }) => {
             setIsLoading("Fetching current week..."); // Update loading text
             setProgress(0); // Reset progress when starting
             console.time("fetchCurrentWeek");
-            const currentWeekAndSeason = await fetchCurrentWeek();
+            const currentWeekSeasonType = await fetchCurrentWeek();
             console.timeEnd("fetchCurrentWeek");
             setProgress(33); // Update progress after fetchCurrentWeek
             setIsLoading("Loading bets for the week..."); // Update loading text
-            if (currentWeekAndSeason !== null) {
-                const currentWeek = `week${currentWeekAndSeason.week}`;
+            if (currentWeekSeasonType !== null) {
+                const currentWeek = currentWeekSeasonType.seasonType == 3 ? "week16" : `week${currentWeekSeasonType.week}`;
                 console.time("fetchAllBetsForWeek");
                 const usersBetsForWeek = await fetchAllBetsForWeek(
                     currentWeek,
-                    currentWeekAndSeason.seasonYear.toString(),
+                    currentWeekSeasonType.seasonYear.toString(),
                     (status) => setIsLoading(status)
                 );
                 console.timeEnd("fetchAllBetsForWeek");
@@ -59,7 +59,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                     console.time("updateBetsUsingWeekData");
                     const updatedBetsArray: Bet[] = await updateBetsUsingWeekData(
                         allBetsArray,
-                        currentWeekAndSeason.week
+                        currentWeekSeasonType.week
                     );
                     console.timeEnd("updateBetsUsingWeekData");
                     console.time("test");
@@ -67,7 +67,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                     setIsLoading("Finalizing updates..."); // Update loading text
                     // Only save outcomes if a user is logged in
                     if (user) {
-                        saveOutcomes(currentWeekAndSeason, updatedBetsArray);
+                        saveOutcomes(currentWeekSeasonType, updatedBetsArray);
                     }
 
                     // Update the allUsersBets state with the updated bets

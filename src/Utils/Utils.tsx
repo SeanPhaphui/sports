@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 export type CurrentWeekAndSeason = {
     week: number;
     seasonYear: number;
+    seasonType: number;
 };
 
 export interface UserBetsV2 {
@@ -85,22 +86,23 @@ const fetchData = async (url: string) => {
     return response.json();
 };
 
-export const fetchCurrentWeek = async (): Promise<{ week: number; seasonYear: number } | null> => {
+export const fetchCurrentWeek = async (): Promise<{ week: number; seasonYear: number; seasonType: number } | null> => {
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard`;
 
     const responseData = await fetchData(footballUrl);
-
+    
     // Validate and process the data
     if (
         responseData?.week &&
         responseData.week.number &&
         responseData?.season &&
         responseData.season.year
-    ) {
+        ) {
         return {
             week: responseData.week.number,
             seasonYear: responseData.season.year,
+            seasonType: responseData.season.type
         };
     }
 
