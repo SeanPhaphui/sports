@@ -62,7 +62,7 @@ export const saveUserBets = async (uid: string, week: string, year: string, bets
 // Save outcomes of games for a week
 export const saveOutcomes = async (currentWeekAndSeason: CurrentWeekAndSeason, outcomes: Bet[]) => {
     console.log("FIREBASE - Saving Outcomes: ", outcomes);
-
+    const currentWeek = currentWeekAndSeason.seasonType == 3 ? "16" : currentWeekAndSeason.week;
     const formattedOutcomes = outcomes.map((outcome) => ({
         ...outcome,
         game: {
@@ -73,7 +73,7 @@ export const saveOutcomes = async (currentWeekAndSeason: CurrentWeekAndSeason, o
 
     const outcomesRef = ref(
         db,
-        `outcomes/${currentWeekAndSeason.seasonYear}/week${currentWeekAndSeason.week}`
+        `outcomes/${currentWeekAndSeason.seasonYear}/week${currentWeek}`
     );
     await set(outcomesRef, formattedOutcomes);
 };

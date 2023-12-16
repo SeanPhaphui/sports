@@ -31,6 +31,7 @@ const isMondayBefore8am = (date: Date): boolean => {
 };
 
 export const isBettingWindowClosed = (date: Date): boolean => {
+    return false;
     return (
         isFridayNoonOrLater(date) || isSaturday(date) || isSunday(date) || isMondayBefore8am(date)
     );

@@ -74,6 +74,7 @@ export interface GameCalendarObject {
     detail: string;
     week: string;
     seasonYear: string;
+    seasonType:string;
 }
 
 export interface AlertProps {
@@ -119,6 +120,8 @@ export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
     // Validate and process the data
     if (responseData?.leagues && responseData?.week) {
         const leaguesCalendar = responseData.leagues[0].calendar;
+        console.log("responseData", responseData)
+        console.log("leaguesCalendar", leaguesCalendar)
 
         for (const singleCalendarKey in leaguesCalendar) {
             const singleCalendar = leaguesCalendar[singleCalendarKey];
@@ -131,6 +134,7 @@ export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
                         detail: entry.detail.toUpperCase(),
                         week: responseData.week.number,
                         seasonYear: responseData.season.year,
+                        seasonType: responseData.season.type,
                     };
                     calendarEntries.push(gameCalendarEntry);
                 }

@@ -26,8 +26,14 @@ const Weeks: React.FC<WeeksProps> = (props) => {
         fetchGameCalendar().then((data) => {
             setGameCalendar(data);
             if (data && data.length > 0) {
-                setActiveItemIndex(parseInt(data[0].week)-1);
-                handleSeasonWeekChange(data[0].seasonYear, data[0].week);
+                console.log("DATATDATATDADT: ", data)
+                if (parseInt(data[0].seasonType) == 3) {
+                    setActiveItemIndex(data.length - 1);
+                    handleSeasonWeekChange(data[0].seasonYear, data.length.toString());
+                } else {
+                    setActiveItemIndex(parseInt(data[0].week)-1);
+                    handleSeasonWeekChange(data[0].seasonYear, data[0].week);
+                }
             }
             setLoading(false);
         });

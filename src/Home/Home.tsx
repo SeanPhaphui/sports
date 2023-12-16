@@ -57,9 +57,10 @@ const Home: React.FC<HomeProps> = ({ user }) => {
 
                 try {
                     console.time("updateBetsUsingWeekData");
+                    const currentWeek = currentWeekSeasonType.seasonType == 3 ? 16 : currentWeekSeasonType.week;
                     const updatedBetsArray: Bet[] = await updateBetsUsingWeekData(
                         allBetsArray,
-                        currentWeekSeasonType.week
+                        currentWeek
                     );
                     console.timeEnd("updateBetsUsingWeekData");
                     console.time("test");
@@ -124,7 +125,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                     {hasAnyGameFinished(allUsersBetsFromDatabaseAfterAPIFetch) && (
                         <div className="leader">{leaderText}</div>
                     )}
-                    {!isBettingWindowClosed(now) && <CountdownTimer />}
+                    {/* {!isBettingWindowClosed(now) && <CountdownTimer />} */}
                     {isLoading ? (
                         <>
                             <div className="loading-container">
