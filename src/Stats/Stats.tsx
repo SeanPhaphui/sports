@@ -3,12 +3,16 @@ import { User } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { calculateUserWins, computeSeasonRecord } from "../Utils/BetUtils";
 import { Bet, UserBetsV2 } from "../Utils/Utils";
-import WinLossRatio from "../WinLossRatio/WinLossRatio";
-import { fetchAllOutcomes, fetchAllUsers, fetchAllUsersBets } from "../firebaseConfig";
+import {
+    fetchAllOutcomes,
+    fetchAllUsers,
+    fetchAllUsersBets,
+    fetchAvailableSeasons,
+} from "../firebaseConfig";
 import GraphCard from "./GraphCard/GraphCard";
 import Leaderboard from "./Leaderboard/Leaderboard";
-import "./Stats.css";
 import StatCard from "./StatCard/StatCard";
+import "./Stats.css";
 
 interface StatsProps {
     user: User | null;
@@ -26,6 +30,27 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
         [name: string]: { wins: number; losses: number };
     }>({});
     const [seasonRecord, setSeasonRecord] = useState<{ wins: number; losses: number } | null>(null);
+    const [seasons, setSeasons] = useState<string[]>([]);
+    const [selectedSeason, setSelectedSeason] = useState<string>("2023");
+
+    useEffect(() => {
+        // Fetch available seasons from Firebase
+        const fetchSeasons = async () => {
+            try {
+                const availableSeasons = await fetchAvailableSeasons();
+                setSeasons(availableSeasons);
+
+                // Set the default season to the most current season (e.g., the latest one)
+                if (availableSeasons.length > 0) {
+                    setSelectedSeason(availableSeasons[0]);
+                }
+            } catch (error) {
+                console.error("Failed to fetch seasons:", error);
+            }
+        };
+
+        fetchSeasons();
+    }, []);
 
     const calculateWinLossRatio = (wins: number, losses: number) => {
         if (losses === 0) {
@@ -40,17 +65,21 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
     useEffect(() => {
         const aggregateUserBets = async (): Promise<UserBetsV2[]> => {
             try {
-                const rawOutcomesData = await fetchAllOutcomes();
+                const rawOutcomesData = await fetchAllOutcomes(selectedSeason); // Fetch based on the selected season
+
+                // Assuming selectedSeason is "2023"
+                const outcomesForYear = rawOutcomesData[selectedSeason]; // This is what you had before
+
+                // Convert outcomesForYear to a flat list for easier searching
+                // Convert raw outcomes data to a flat list for easier searching
+                const flatOutcomes: Bet[] = [];
+                for (const week in outcomesForYear) {
+                    flatOutcomes.push(...outcomesForYear[week]);
+                }
                 const rawUserData = await fetchAllUsers();
                 const rawUsersBetsData = await fetchAllUsersBets();
 
-                // Convert raw outcomes data to a flat list for easier searching
-                const flatOutcomes: Bet[] = [];
-                for (const year in rawOutcomesData) {
-                    for (const week in rawOutcomesData[year]) {
-                        flatOutcomes.push(...rawOutcomesData[year][week]);
-                    }
-                }
+
 
                 const userBetsArray: UserBetsV2[] = [];
 
@@ -95,19 +124,19 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
                 throw error;
             }
         };
-        aggregateUserBets()
-            .then((data) => {
-                console.log("SETTING USER BETS");
-                setUserBets(data);
-                // Set the first user as the default selected user.
-                if (data.length > 0) {
-                    setSelectedUserId(data[0].uid);
-                }
-            })
-            .catch((error) => {
-                console.error("Failed to aggregate user bets:", error);
-            });
-    }, []);
+        if (selectedSeason) {
+            aggregateUserBets()
+                .then((data) => {
+                    setUserBets(data);
+                    if (data.length > 0) {
+                        setSelectedUserId(data[0].uid);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Failed to aggregate user bets:", error);
+                });
+        }
+    }, [selectedSeason]);
 
     useEffect(() => {
         if (userBets.length > 0) {
@@ -152,9 +181,26 @@ const Stats: React.FC<StatsProps> = ({ user }) => {
         setSelectedUserId(event.target.value);
     };
 
+    const handleSeasonChange = (event: SelectChangeEvent<string>) => {
+        setSelectedSeason(event.target.value);
+    };
+
     return (
         <Fade in={true} timeout={500}>
             <div className="Stats">
+                {/* Dropdown for selecting the season */}
+                <Select
+                    value={selectedSeason}
+                    onChange={handleSeasonChange}
+                    displayEmpty
+                    inputProps={{ "aria-label": "Select season" }}
+                >
+                    {seasons.map((season) => (
+                        <MenuItem key={season} value={season}>
+                            {season}
+                        </MenuItem>
+                    ))}
+                </Select>
                 <Leaderboard allSeasonRecords={allSeasonRecords} userBets={userBets} />
                 {/* <Graph userBets={userBets} /> */}
                 <GraphCard title="Cumulative Bet Wins" userBets={userBets} />

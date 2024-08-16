@@ -1,15 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { child, get, getDatabase, ref, set } from "firebase/database";
-import {
-    getDownloadURL,
-    getMetadata,
-    getStorage,
-    ref as storageRef,
-    uploadBytesResumable,
-} from "firebase/storage";
-import { Bet, CurrentWeekAndSeason, UserBets } from "./Utils/Utils";
 import { deleteToken, getMessaging } from "firebase/messaging";
+import { Bet, CurrentWeekAndSeason, UserBets } from "./Utils/Utils";
 
 const firebaseConfig = {
     apiKey: "AIzaSyB4N2vUOlqu9LB5yn4hDkCJS3XNn-jUbtM",
@@ -62,7 +55,7 @@ export const saveUserBets = async (uid: string, week: string, year: string, bets
 // Save outcomes of games for a week
 export const saveOutcomes = async (currentWeekAndSeason: CurrentWeekAndSeason, outcomes: Bet[]) => {
     console.log("FIREBASE - Saving Outcomes: ", outcomes);
-    const currentWeek = currentWeekAndSeason.seasonType == 3 ? "16" : currentWeekAndSeason.week;
+    const currentWeek = currentWeekAndSeason.seasonType === 3 ? "16" : currentWeekAndSeason.week;
     const formattedOutcomes = outcomes.map((outcome) => ({
         ...outcome,
         game: {
@@ -232,31 +225,49 @@ interface Week {
     [key: string]: Bet[];
 }
 
-interface RawOutcomesData {
-    [year: string]: Week;
-}
-
-export const fetchAllOutcomes = async (): Promise<RawOutcomesData> => {
+export const fetchAvailableSeasons = async (): Promise<string[]> => {
     try {
-        // Fetch all outcomes
+        // Reference to the 'outcomes' node in the database
         const outcomesRef = ref(db, "outcomes");
-        const outcomesSnapshot = await get(outcomesRef);
+        const snapshot = await get(outcomesRef);
 
-        if (!outcomesSnapshot.exists()) {
-            throw new Error("Outcomes data does not exist");
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const seasons = Object.keys(data); // Extract the years (seasons) from the 'outcomes' node
+            return seasons.sort((a, b) => b.localeCompare(a)); // Sort seasons in descending order, e.g., "2023" before "2022"
+        } else {
+            console.warn("No seasons data found in the database.");
+            return [];
         }
-
-        const rawOutcomesData: RawOutcomesData = outcomesSnapshot.val();
-        return rawOutcomesData;
     } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching available seasons:", error);
         throw error;
     }
 };
 
-interface BetWeek {
-    [key: string]: Bet[]; // Define the structure for individual game bets if known
+interface RawOutcomesData {
+    [year: string]: Week;
 }
+
+export const fetchAllOutcomes = async (year: string): Promise<RawOutcomesData> => {
+    try {
+        // Fetch outcomes for the specific year
+        const outcomesRef = ref(db, `outcomes/${year}`);
+        const outcomesSnapshot = await get(outcomesRef);
+
+        if (!outcomesSnapshot.exists()) {
+            throw new Error(`Outcomes data for the year ${year} does not exist`);
+        }
+
+        // We wrap the results in an object with the year as the key
+        const rawOutcomesData: RawOutcomesData = { [year]: outcomesSnapshot.val() };
+        return rawOutcomesData;
+    } catch (error) {
+        console.error(`Error fetching outcomes for the year ${year}:`, error);
+        throw error;
+    }
+};
+
 
 interface YearlyBets {
     [week: string]: Bet[];
