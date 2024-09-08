@@ -172,8 +172,10 @@ export const getGamesByWeek = async (week: number, top25true: boolean): Promise<
     const proxyUrl = "https://corsproxy.io/?";
     const top25Url = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=${seasonType}&week=${modifiedWeek}`;
     const fbsIAUrl = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=${seasonType}&week=${modifiedWeek}&groups=80`;
-    const completeUrl = top25true ? `${proxyUrl}${top25Url}` : `${proxyUrl}${fbsIAUrl}`;
-
+    // Adding a cache buster using a timestamp
+    const cacheBuster = `&_=${new Date().getTime()}`;
+    const completeUrl = top25true ? `${proxyUrl}${top25Url}${cacheBuster}` : `${proxyUrl}${fbsIAUrl}${cacheBuster}`;
+    
     const data = await fetchData(completeUrl);
     const games: Game[] = [];
     if (data?.events) {
