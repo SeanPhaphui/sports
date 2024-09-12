@@ -90,8 +90,13 @@ const fetchData = async (url: string) => {
 export const fetchCurrentWeek = async (): Promise<{ week: number; seasonYear: number; seasonType: number } | null> => {
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard`;
-
-    const responseData = await fetchData(footballUrl);
+    
+    // Adding a cache buster using a timestamp
+    const cacheBuster = `?&_=${new Date().getTime()}`;
+    const footballUrlWithCacheBuster = `${footballUrl}${cacheBuster}`;
+    
+    const responseData = await fetchData(footballUrlWithCacheBuster);
+    
     
     // Validate and process the data
     if (
@@ -113,8 +118,12 @@ export const fetchCurrentWeek = async (): Promise<{ week: number; seasonYear: nu
 export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
     const proxyUrl = "https://corsproxy.io/?";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard`;
-
-    const responseData = await fetchData(footballUrl);
+    
+    // Adding a cache buster using a timestamp
+    const cacheBuster = `?&_=${new Date().getTime()}`;
+    const footballUrlWithCacheBuster = `${footballUrl}${cacheBuster}`;
+    
+    const responseData = await fetchData(footballUrlWithCacheBuster);
     const calendarEntries: GameCalendarObject[] = [];
 
     // Validate and process the data
