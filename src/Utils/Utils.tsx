@@ -254,7 +254,9 @@ export const getGameByGameID = async (
     originalBetId?: string
 ): Promise<Bet> => {
     const proxyUrl = "https://corsproxy.io/?";
-    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event=${id}`;
+    // Adding a cache buster using a timestamp
+    const cacheBuster = `&_=${new Date().getTime()}`;
+    const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event=${id}${cacheBuster}`;
 
     const data = await fetchData(footballUrl);
     if (data) {
