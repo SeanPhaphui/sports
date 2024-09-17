@@ -38,7 +38,10 @@ const Home: React.FC<HomeProps> = ({ user }) => {
             setProgress(33); // Update progress after fetchCurrentWeek
             setIsLoading("Loading bets for the week..."); // Update loading text
             if (currentWeekSeasonType !== null) {
-                const currentWeek = currentWeekSeasonType.seasonType == 3 ? "week16" : `week${currentWeekSeasonType.week}`;
+                const currentWeek =
+                    currentWeekSeasonType.seasonType == 3
+                        ? "week16"
+                        : `week${currentWeekSeasonType.week}`;
                 console.time("fetchAllBetsForWeek");
                 const usersBetsForWeek = await fetchAllBetsForWeek(
                     currentWeek,
@@ -57,7 +60,8 @@ const Home: React.FC<HomeProps> = ({ user }) => {
 
                 try {
                     console.time("updateBetsUsingWeekData");
-                    const currentWeek = currentWeekSeasonType.seasonType == 3 ? 16 : currentWeekSeasonType.week;
+                    const currentWeek =
+                        currentWeekSeasonType.seasonType == 3 ? 16 : currentWeekSeasonType.week;
                     const updatedBetsArray: Bet[] = await updateBetsUsingWeekData(
                         allBetsArray,
                         currentWeek
@@ -129,15 +133,27 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                     {isLoading ? (
                         <>
                             <div className="loading-container">
-                                {" "}
-                                {/* A container for centering the spinner */}
-                                <CircularProgress /> {/* The spinner itself */}
-                                {/* Add the LinearProgress below CircularProgress */}
+                                <iframe
+                                    src="https://lottie.host/embed/76dad2b4-f85f-47cf-8b86-44cc11ab1ff0/tjmsRYQsf7.json"
+                                    style={{
+                                        border: "none",
+                                        overflow: "hidden",
+                                        width: "180px", // Slightly larger size
+                                        height: "180px",
+                                    }}
+                                    allowFullScreen
+                                    title="Loading Animation"
+                                ></iframe>
+                                <div className="linear-progress">
+                                    <LinearProgress variant="determinate" value={progress} />
+                                    <div className="loading-percentage">
+                                        <p>{`${progress}%`}</p>
+                                    </div>
+                                </div>
+                                <div className="loading-text">
+                                    <p>{isLoading}</p>
+                                </div>
                             </div>
-                            <div className="loading-text">
-                                <p>{isLoading}</p> {/* Display the current loading text */}
-                            </div>
-                            <LinearProgress variant="determinate" value={progress} />
                         </>
                     ) : (
                         <>

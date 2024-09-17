@@ -5,7 +5,11 @@
 
 .Home .body {
     width: 95%;
-    margin: 0 auto; /* Centers the div horizontally */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 80vh;
 }
 
 .Home .body .leader{
@@ -17,14 +21,46 @@
 
 .Home .body .loading-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 25vh; /* Or the height you want the loading area to be */
-}
-
-.Home .body .loading-text {
+    min-height: 100vh;
+    background: radial-gradient(circle, rgba(36, 36, 36, 1) 0%, rgba(18, 18, 18, 1) 100%);
+  }
+  
+  .Home .body .loading-text {
     color: #ffffff;
-}
+    margin-top: 10px; /* Reduced for tighter alignment with animation */
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    animation: fadeInOut 2s ease-in-out infinite;
+  }
+  
+  .Home .body .linear-progress {
+    margin-top: 15px; /* Spaced evenly to balance with text */
+    width: 180px; /* Matches the width of the animation for visual consistency */
+    padding: 0 10px; /* Optional: Add padding for more balanced spacing */
+  }
+  
+  .Home .body .linear-progress .loading-percentage {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #ffffff;
+    text-align: center;
+  }
+  
+  .MuiLinearProgress-root {
+    height: 10px !important;
+    border-radius: 5px;
+    background-color: #424242 !important;
+  }
+  
+  .MuiLinearProgress-bar {
+    border-radius: 5px;
+    background-color: #ff9800 !important;
+  }
+  
 
 .Home .body .pick-list{
     margin-top: 20px;
