@@ -17,22 +17,22 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 // Retrieve an instance of Firebase Messaging so that it can handle background messages.
-const messaging = firebase.messaging();
+// const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-    console.log("[firebase-messaging-sw.js] Received background message ", payload);
+// messaging.onBackgroundMessage((payload) => {
+//     console.log("[firebase-messaging-sw.js] Received background message ", payload);
 
-    // Only show a custom notification if there is no notification payload from FCM
-    if (!payload.notification) {
-        // Customize notification here using the data payload
-        const notificationTitle = 'Default Title'; // You should define a default or use payload.data.title
-        const notificationOptions = {
-            body: 'Default body text', // You should define a default or use payload.data.body
-            icon: "/logo192.png",
-            // ...other options...
-        };
+//     // Only show a custom notification if there is no notification payload from FCM
+//     if (!payload.notification) {
+//         // Customize notification here using the data payload
+//         const notificationTitle = 'Default Title'; // You should define a default or use payload.data.title
+//         const notificationOptions = {
+//             body: 'Default body text', // You should define a default or use payload.data.body
+//             icon: "/logo192.png",
+//             // ...other options...
+//         };
 
-        self.registration.showNotification(notificationTitle, notificationOptions);
-    }
-    // If payload.notification is present, FCM will handle displaying the notification
-});
+//         self.registration.showNotification(notificationTitle, notificationOptions);
+//     }
+//     // If payload.notification is present, FCM will handle displaying the notification
+// });

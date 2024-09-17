@@ -10,7 +10,7 @@ import { User, updateProfile, signOut } from "firebase/auth";
 import * as React from "react";
 import { auth, db } from "../../firebaseConfig";
 import { getLetter } from "../../Utils/Utils";
-import Notifications from "./Notifications/Notifications";
+// import Notifications from "./Notifications/Notifications";
 
 interface AccountProps {
     user: User;
@@ -128,7 +128,7 @@ const Account: React.FC<AccountProps> = ({ user, onLogout }) => {
                 >
                     Logout
                 </Button>
-                <Notifications user={user} />
+                {/* <Notifications user={user} /> */}
                 {feedbackMessage !== "" && (
                     <Typography
                         component="body"

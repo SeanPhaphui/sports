@@ -23,7 +23,7 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 // Initialize Firebase Cloud Messaging and get a reference to the service
-const messaging = getMessaging(app);
+// const messaging = getMessaging(app);
 
 // Initialize Cloud Storage and get a reference to the service
 // const storage = getStorage(app);
@@ -346,10 +346,10 @@ export const saveFcmTokenToDatabase = async (uid: string, token: string) => {
 };
 
 // This function is to unregister the service worker and delete the token
-export const unregisterServiceWorker = async () => {
-    await deleteToken(messaging);
-    console.log("Token deleted.");
-};
+// export const unregisterServiceWorker = async () => {
+//     await deleteToken(messaging);
+//     console.log("Token deleted.");
+// };
 
 // export const fetchAvatarURL = async (uid: string): Promise<string | null> => {
 //     try {
@@ -385,4 +385,4 @@ export const unregisterServiceWorker = async () => {
 //     }
 // };
 
-export { app, auth, db, messaging };
+export { app, auth, db };
