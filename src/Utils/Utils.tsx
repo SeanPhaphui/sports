@@ -88,7 +88,7 @@ const fetchData = async (url: string) => {
 };
 
 export const fetchCurrentWeek = async (): Promise<{ week: number; seasonYear: number; seasonType: number } | null> => {
-    const proxyUrl = "https://corsproxy.io/?";
+    const proxyUrl = "https://corsproxy.io/?url=";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard`;
     
     // Adding a cache buster using a timestamp
@@ -116,7 +116,7 @@ export const fetchCurrentWeek = async (): Promise<{ week: number; seasonYear: nu
 };
 
 export const fetchGameCalendar = async (): Promise<GameCalendarObject[]> => {
-    const proxyUrl = "https://corsproxy.io/?";
+    const proxyUrl = "https://corsproxy.io/?url=";
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard`;
     
     // Adding a cache buster using a timestamp
@@ -178,7 +178,7 @@ const mapStatusFromAPI = (apiStatus: string): "ongoing" | "upcoming" | "final" =
 export const getGamesByWeek = async (week: number, top25true: boolean): Promise<Game[]> => {
     const seasonType = week <= 15 ? "-1" : 3;
     const modifiedWeek = week > 15 ? "1" : week;
-    const proxyUrl = "https://corsproxy.io/?";
+    const proxyUrl = "https://corsproxy.io/?url=";
     const top25Url = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=${seasonType}&week=${modifiedWeek}`;
     const fbsIAUrl = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?seasontype=${seasonType}&week=${modifiedWeek}&groups=80`;
     // Adding a cache buster using a timestamp
@@ -253,7 +253,7 @@ export const getGameByGameID = async (
     value: string,
     originalBetId?: string
 ): Promise<Bet> => {
-    const proxyUrl = "https://corsproxy.io/?";
+    const proxyUrl = "https://corsproxy.io/?url=";
     // Adding a cache buster using a timestamp
     const cacheBuster = `&_=${new Date().getTime()}`;
     const footballUrl = `${proxyUrl}https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event=${id}${cacheBuster}`;
