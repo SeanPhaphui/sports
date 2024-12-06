@@ -27,6 +27,8 @@ const Home: React.FC<HomeProps> = ({ user }) => {
     const [isLoading, setIsLoading] = useState("Starting up..."); // State to manage the loading state as a string
     const [progress, setProgress] = useState(0); // State to track progress
 
+    const [isIframeLoaded, setIframeLoaded] = useState(false);
+
     // Single useEffect to fetch and update all user bets
     useEffect(() => {
         const loadAndAllBets = async () => {
@@ -125,64 +127,70 @@ const Home: React.FC<HomeProps> = ({ user }) => {
         <Fade in={true} timeout={500}>
             <div className="Home">
                 <HomeHeader user={user} />
-                <div className="body">
-                    {hasAnyGameFinished(allUsersBetsFromDatabaseAfterAPIFetch) && (
-                        <div className="leader">{leaderText}</div>
-                    )}
-                    {/* {!isBettingWindowClosed(now) && <CountdownTimer />} */}
-                    {isLoading ? (
-                        <>
-                            <div className="loading-container">
-                                <iframe
-                                    src="https://lottie.host/embed/76dad2b4-f85f-47cf-8b86-44cc11ab1ff0/tjmsRYQsf7.json"
-                                    style={{
-                                        border: "none",
-                                        overflow: "hidden",
-                                        width: "180px", // Slightly larger size
-                                        height: "180px",
-                                    }}
-                                    allowFullScreen
-                                    title="Loading Animation"
-                                ></iframe>
-                                <div className="linear-progress">
-                                    <LinearProgress variant="determinate" value={progress} />
-                                    <div className="loading-percentage">
-                                        <p>{`${progress}%`}</p>
-                                    </div>
-                                </div>
-                                <div className="loading-text">
-                                    <p>{isLoading}</p>
-                                </div>
+                {isLoading ? (
+                    <div className="loading-container">
+                        <iframe
+                            src="https://lottie.host/embed/76dad2b4-f85f-47cf-8b86-44cc11ab1ff0/tjmsRYQsf7.json"
+                            style={{
+                                border: "none",
+                                overflow: "hidden",
+                                width: "180px", // Slightly larger size
+                                height: "180px",
+                                display: isIframeLoaded ? "block" : "none", // Hide iframe until loaded
+                            }}
+                            onLoad={() => setIframeLoaded(true)} // Set to true when iframe finishes loading
+                            allowFullScreen
+                            title="Loading Animation"
+                        ></iframe>
+                        {!isIframeLoaded && (
+                            <div
+                                style={{
+                                    width: "180px",
+                                    height: "180px",
+                                }}
+                            ></div>
+                        )}
+                        <div className="linear-progress">
+                            <LinearProgress variant="determinate" value={progress} />
+                            <div className="loading-percentage">
+                                <p>{`${progress}%`}</p>
                             </div>
-                        </>
-                    ) : (
-                        <>
-                            {allUsersBetsFromDatabaseAfterAPIFetch.map((object, index) => (
-                                <PlayerPicks
-                                    key={index}
-                                    playerBets={object.bets}
-                                    displayName={object.displayName}
-                                />
+                        </div>
+                        <div className="loading-text">
+                            <p>{isLoading}</p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="body">
+                        {hasAnyGameFinished(allUsersBetsFromDatabaseAfterAPIFetch) && (
+                            <div className="leader">{leaderText}</div>
+                        )}
+                        {/* {!isBettingWindowClosed(now) && <CountdownTimer />} */}
+                        {allUsersBetsFromDatabaseAfterAPIFetch.map((object, index) => (
+                            <PlayerPicks
+                                key={index}
+                                playerBets={object.bets}
+                                displayName={object.displayName}
+                            />
+                        ))}
+                        <TransitionGroup>
+                            {combinedBets.map((betObject, index) => (
+                                <Grow in={true} key={index} timeout={500}>
+                                    <Card className="pick-list">
+                                        <h4>
+                                            {betObject.displayName === "Your"
+                                                ? `${betObject.displayName} Week's Picks`
+                                                : `${betObject.displayName}'s Picks`}
+                                        </h4>
+                                        {betObject.bets.map((bet) => (
+                                            <PlayerBetCard key={bet.id} bet={bet} />
+                                        ))}
+                                    </Card>
+                                </Grow>
                             ))}
-                            <TransitionGroup>
-                                {combinedBets.map((betObject, index) => (
-                                    <Grow in={true} key={index} timeout={500}>
-                                        <Card className="pick-list">
-                                            <h4>
-                                                {betObject.displayName === "Your"
-                                                    ? `${betObject.displayName} Week's Picks`
-                                                    : `${betObject.displayName}'s Picks`}
-                                            </h4>
-                                            {betObject.bets.map((bet) => (
-                                                <PlayerBetCard key={bet.id} bet={bet} />
-                                            ))}
-                                        </Card>
-                                    </Grow>
-                                ))}
-                            </TransitionGroup>
-                        </>
-                    )}
-                </div>
+                        </TransitionGroup>
+                    </div>
+                )}
             </div>
         </Fade>
     );
